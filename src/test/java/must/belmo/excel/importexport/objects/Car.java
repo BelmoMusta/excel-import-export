@@ -1,6 +1,5 @@
 package must.belmo.excel.importexport.objects;
-@lombok.Getter
-@lombok.Setter
+
 public class Car {
 	private String name;
 	private String model;
@@ -16,4 +15,16 @@ public class Car {
 				", id=" + id +
 				'}';
 	}
+	
+	public String getName() {return this.name;}
+	
+	public String getModel() {return this.model;}
+	
+	public int getId() {return this.id;}
+	
+	public void setName(String name) {this.name = name; }
+	
+	public void setModel(String model) {this.model = model; }
+	
+	public void setId(int id) {this.id = id; }
 }
