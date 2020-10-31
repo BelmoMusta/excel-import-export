@@ -19,10 +19,8 @@ public class ImporterTest {
 		map.put("id", 0);
 		map.put("name", 1);
 		map.put("model", 2);
-		final URL resource = getClass().getClassLoader().getResource("cars.xlsx");
-		final String file = resource.getFile();
-		final Collection<Car> cars = carExcelImporterService.importFromExcelFile(Car.class, file, 0, map
-		);
+		final String file = getCarsFile();
+		final Collection<Car> cars = carExcelImporterService.importFromExcelFile(Car.class, file, 0, map);
 		Assert.assertEquals(2, cars.size());
 		
 		final Car firstCar = cars.iterator().next();
@@ -30,5 +28,20 @@ public class ImporterTest {
 		Assert.assertEquals("Mercedes", firstCar.getName());
 		Assert.assertEquals("AMG", firstCar.getModel());
 		
+	}
+	
+	@Test(expected = ExcelImporterException.class)
+	public void testExcelImportException() throws ExcelImporterException {
+		
+		final ExcelImporterService<Car> carExcelImporterService = new ExcelImporterService<>();
+		Map<String, Integer> map = new HashMap<>();
+		map.put("aFieldThatDoesNotExist", 1);
+		final String file = getCarsFile();
+		carExcelImporterService.importFromExcelFile(Car.class, file, 0, map);
+	}
+	
+	private String getCarsFile() {
+		final URL resource = getClass().getClassLoader().getResource("cars.xlsx");
+		return resource.getFile();
 	}
 }
