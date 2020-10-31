@@ -1,5 +1,10 @@
 package must.belmo.excel.importexport.utils;
 
+import must.belmo.excel.importexport.exception.ExcelImporterDefaultConstructorException;
+import must.belmo.excel.importexport.exception.ExcelImporterException;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,5 +40,21 @@ public class TypesUtils {
 	@SuppressWarnings("unchecked")
 	public static <T> T getDefaultValue(Class<T> c) {
 		return (T) DEFAULT_VALUES_FOR_PRIMITIVE_TYPES.getOrDefault(c,0);
+	}
+	
+	public static <T> T createInstanceUsingDefaultConstructor(Class<T> cls) throws ExcelImporterException {
+		final Constructor<T> constructor;
+		try {
+			constructor = cls.getConstructor();
+		} catch (NoSuchMethodException e) {
+			throw new ExcelImporterDefaultConstructorException(cls);
+		}
+		final T instance;
+		try {
+			instance = constructor.newInstance();
+		} catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+			throw new ExcelImporterException("Cannot access the class " + cls.getCanonicalName());
+		}
+		return instance;
 	}
 }
