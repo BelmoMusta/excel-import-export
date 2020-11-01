@@ -1,6 +1,7 @@
 package must.belmo.excel.importexport;
 
-import must.belmo.excel.importexport.functional.Extractor;
+import must.belmo.excel.importexport.exception.ExcelExporterException;
+import must.belmo.excel.importexport.utils.TypesUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -10,52 +11,87 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ExcelExporterService<T> {
+	private File destinationFile;
+	private Map<String, Integer> columnsMappers;
+	private Collection<T> content;
+	private boolean writeHeaders;
+	private int initialRow;
 	
-	public void export(Collection<T> content, Map<String, Extractor<T, String>> extractors, File filePath) throws IOException {
-		final List<Map<String, String>> maps = convertToMap(content, extractors);
-		writeMapToExcelFile(maps, filePath);
+	
+	public static <R> ExcelExporterService<R> exportContent(Collection<R> content) {
+		ExcelExporterService<R> rExcelExporterService = new ExcelExporterService<>();
+		rExcelExporterService.content = content;
+		return rExcelExporterService;
 	}
 	
-	private List<Map<String, String>> convertToMap(Collection<T> content,
-												   Map<String, Extractor<T, String>> extractors) {
-		final List<Map<String, String>> listOfMaps = new ArrayList<>();
+	public ExcelExporterService<T> toFile(File file) {
+		this.destinationFile = file;
+		return this;
+	}
+	
+	public ExcelExporterService<T> withColumnsMappers(Map<String, Integer> columnsMappers) {
+		this.columnsMappers = columnsMappers;
+		return this;
+	}
+	
+	public ExcelExporterService<T> withHeaders() {
+		this.writeHeaders = true;
+		initialRow = 1;
+		return this;
+	}
+	
+	public void export() throws ExcelExporterException {
+		final List<Map<Integer, Object>> maps = convertToMap(content, columnsMappers);
+		writeMapToExcelFile(maps, destinationFile);
+	}
+	
+	private List<Map<Integer, Object>> convertToMap(Collection<T> content,
+													Map<String, Integer> extractors) throws ExcelExporterException {
+		final List<Map<Integer, Object>> listOfMaps = new ArrayList<>();
 		
 		for (T item : content) {
-			final Map<String, String> map = new LinkedHashMap<>();
+			final Map<Integer, Object> map = new LinkedHashMap<>();
 			
-			for (Map.Entry<String, Extractor<T, String>> entry : extractors.entrySet()) {
-				final Extractor<T, String> extractor = entry.getValue();
+			for (Map.Entry<String, Integer> entry : extractors.entrySet()) {
+				final Integer cell = entry.getValue();
 				final String key = entry.getKey();
-				final String value = extractor.extract(item);
-				map.put(key, value);
+				final Object valueFromField = TypesUtils.getValueFromField(item, key);
+				
+				map.put(cell, valueFromField);
 			}
-			
 			listOfMaps.add(map);
 		}
 		return listOfMaps;
 	}
 	
-	private <K, V> void writeMapToExcelFile(List<Map<K, V>> listMap, File outputFile) throws IOException {
+	private <V> void writeMapToExcelFile(List<Map<Integer, V>> listMap, File outputFile) throws ExcelExporterException {
 		
 		try (XSSFWorkbook workbook = new XSSFWorkbook()) {
 			final Sheet sheet = workbook.createSheet("Sheet 0");
-			writeHeaders(listMap, sheet);
+			if (writeHeaders) {
+				final List<String> headers = columnsMappers.keySet()
+						.stream()
+						.sorted(Comparator.comparing(o -> columnsMappers.get(o)))
+						.collect(Collectors.toList());
+				writeHeaders(headers, sheet);
+			}
 			
-			int currentRow = 1;
-			for (Map<K, V> map : listMap) {
+			int currentRow = initialRow;
+			for (Map<Integer, V> map : listMap) {
 				final Row row = sheet.createRow(currentRow++);
 				createRowFromMap(map, row);
 			}
 			
 			writeWorkbookToFile(workbook, outputFile);
+		} catch (IOException e) {
+			throw new ExcelExporterException("Error writing to file ", e);
 		}
 	}
 	
@@ -65,21 +101,17 @@ public class ExcelExporterService<T> {
 		workbook.close();
 	}
 	
-	private <K, V> void createRowFromMap(Map<K, V> map, Row row) {
-		int currentCell = 0;
-		for (Map.Entry<K, V> keyValue : map.entrySet()) {
-			row.createCell(currentCell).setCellValue(String.valueOf(keyValue.getValue()));
-			currentCell++;
+	private <V> void createRowFromMap(Map<Integer, V> map, Row row) {
+		for (Map.Entry<Integer, V> keyValue : map.entrySet()) {
+			final Integer cell = keyValue.getKey();
+			row.createCell(cell).setCellValue(String.valueOf(keyValue.getValue()));
 		}
 	}
 	
-	private <K, V> void writeHeaders(List<Map<K, V>> listMap, Sheet sheet) {
+	private void writeHeaders(List<String> headers, Sheet sheet) {
 		final Row header = sheet.createRow(0);
-		final Set<K> keySet = listMap.stream()
-				.flatMap(map -> map.keySet().stream())
-				.collect(Collectors.toCollection(LinkedHashSet::new));
 		int currentCell = 0;
-		for (K key : keySet) {
+		for (String key : headers) {
 			header.createCell(currentCell).setCellValue(String.valueOf(key));
 			currentCell++;
 		}
