@@ -42,8 +42,8 @@ public class CarWithAnnotations {
 ```
 
 ## 2.  Exporting
-    To export a collection of items to an excel file, You an use the `ExcelExporterService` to do so.
-    Here is a common example of use  :
+To export a collection of items to an excel file, You an use the `ExcelExporterService` to do so.
+Here is a common example of use  :
 
 ```java
   final Car car = new Car();
