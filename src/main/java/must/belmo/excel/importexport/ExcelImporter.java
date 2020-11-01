@@ -26,6 +26,7 @@ public class ExcelImporter<T> {
 	private int sheetNumber;
 	private boolean sheetNumberSpecified;
 	private Collection<T> items;
+	private boolean collectionTypeSpecified;
 	
 	protected ExcelImporter(Class<T> aClass) {
 		this.cls = aClass;
@@ -53,6 +54,7 @@ public class ExcelImporter<T> {
 	
 	public ExcelImporter<T> toCollection(Collection<T> aCollection) {
 		items = aCollection;
+		collectionTypeSpecified = true;
 		return this;
 	}
 	
@@ -86,7 +88,11 @@ public class ExcelImporter<T> {
 				items_.add(object);
 			}
 		}
-		items = items_;
+		if (collectionTypeSpecified) {
+			items.addAll(items_);
+		} else {
+			items = items_;
+		}
 		return this;
 	}
 	
