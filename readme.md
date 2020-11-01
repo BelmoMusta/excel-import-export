@@ -45,7 +45,7 @@ public class CarWithAnnotations {
     To export a collection of items to an excel file, You an use the `ExcelExporterService` to do so.
     Here is a common example of use  :
 
- ```java
+```java
   final Car car = new Car();
   car.setId(22);
   car.setModel("My model");
