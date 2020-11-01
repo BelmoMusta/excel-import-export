@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class ExcelImporter<T> {
 	
@@ -27,6 +28,8 @@ public class ExcelImporter<T> {
 	private boolean sheetNumberSpecified;
 	private Collection<T> items;
 	private boolean collectionTypeSpecified;
+	private int rowNumber;
+	private boolean rowNumberSpecified;
 	
 	protected ExcelImporter(Class<T> aClass) {
 		this.cls = aClass;
@@ -52,8 +55,9 @@ public class ExcelImporter<T> {
 		return this;
 	}
 	
-	public ExcelImporter<T> toCollection(Collection<T> aCollection) {
-		items = aCollection;
+	public ExcelImporter<T> toCollection(Collection<T> aCollection) throws ExcelImporterException {
+		items = Optional.ofNullable(aCollection)
+				.orElseThrow(() -> new ExcelImporterException("The provided collection is null"));
 		collectionTypeSpecified = true;
 		return this;
 	}
@@ -69,8 +73,32 @@ public class ExcelImporter<T> {
 		return this;
 	}
 	
-	public ExcelImporter<T> doImport() throws ExcelImporterException {
+	public ExcelImporter<T> atRowNumber(int rowNumber) {
+		// access to a row in O(1)
+		this.rowNumber = rowNumber;
+		rowNumberSpecified = true;
+		return this;
+	}
+	
+	public Collection<T> get() throws ExcelImporterException {
 		final Workbook workbook = WorkbookUtils.getWorkbookFromFile(file);
+		final List<Sheet> sheetList = getSheets(workbook);
+		final Collection<T> innerItems = new ArrayList<>();
+		final List<Row> rows = getRows(sheetList);
+		for (Row row : rows) {
+			T object = convertRowToObject(row, rowMapper, cls);
+			innerItems.add(object);
+		}
+		
+		if (collectionTypeSpecified) {
+			items.addAll(innerItems);
+		} else {
+			items = innerItems;
+		}
+		return items;
+	}
+	
+	public List<Sheet> getSheets(Workbook workbook) {
 		final List<Sheet> sheetList = new ArrayList<>();
 		if (sheetNumberSpecified) {
 			sheetList.add(workbook.getSheetAt(this.sheetNumber));
@@ -80,24 +108,22 @@ public class ExcelImporter<T> {
 				sheetList.add(sheetIterator.next());
 			}
 		}
-		Collection<T> items_ = new ArrayList<>();
-		for (Sheet sheet : sheetList) {
-			final Iterator<Row> rowIterator = sheet.rowIterator();
-			while (rowIterator.hasNext()) {
-				T object = convertRowToObject(rowIterator.next(), rowMapper, cls);
-				items_.add(object);
-			}
-		}
-		if (collectionTypeSpecified) {
-			items.addAll(items_);
-		} else {
-			items = items_;
-		}
-		return this;
+		return sheetList;
 	}
 	
-	public Collection<T> get() {
-		return items;
+	public List<Row> getRows(List<Sheet> sheetList) {
+		final List<Row> rows = new ArrayList<>();
+		for (Sheet sheet : sheetList) {
+			if (rowNumberSpecified) {
+				rows.add(sheet.getRow(rowNumber));
+			} else {
+				final Iterator<Row> rowIterator = sheet.rowIterator();
+				while (rowIterator.hasNext()) {
+					rows.add(rowIterator.next());
+				}
+			}
+		}
+		return rows;
 	}
 	
 	private T convertRowToObject(Row row, Map<String, Integer> rowMapper, Class<T> cls) throws ExcelImporterException {

@@ -19,7 +19,6 @@ public class ImporterWithAnnotationTest {
 		Collection<CarWithAnnotations> cars = ExcelImporterAnnotation.extract(CarWithAnnotations.class)
 				.from(file)
 				.inSheetNumber(0)
-				.doImport()
 				.get();
 		
 		Assert.assertEquals(2, cars.size());
@@ -32,7 +31,7 @@ public class ImporterWithAnnotationTest {
 	}
 	
 	@Test()
-	public void testExcelImportException() {
+	public void testExcelImportException() throws ExcelImporterException {
 		
 		Map<String, Integer> map = new HashMap<>();
 		map.put("aFieldThatDoesNotExist", 1);

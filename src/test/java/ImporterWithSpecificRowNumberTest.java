@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-public class ImporterWithSpecificCollectionTypeTest {
+public class ImporterWithSpecificRowNumberTest {
 	
 	@Test
 	public void testImportCars() throws ExcelImporterException {
@@ -22,8 +22,9 @@ public class ImporterWithSpecificCollectionTypeTest {
 		final Collection<Car> cars = ExcelImporter.extract(Car.class)
 				.from(file)
 				.withColumnsMapper(map)
+				.atRowNumber(0)
 				.toCollection(new HashSet<>())
 				.get();
-		Assert.assertEquals(HashSet.class, cars.getClass());
+		Assert.assertEquals(1, cars.size());
 	}
 }

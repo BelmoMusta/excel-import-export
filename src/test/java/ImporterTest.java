@@ -22,7 +22,6 @@ public class ImporterTest {
 				.from(file)
 				.inSheetNumber(0)
 				.withColumnsMapper(map)
-				.doImport()
 				.get();
 		
 		Assert.assertEquals(2, cars.size());
@@ -43,8 +42,7 @@ public class ImporterTest {
 		final ExcelImporter<Car> carExcelImporterService = ExcelImporter.extract(Car.class)
 				.withColumnsMapper(map)
 				.from(file);
-		carExcelImporterService.doImport()
-				.get();
+		carExcelImporterService.get();
 	}
 	
 }
