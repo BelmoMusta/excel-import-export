@@ -41,7 +41,8 @@ public class ImporterTest {
 		map.put("aFieldThatDoesNotExist", 1);
 		final ExcelImporter<Car> carExcelImporterService = ExcelImporter.extract(Car.class)
 				.withColumnsMapper(map)
-				.from(file);
+				.from(file)
+				.fromAllSheets();
 		carExcelImporterService.get();
 	}
 	

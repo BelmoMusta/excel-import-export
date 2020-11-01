@@ -46,8 +46,7 @@ public class ExcelImporter<T> {
 	}
 	
 	public ExcelImporter<T> from(String file) {
-		this.file = new File(file);
-		return this;
+		return from(new File(file));
 	}
 	
 	public ExcelImporter<T> fromAllSheets() {
@@ -83,12 +82,8 @@ public class ExcelImporter<T> {
 	public Collection<T> get() throws ExcelImporterException {
 		final Workbook workbook = WorkbookUtils.getWorkbookFromFile(file);
 		final List<Sheet> sheetList = getSheets(workbook);
-		final Collection<T> innerItems = new ArrayList<>();
 		final List<Row> rows = getRows(sheetList);
-		for (Row row : rows) {
-			T object = convertRowToObject(row, rowMapper, cls);
-			innerItems.add(object);
-		}
+		final Collection<T> innerItems = convertRowsToItems(rows);
 		
 		if (collectionTypeSpecified) {
 			items.addAll(innerItems);
@@ -96,6 +91,15 @@ public class ExcelImporter<T> {
 			items = innerItems;
 		}
 		return items;
+	}
+	
+	public Collection<T> convertRowsToItems(List<Row> rows) throws ExcelImporterException {
+		final Collection<T> innerItems = new ArrayList<>();
+		for (Row row : rows) {
+			T object = convertRowToObject(row, rowMapper, cls);
+			innerItems.add(object);
+		}
+		return innerItems;
 	}
 	
 	public List<Sheet> getSheets(Workbook workbook) {
