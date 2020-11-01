@@ -42,7 +42,28 @@ public class CarWithAnnotations {
 ```
 
 ## 2.  Exporting
-  `TODO`
+    To export a collection of items to an excel file, You an use the `ExcelExporterService` to do so.
+    Here is a common example of use  :
+
+    ```java
+  final Car car = new Car();
+  car.setId(22);
+  car.setModel("My model");
+  car.setName("a car name");
+
+  final Map<String, Integer> columnsMapper = new HashMap<>();
+  columnsMapper.put("id", 0);
+  columnsMapper.put("name", 1);
+  columnsMapper.put("model", 2);
+
+
+  final File destinationFile = new File("cars-exported.xlsx");
+  ExcelExporterService.exportContent(Collections.singletonList(car))
+        .toFile(destinationFile)
+        .withColumnsMappers(columnsMapper)
+        .withHeaders()
+        .export();
+    ```
 
 ### Dependencies :
  - Apache POI 3.15
