@@ -19,11 +19,17 @@ import java.util.stream.Collectors;
 
 public class ExcelExporterService<T> {
 	private File destinationFile;
-	private Map<String, Integer> columnsMappers;
+	private ColumnsMapper<ExcelExporterService<T>> aColMapper;
 	private Collection<T> content;
 	private boolean writeHeaders;
 	private int initialRow;
+	public ExcelExporterService (){
+		aColMapper = new ColumnsMapper<>(this);
+	}
 	
+	public ColumnsMapper<ExcelExporterService<T>> map(String columnName) {
+		return aColMapper.map(columnName);
+	}
 	
 	public static <R> ExcelExporterService<R> exportContent(Collection<R> content) {
 		ExcelExporterService<R> rExcelExporterService = new ExcelExporterService<>();
@@ -36,11 +42,6 @@ public class ExcelExporterService<T> {
 		return this;
 	}
 	
-	public ExcelExporterService<T> withColumnsMappers(Map<String, Integer> columnsMappers) {
-		this.columnsMappers = columnsMappers;
-		return this;
-	}
-	
 	public ExcelExporterService<T> withHeaders() {
 		this.writeHeaders = true;
 		initialRow = 1;
@@ -48,7 +49,7 @@ public class ExcelExporterService<T> {
 	}
 	
 	public void export() throws ExcelExporterException {
-		final List<Map<Integer, Object>> maps = convertToMap(content, columnsMappers);
+		final List<Map<Integer, Object>> maps = convertToMap(content, aColMapper.get());
 		writeMapToExcelFile(maps, destinationFile);
 	}
 	
@@ -76,9 +77,9 @@ public class ExcelExporterService<T> {
 		try (XSSFWorkbook workbook = new XSSFWorkbook()) {
 			final Sheet sheet = workbook.createSheet("Sheet 0");
 			if (writeHeaders) {
-				final List<String> headers = columnsMappers.keySet()
+				final List<String> headers = aColMapper.get().keySet()
 						.stream()
-						.sorted(Comparator.comparing(o -> columnsMappers.get(o)))
+						.sorted(Comparator.comparing(o -> aColMapper.get().get(o)))
 						.collect(Collectors.toList());
 				writeHeaders(headers, sheet);
 			}
