@@ -23,7 +23,8 @@ public class ExcelExporterService<T> {
 	private Collection<T> content;
 	private boolean writeHeaders;
 	private int initialRow;
-	public ExcelExporterService (){
+	
+	public ExcelExporterService() {
 		aColMapper = new ColumnsMapper<>(this);
 	}
 	
@@ -76,14 +77,7 @@ public class ExcelExporterService<T> {
 		
 		try (XSSFWorkbook workbook = new XSSFWorkbook()) {
 			final Sheet sheet = workbook.createSheet("Sheet 0");
-			if (writeHeaders) {
-				final List<String> headers = aColMapper.get().keySet()
-						.stream()
-						.sorted(Comparator.comparing(o -> aColMapper.get().get(o)))
-						.collect(Collectors.toList());
-				writeHeaders(headers, sheet);
-			}
-			
+			writeHeaders(sheet);
 			int currentRow = initialRow;
 			for (Map<Integer, V> map : listMap) {
 				final Row row = sheet.createRow(currentRow++);
@@ -93,6 +87,21 @@ public class ExcelExporterService<T> {
 			writeWorkbookToFile(workbook, outputFile);
 		} catch (IOException e) {
 			throw new ExcelExporterException("Error writing to file ", e);
+		}
+	}
+	
+	private void writeHeaders(Sheet sheet) {
+		if (writeHeaders) {
+			final List<String> headers = aColMapper.get().keySet()
+					.stream()
+					.sorted(Comparator.comparing(o -> aColMapper.get().get(o)))
+					.collect(Collectors.toList());
+			final Row header = sheet.createRow(0);
+			int currentCell = 0;
+			for (String key : headers) {
+				header.createCell(currentCell).setCellValue(String.valueOf(key));
+				currentCell++;
+			}
 		}
 	}
 	
@@ -106,15 +115,6 @@ public class ExcelExporterService<T> {
 		for (Map.Entry<Integer, V> keyValue : map.entrySet()) {
 			final Integer cell = keyValue.getKey();
 			row.createCell(cell).setCellValue(String.valueOf(keyValue.getValue()));
-		}
-	}
-	
-	private void writeHeaders(List<String> headers, Sheet sheet) {
-		final Row header = sheet.createRow(0);
-		int currentCell = 0;
-		for (String key : headers) {
-			header.createCell(currentCell).setCellValue(String.valueOf(key));
-			currentCell++;
 		}
 	}
 }
