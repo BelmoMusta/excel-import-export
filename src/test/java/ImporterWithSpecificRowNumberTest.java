@@ -22,7 +22,7 @@ public class ImporterWithSpecificRowNumberTest {
 		final Collection<Car> cars = ExcelImporter.extract(Car.class)
 				.from(file)
 				.withColumnsMapper(map)
-				.itemAtRows(0)
+				.itemsAtRows(0)
 				.toCollection(new HashSet<>())
 				.get();
 		Assert.assertEquals(1, cars.size());
@@ -38,7 +38,7 @@ public class ImporterWithSpecificRowNumberTest {
 		final Collection<Car> cars = ExcelImporter.extract(Car.class)
 				.from(file)
 				.withColumnsMapper(map)
-				.itemAtRows(0,1)
+				.itemsAtRows(0,1)
 				.toCollection(new HashSet<>())
 				.get();
 		Assert.assertEquals(2, cars.size());

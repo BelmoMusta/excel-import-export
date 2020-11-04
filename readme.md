@@ -36,7 +36,6 @@ public class CarWithAnnotations {
 	Collection<CarWithAnnotations> cars = ExcelImporterAnnotation.extract(CarWithAnnotations.class)
 				.from(file)
 				.inSheetNumber(0)
-				.doImport()
 				.get();
 ```
 

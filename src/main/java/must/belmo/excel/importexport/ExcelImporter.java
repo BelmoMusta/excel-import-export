@@ -72,7 +72,7 @@ public class ExcelImporter<T> {
 		return this;
 	}
 	
-	public ExcelImporter<T> itemAtRows(int... rowNumbers) {
+	public ExcelImporter<T> itemsAtRows(int... rowNumbers) {
 		// access to a row in O(1)
 		this.rowNumbers = rowNumbers;
 		rowNumberSpecified = true;
