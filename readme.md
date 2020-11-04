@@ -6,15 +6,14 @@ Usage:
 ## 1. Importing
 
 ```java
-final Map<String, Integer> columnsMapper = new HashMap<>();
-		map.put("id", 0);
-		map.put("name", 1);
-		map.put("model", 2);
+
 		final String file = "the path to a valid excel file";
 		final Collection<Car> cars = ExcelImporter.extract(Car.class)
 				.from(file)
 				.inSheetNumber(0)
-				.withColumnsMapper(columnsMapper)
+				.map("id").toCell(0)
+                .map("name").toCell(1)
+                .map("model").toCell(2)
 				.get();
 ```
 This snippet creates a collection of cars from the first sheet of an excel workbook.
@@ -49,18 +48,14 @@ Here is a common example of use  :
   car.setModel("My model");
   car.setName("a car name");
 
-  final Map<String, Integer> columnsMapper = new HashMap<>();
-  columnsMapper.put("id", 0);
-  columnsMapper.put("name", 1);
-  columnsMapper.put("model", 2);
-
-
-  final File destinationFile = new File("cars-exported.xlsx");
-  ExcelExporterService.exportContent(Collections.singletonList(car))
-        .toFile(destinationFile)
-        .withColumnsMappers(columnsMapper)
-        .withHeaders()
-        .export();
+ final File destinationFile = new File("cars-exported.xlsx");
+ 		ExcelExporterService.exportContent(Collections.singletonList(car))
+ 				.toFile(destinationFile)
+ 				.withHeaders()
+ 				.map("id").toCell(0)
+ 				.map("name").toCell(1)
+ 				.map("model").toCell(2)
+ 				.export();
 ```
 
 ### Dependencies :

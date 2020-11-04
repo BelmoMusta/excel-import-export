@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ColumnsMapper<S> {
-	private final Map<String, Integer> columnsMappers;
+	public final Map<String, Integer> columnsMappers;
 	private S service;
 	private String currentColumnName;
 	

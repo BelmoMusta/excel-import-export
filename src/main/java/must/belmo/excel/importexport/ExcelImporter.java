@@ -23,7 +23,7 @@ public class ExcelImporter<T> {
 	
 	protected Class<T> cls;
 	private File file;
-	private Map<String, Integer> rowMapper;
+	protected final ColumnsMapper<ExcelImporter<T>> columnsMapper;
 	private int sheetNumber;
 	private boolean sheetNumberSpecified;
 	private Collection<T> items;
@@ -33,6 +33,7 @@ public class ExcelImporter<T> {
 	
 	protected ExcelImporter(Class<T> aClass) {
 		this.cls = aClass;
+		this.columnsMapper = new ColumnsMapper<>(this);
 		items = new ArrayList<>(); // default
 	}
 	
@@ -61,11 +62,6 @@ public class ExcelImporter<T> {
 		return this;
 	}
 	
-	public ExcelImporter<T> withColumnsMapper(Map<String, Integer> mapper) {
-		this.rowMapper = mapper;
-		return this;
-	}
-	
 	public ExcelImporter<T> inSheetNumber(int sheetNumber) {
 		this.sheetNumber = sheetNumber;
 		sheetNumberSpecified = true;
@@ -77,6 +73,10 @@ public class ExcelImporter<T> {
 		this.rowNumbers = rowNumbers;
 		rowNumberSpecified = true;
 		return this;
+	}
+	
+	public ColumnsMapper<ExcelImporter<T>> map(String columnName) {
+		return columnsMapper.map(columnName);
 	}
 	
 	public Collection<T> get() throws ExcelImporterException {
@@ -96,7 +96,7 @@ public class ExcelImporter<T> {
 	public Collection<T> convertRowsToItems(List<Row> rows) throws ExcelImporterException {
 		final Collection<T> innerItems = new ArrayList<>();
 		for (Row row : rows) {
-			T object = convertRowToObject(row, rowMapper, cls);
+			T object = convertRowToObject(row, columnsMapper, cls);
 			innerItems.add(object);
 		}
 		return innerItems;
@@ -132,9 +132,9 @@ public class ExcelImporter<T> {
 		return rows;
 	}
 	
-	private T convertRowToObject(Row row, Map<String, Integer> rowMapper, Class<T> cls) throws ExcelImporterException {
+	private T convertRowToObject(Row row, ColumnsMapper<ExcelImporter<T>> rowMapper, Class<T> cls) throws ExcelImporterException {
 		final T instance = TypesUtils.createInstanceUsingDefaultConstructor(cls);
-		for (Map.Entry<String, Integer> entry : rowMapper.entrySet()) {
+		for (Map.Entry<String, Integer> entry : rowMapper.columnsMappers.entrySet()) {
 			final String fieldName = entry.getKey();
 			final Integer cellNumber = entry.getValue();
 			extractFromRow(row, cls, instance, fieldName, cellNumber);

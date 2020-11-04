@@ -14,14 +14,14 @@ public class ImporterTest {
 	@Test
 	public void testImportCars() throws ExcelImporterException {
 		Map<String, Integer> map = new HashMap<>();
-		map.put("id", 0);
-		map.put("name", 1);
-		map.put("model", 2);
+		
 		final String file = TestUtils.getCarsFile(getClass());
 		final Collection<Car> cars = ExcelImporter.extract(Car.class)
 				.from(file)
 				.inSheetNumber(0)
-				.withColumnsMapper(map)
+				.map("id").toCell(0)
+				.map("name").toCell(1)
+				.map("model").toCell(2)
 				.get();
 		
 		Assert.assertEquals(2, cars.size());
@@ -37,11 +37,9 @@ public class ImporterTest {
 	public void testExcelImportException() throws ExcelImporterException {
 		
 		final String file = TestUtils.getCarsFile(getClass());
-		Map<String, Integer> map = new HashMap<>();
-		map.put("aFieldThatDoesNotExist", 1);
 		final ExcelImporter<Car> carExcelImporterService = ExcelImporter.extract(Car.class)
-				.withColumnsMapper(map)
 				.from(file)
+				.map("aFieldThatDoesNotExist").toCell( 1)
 				.fromAllSheets();
 		carExcelImporterService.get();
 	}
