@@ -28,7 +28,7 @@ public class ExcelImporter<T> {
 	private boolean sheetNumberSpecified;
 	private Collection<T> items;
 	private boolean collectionTypeSpecified;
-	private int rowNumber;
+	private int[] rowNumbers = {};
 	private boolean rowNumberSpecified;
 	
 	protected ExcelImporter(Class<T> aClass) {
@@ -72,9 +72,9 @@ public class ExcelImporter<T> {
 		return this;
 	}
 	
-	public ExcelImporter<T> atRowNumber(int rowNumber) {
+	public ExcelImporter<T> itemAtRows(int... rowNumbers) {
 		// access to a row in O(1)
-		this.rowNumber = rowNumber;
+		this.rowNumbers = rowNumbers;
 		rowNumberSpecified = true;
 		return this;
 	}
@@ -119,7 +119,9 @@ public class ExcelImporter<T> {
 		final List<Row> rows = new ArrayList<>();
 		for (Sheet sheet : sheetList) {
 			if (rowNumberSpecified) {
-				rows.add(sheet.getRow(rowNumber));
+				for (int i : rowNumbers) {
+					rows.add(sheet.getRow(i));
+				}
 			} else {
 				final Iterator<Row> rowIterator = sheet.rowIterator();
 				while (rowIterator.hasNext()) {

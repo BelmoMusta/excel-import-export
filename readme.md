@@ -15,7 +15,6 @@ final Map<String, Integer> columnsMapper = new HashMap<>();
 				.from(file)
 				.inSheetNumber(0)
 				.withColumnsMapper(columnsMapper)
-				.doImport()
 				.get();
 ```
 This snippet creates a collection of cars from the first sheet of an excel workbook.

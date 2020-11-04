@@ -22,9 +22,25 @@ public class ImporterWithSpecificRowNumberTest {
 		final Collection<Car> cars = ExcelImporter.extract(Car.class)
 				.from(file)
 				.withColumnsMapper(map)
-				.atRowNumber(0)
+				.itemAtRows(0)
 				.toCollection(new HashSet<>())
 				.get();
 		Assert.assertEquals(1, cars.size());
+	}
+	
+	@Test
+	public void testImportCarsMultipleIndex() throws ExcelImporterException {
+		final Map<String, Integer> map = new HashMap<>();
+		map.put("id", 0);
+		map.put("name", 1);
+		map.put("model", 2);
+		final String file = TestUtils.getCarsFile(getClass());
+		final Collection<Car> cars = ExcelImporter.extract(Car.class)
+				.from(file)
+				.withColumnsMapper(map)
+				.itemAtRows(0,1)
+				.toCollection(new HashSet<>())
+				.get();
+		Assert.assertEquals(2, cars.size());
 	}
 }
