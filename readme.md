@@ -7,14 +7,14 @@ Usage:
 
 ```java
 
-		final String file = "the path to a valid excel file";
-		final Collection<Car> cars = ExcelImporter.extract(Car.class)
-        				.from(file)
-        				.inSheetNumber(0)
-        				.map("id").toCell(0)
-        				.map("name").toCell(1)
-        				.map("model").toCell(2)
-        				.get();
+final String file = "the path to a valid excel file";
+final Collection<Car> cars = ExcelImporter.extract(Car.class)
+                .from(file)
+                .inSheetNumber(0)
+                .map("id").toCell(0)
+                .map("name").toCell(1)
+                .map("model").toCell(2)
+                .get();
 ```
 This snippet creates a collection of cars from the first sheet of an excel workbook.
 The importing is also possible with the annotation marker.
