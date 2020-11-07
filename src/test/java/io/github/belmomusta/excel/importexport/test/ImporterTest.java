@@ -1,7 +1,8 @@
+package io.github.belmomusta.excel.importexport.test;
+
 import io.github.belmomusta.excel.importexport.ExcelImporter;
 import io.github.belmomusta.excel.importexport.exception.ExcelImporterException;
 import io.github.belmomusta.excel.importexport.objects.Car;
-import io.github.belmomusta.excel.importexport.objects.TestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

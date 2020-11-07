@@ -1,12 +1,15 @@
+package io.github.belmomusta.excel.importexport.test;
+
 import io.github.belmomusta.excel.importexport.ExcelExporterService;
 import io.github.belmomusta.excel.importexport.exception.ExcelExporterException;
 import io.github.belmomusta.excel.importexport.objects.Car;
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.Collections;
-
 public class ExporterTest {
 	
 	@Test
@@ -27,5 +30,10 @@ public class ExporterTest {
 				.export();
 		
 		Assert.assertTrue(destinationFile.exists());
+	}
+	
+	@After
+	public void deleteTemporaryFile() throws Exception{
+		FileUtils.forceDelete(new File("cars-exported.xlsx"));
 	}
 }
