@@ -1,6 +1,6 @@
-import must.belmo.excel.importexport.ExcelExporterService;
-import must.belmo.excel.importexport.exception.ExcelExporterException;
-import must.belmo.excel.importexport.objects.Car;
+import io.github.belmomusta.excel.importexport.ExcelExporterService;
+import io.github.belmomusta.excel.importexport.exception.ExcelExporterException;
+import io.github.belmomusta.excel.importexport.objects.Car;
 import org.junit.Assert;
 import org.junit.Test;
 

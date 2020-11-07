@@ -1,7 +1,7 @@
-import must.belmo.excel.importexport.ExcelImporterAnnotation;
-import must.belmo.excel.importexport.exception.ExcelImporterException;
-import must.belmo.excel.importexport.objects.CarWithAnnotations;
-import must.belmo.excel.importexport.objects.TestUtils;
+import io.github.belmomusta.excel.importexport.ExcelImporterAnnotation;
+import io.github.belmomusta.excel.importexport.exception.ExcelImporterException;
+import io.github.belmomusta.excel.importexport.objects.CarWithAnnotations;
+import io.github.belmomusta.excel.importexport.objects.TestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
