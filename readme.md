@@ -1,7 +1,17 @@
 # Excel import and export
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.belmomusta/excel-import-export/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.belmomusta/excel-import-export)
+
 This project contains utilities to import objects from an excel file.
 It also contains functions to export data from objects an to excel file.
+## Get it as a maven dependency  :
 
+```XML
+   <dependency>
+            <groupId>io.github.belmomusta</groupId>
+            <artifactId>excel-import-export</artifactId>
+            <version>1.0</version>
+   </dependency>
+```
 Usage:
 ## 1. Importing
 
