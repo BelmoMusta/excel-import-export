@@ -8,13 +8,13 @@
     <artifactId>excel-import-export</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>Java object validation</name>
-    <description>Validation of java objects using criteria and annotations</description>
+    <name>Excel Imort Export</name>
+    <description>Excel import and export tools</description>
     <url>https://github.com/BelmoMusta/excel-import-export</url>
 
     <organization>
         <url>https://github.com/BelmoMusta/excel-import-export</url>
-        <name>ObjectValidation</name>
+        <name>Excel Import Export</name>
     </organization>
     <inceptionYear>2020</inceptionYear>
     <developers>
