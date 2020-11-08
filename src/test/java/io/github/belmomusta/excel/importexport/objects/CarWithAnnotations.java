@@ -1,15 +1,15 @@
 package io.github.belmomusta.excel.importexport.objects;
 
-import io.github.belmomusta.excel.importexport.annotation.ExcelCell;
+import io.github.belmomusta.excel.importexport.annotation.ExcelColumn;
 import io.github.belmomusta.excel.importexport.annotation.ExcelRow;
 
 @ExcelRow
 public class CarWithAnnotations {
-	@ExcelCell(0)
+	@ExcelColumn(0)
 	private int id;
-	@ExcelCell(1)
+	@ExcelColumn(1)
 	private String name;
-	@ExcelCell(2)
+	@ExcelColumn(2)
 	private String model;
 	
 	public CarWithAnnotations() {}
@@ -24,9 +24,9 @@ public class CarWithAnnotations {
 	}
 	
 	public String getName() {return this.name;}
-	
+	@ExcelColumn(2)
 	public String getModel() {return this.model;}
-	
+	@ExcelColumn(0)
 	public int getId() {return this.id;}
 	
 	public void setName(String name) {this.name = name; }

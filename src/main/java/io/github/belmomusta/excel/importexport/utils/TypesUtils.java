@@ -7,6 +7,7 @@ import io.github.belmomusta.excel.importexport.exception.ExcelImporterException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,6 +73,19 @@ public class TypesUtils {
 			return (R) declaredField.get(object);
 		} catch (NoSuchFieldException | IllegalAccessException e) {
 			throw new ExcelExporterException("Error accessing the field " + fieldName + " in the class " + object.getClass());
+		}
+	}
+	
+	public static <R, T> R getValueFromMethod(T object, String methodName) throws ExcelExporterException {
+		if (object == null) {
+			throw new ExcelExporterException("The object is null");
+		}
+		try {
+			final Method declaredMethod = object.getClass().getDeclaredMethod(methodName);
+			declaredMethod.setAccessible(true);
+			return (R) declaredMethod.invoke(object);
+		} catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+			throw new ExcelExporterException("Error accessing the field " + methodName + " in the class " + object.getClass());
 		}
 	}
 }
