@@ -9,7 +9,7 @@ It also contains functions to export data from objects an to excel file.
    <dependency>
             <groupId>io.github.belmomusta</groupId>
             <artifactId>excel-import-export</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
    </dependency>
 ```
 Usage:
