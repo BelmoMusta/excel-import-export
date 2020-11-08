@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -17,33 +18,38 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ExcelExporterService<T> {
+public class ExcelExporter<T> {
 	private File destinationFile;
-	private ColumnsMapper<ExcelExporterService<T>> aColMapper;
-	private Collection<T> content;
+	protected ColumnsMapper<ExcelExporter<T>> aColMapper;
+	protected Collection<T> content;
 	private boolean writeHeaders;
 	private int initialRow;
+	private Collection<String> headers = new ArrayList<>();
 	
-	public ExcelExporterService() {
+	public ExcelExporter() {
 		aColMapper = new ColumnsMapper<>(this);
 	}
 	
-	public ColumnsMapper<ExcelExporterService<T>> map(String columnName) {
+	public ColumnsMapper<ExcelExporter<T>> map(String columnName) {
 		return aColMapper.map(columnName);
 	}
-	
-	public static <R> ExcelExporterService<R> exportContent(Collection<R> content) {
-		ExcelExporterService<R> rExcelExporterService = new ExcelExporterService<>();
-		rExcelExporterService.content = content;
-		return rExcelExporterService;
+	public ColumnsMapper<ExcelExporter<T>> mapMethod(String columnName) {
+		return aColMapper.map("#"+columnName);
 	}
 	
-	public ExcelExporterService<T> toFile(File file) {
+	public static <R> ExcelExporter<R> exportContent(Collection<R> content) {
+		ExcelExporter<R> rExcelExporter = new ExcelExporter<>();
+		rExcelExporter.content = content;
+		return rExcelExporter;
+	}
+	
+	public ExcelExporter<T> toFile(File file) {
 		this.destinationFile = file;
 		return this;
 	}
 	
-	public ExcelExporterService<T> withHeaders() {
+	public ExcelExporter<T> withHeaders(String... headers) {
+		this.headers.addAll(Arrays.asList(headers));
 		this.writeHeaders = true;
 		initialRow = 1;
 		return this;
@@ -64,7 +70,12 @@ public class ExcelExporterService<T> {
 			for (Map.Entry<String, Integer> entry : extractors.entrySet()) {
 				final Integer cell = entry.getValue();
 				final String key = entry.getKey();
-				final Object valueFromField = TypesUtils.getValueFromField(item, key);
+				final Object valueFromField;
+				if (key.startsWith("#")) {
+					valueFromField = TypesUtils.getValueFromMethod(item, key.substring(1));
+				} else {
+					valueFromField = TypesUtils.getValueFromField(item, key);
+				}
 				
 				map.put(cell, valueFromField);
 			}
@@ -92,13 +103,18 @@ public class ExcelExporterService<T> {
 	
 	private void writeHeaders(Sheet sheet) {
 		if (writeHeaders) {
-			final List<String> headers = aColMapper.get().keySet()
-					.stream()
-					.sorted(Comparator.comparing(o -> aColMapper.get().get(o)))
-					.collect(Collectors.toList());
+			final Collection<String> headersToWrite;
+			if (headers.isEmpty()) {
+				headersToWrite = aColMapper.get().keySet()
+						.stream()
+						.sorted(Comparator.comparing(o -> aColMapper.get().get(o)))
+						.collect(Collectors.toList());
+			} else {
+				headersToWrite = this.headers;
+			}
 			final Row header = sheet.createRow(0);
 			int currentCell = 0;
-			for (String key : headers) {
+			for (String key : headersToWrite) {
 				header.createCell(currentCell).setCellValue(String.valueOf(key));
 				currentCell++;
 			}

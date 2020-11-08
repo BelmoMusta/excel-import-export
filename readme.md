@@ -52,6 +52,8 @@ public class CarWithAnnotations {
 To export a collection of items to an excel file, You an use the `ExcelExporterService` to do so.
 Here is a common example of use  :
 
+### Without annotations
+
 ```java
   final Car car = new Car();
   car.setId(22);
@@ -67,7 +69,37 @@ Here is a common example of use  :
  				.map("model").toCell(2)
  				.export();
 ```
+### Export content using method names on the exported class
+Used methods should have no args, and have a specific return value, void methods are not supported.
 
+```java
+final Car car = new Car();
+		car.setId(22);
+		car.setModel("My model");
+		car.setName("a car name");
+
+		final File destinationFile = new File("cars-exported-with-method.xlsx");
+		ExcelExporter.exportContent(Collections.singletonList(car))
+				.toFile(destinationFile)
+				.mapMethod("getId").toCell(0)
+				.mapMethod("getName").toCell(1)
+				.mapMethod("getModel").toCell(4)
+				.withHeaders("id", "name", "model") // Here you van specify headers
+				.export();
+```
+### With annotations
+```java
+final CarWithAnnotations car = new CarWithAnnotations();
+		car.setId(22);
+		car.setModel("My model");
+		car.setName("a car name");
+
+		final File destinationFile = new File("cars-exported-with-annotations.xlsx");
+		ExcelExporterAnnotation.exportContent(Collections.singletonList(car))
+				.toFile(destinationFile)
+				.withHeaders("id", "name", "model")
+				.export();
+```
 ### Dependencies :
  - Apache POI 3.15
  - Apache Commons-IO 2.6

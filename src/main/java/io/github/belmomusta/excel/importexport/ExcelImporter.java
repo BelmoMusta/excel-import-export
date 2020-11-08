@@ -96,7 +96,7 @@ public class ExcelImporter<T> {
 	public Collection<T> convertRowsToItems(List<Row> rows) throws ExcelImporterException {
 		final Collection<T> innerItems = new ArrayList<>();
 		for (Row row : rows) {
-			T object = convertRowToObject(row, columnsMapper, cls);
+			T object = convertRowToObject(row, cls);
 			innerItems.add(object);
 		}
 		return innerItems;
@@ -132,9 +132,9 @@ public class ExcelImporter<T> {
 		return rows;
 	}
 	
-	private T convertRowToObject(Row row, ColumnsMapper<ExcelImporter<T>> rowMapper, Class<T> cls) throws ExcelImporterException {
+	private T convertRowToObject(Row row, Class<T> cls) throws ExcelImporterException {
 		final T instance = TypesUtils.createInstanceUsingDefaultConstructor(cls);
-		for (Map.Entry<String, Integer> entry : rowMapper.columnsMappers.entrySet()) {
+		for (Map.Entry<String, Integer> entry : columnsMapper.columnsMappers.entrySet()) {
 			final String fieldName = entry.getKey();
 			final Integer cellNumber = entry.getValue();
 			extractFromRow(row, cls, instance, fieldName, cellNumber);
