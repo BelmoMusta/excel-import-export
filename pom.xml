@@ -4,7 +4,7 @@
 
     <groupId>io.github.belmomusta</groupId>
     <artifactId>excel-import-export</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
     <packaging>jar</packaging>
     <name>Excel Imort Export</name>
     <description>Excel import and export tools</description>
@@ -34,7 +34,7 @@
         <connection>scm:git:git://github.com/BelmoMusta/excel-import-export.git</connection>
         <developerConnection>scm:git:git@github.com/BelmoMusta/excel-import-export.git</developerConnection>
         <url>https://github.com/BelmoMusta/excel-import-export</url>
-        <tag>excel-impex-1.0</tag>
+        <tag>excel-import-export-1.1</tag>
     </scm>
 
     <licenses>
