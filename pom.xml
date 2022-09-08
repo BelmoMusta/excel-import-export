@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.belmomusta</groupId>
     <artifactId>excel-import-export</artifactId>
     <version>1.2-SNAPSHOT</version>
-    <packaging>jar</packaging>
-    <name>Excel Imort Export</name>
+    <packaging>pom</packaging>
+    <name>Excel Imort Export Parent</name>
     <description>Excel import and export tools</description>
     <url>https://github.com/BelmoMusta/excel-import-export</url>
 
@@ -197,5 +198,15 @@
         </dependency>
     </dependencies>
 
-
+    <modules>
+        <module>
+            excel-import-export-api
+        </module>
+        <module>
+            excel-import-export-examples
+        </module>
+        <module>
+            excel-import-export-processor
+        </module>
+    </modules>
 </project>
