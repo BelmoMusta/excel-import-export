@@ -5,6 +5,7 @@ import io.github.belmomusta.excel.importexport.annotation.ExcelRow;
 
 @ExcelRow
 public class CarWithAnnotations {
+    @ExcelColumn(0)
     private int id;
     @ExcelColumn(1)
     private String name;
@@ -27,12 +28,11 @@ public class CarWithAnnotations {
         return this.name;
     }
 
-    @ExcelColumn(2)
     public String getModel() {
         return this.model;
     }
 
-    @ExcelColumn(0)
+
     public int getId() {
         return this.id;
     }

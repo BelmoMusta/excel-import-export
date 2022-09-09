@@ -1,11 +1,15 @@
 package org.mustabelmo.validation.processor;
 
+import java.util.Collection;
+import java.util.List;
+
 public class VelocityWrapper {
     private String aPackage;
     private String simplifiedClassName;
     private String className;
 
     private ParamNameStrategy paramNameStrategy = new DefaultParamNameStrategy();
+    private Collection<FieldMethodPair> correspondanceFieldMethod;
 
     public String getSimplifiedClassName() {
         return simplifiedClassName;
@@ -24,7 +28,7 @@ public class VelocityWrapper {
     }
 
     public String getParamName() {
-       return paramNameStrategy.getParam(simplifiedClassName);
+        return paramNameStrategy.getParam(simplifiedClassName);
     }
 
     public void setAPackage(String aPackage) {
@@ -37,5 +41,13 @@ public class VelocityWrapper {
 
     public void setParamNameStrategy(ParamNameStrategy paramNameStrategy) {
         this.paramNameStrategy = paramNameStrategy;
+    }
+
+    public void setCorrespondanceFieldMethod(Collection<FieldMethodPair> correspondanceFieldMethod) {
+        this.correspondanceFieldMethod = correspondanceFieldMethod;
+    }
+
+    public Collection<FieldMethodPair> getCorrespondanceFieldMethod() {
+        return correspondanceFieldMethod;
     }
 }

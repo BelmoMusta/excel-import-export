@@ -1,20 +1,27 @@
 package org.mustabelmo.validation.processor;
 
+import io.github.belmomusta.excel.importexport.annotation.ExcelColumn;
+
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
-import java.util.LinkedHashMap;
+import java.lang.annotation.Annotation;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class ClassWrapper {
 
     private final String generatedClassName;
     private Element annotatedElement;
-    private List<WrappedElement> enclosedElements;
+    private List<MethodWrapper> enclosedMethods;
 
-    public ClassWrapper(String generatedClassName) {
+    private List<FieldWrapper> enclosedFields;
+
+    private ClassWrapper(String generatedClassName) {
         this.generatedClassName = generatedClassName;
     }
 
@@ -23,34 +30,55 @@ public class ClassWrapper {
         String generatedClassName = annotatedElement.getSimpleName().toString() + "ExcelMapper";
         ClassWrapper classWrapper = new ClassWrapper(generatedClassName);
         classWrapper.annotatedElement = annotatedElement;
+        classWrapper.enclosedMethods = annotatedElement.getEnclosedElements().stream()
+                .filter(e -> e.getKind() == ElementKind.METHOD)
+                .map(MethodWrapper::new)
+                .collect(Collectors.toList());
+        classWrapper.enclosedFields = annotatedElement.getEnclosedElements().stream()
+                .filter(e -> e.getKind() == ElementKind.FIELD)
+                .map(FieldWrapper::new)
+                .collect(Collectors.toList());
+        for (Class<? extends Annotation> annotation : AnnotationsRegistrer.ANNOTATIONS) {
+            for (MethodWrapper methodWrapper : classWrapper.enclosedMethods) {
+                Annotation foundAnnotation = methodWrapper.wrappedMethod.getAnnotation(annotation);
+                if (foundAnnotation == null) {
+                    foundAnnotation = classWrapper.lookForAnnotationInPossibleField(methodWrapper);
+                    if (foundAnnotation != null) {
+                        methodWrapper.add(foundAnnotation);
+                    }
+                }
+            }
+        }
         return classWrapper;
     }
 
-    public String getParameterName() {
-        String parameterType = annotatedElement.getSimpleName().toString();
-        return "p" + parameterType;
-    }
-
-    public List<WrappedElement> getElements() {
-        return enclosedElements;
-    }
-
-
-    public Map<String, WrappedElement> getCorrespondanceFieldMethod() {
-        Map<String, WrappedElement> methodFieldMapper = new LinkedHashMap<>();
-        for (WrappedElement enclosedElement : this.enclosedElements) {
-            if (enclosedElement.isMethod() && enclosedElement.isValid()) {
-                methodFieldMapper.put(enclosedElement.getPossibleFieldNameForMethod(), enclosedElement);
+    private Annotation lookForAnnotationInPossibleField(MethodWrapper methodWrapper) {
+        String possibleFieldName = methodWrapper.getPossibleFieldName();
+        for (FieldWrapper enclosedField : this.enclosedFields) {
+            if (enclosedField.getName().equals(possibleFieldName)) {
+                return enclosedField.getAnnotation(ExcelColumn.class);
             }
         }
-        return methodFieldMapper;
+        return null;
     }
 
-    public void setAnnotatedElement(Element annotatedElement) {
-        this.annotatedElement = annotatedElement;
-        this.enclosedElements = annotatedElement.getEnclosedElements().stream()
-                .map(WrappedElement::new)
-                .collect(Collectors.toList());
+
+    public Collection<FieldMethodPair> getCorrespondanceFieldMethod() {
+        Set<FieldMethodPair> fieldMethodPairs = new TreeSet<>();
+        for (MethodWrapper aMethod : this.enclosedMethods) {
+            if (aMethod.isMethod() && aMethod.isValid()) {
+                String possibleFieldNameForMethod = aMethod.getPossibleFieldName();
+                if (possibleFieldNameForMethod != null) {
+                    FieldMethodPair fieldMethodPair = new FieldMethodPair(possibleFieldNameForMethod, aMethod.getName());
+                    ExcelColumn annotation = aMethod.getAnnotation(ExcelColumn.class);
+                    if (annotation != null) {
+                        fieldMethodPair.setOrder(annotation.value());
+                    }
+                    fieldMethodPairs.add(fieldMethodPair);
+                }
+            }
+        }
+        return fieldMethodPairs;
     }
 
     public String getGeneratedClassName() {
@@ -66,6 +94,9 @@ public class ClassWrapper {
             int index = aPackage.lastIndexOf('.');
             wrapper.setAPackage(aPackage.substring(0, index - 1));
             wrapper.setClassName(qualifiedName.toString());
+
+            Collection<FieldMethodPair> correspondanceFieldMethod = getCorrespondanceFieldMethod();
+            wrapper.setCorrespondanceFieldMethod(correspondanceFieldMethod);
 
         }
         return wrapper;

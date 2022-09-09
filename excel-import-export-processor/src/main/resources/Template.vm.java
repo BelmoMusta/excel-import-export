@@ -6,14 +6,13 @@ public class ${wrapper.simplifiedClassName}ExcelMapper implements io.github.belm
     public void extractToFile(java.util.Collection<$wrapper.className> $wrapper.paramName,
                               java.io.File destFile) {
         try (org.apache.poi.xssf.usermodel.XSSFWorkbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook()) {
-            final org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Sheet 0");
-            int currentRow = 0;
-            for ($wrapper.className data : $wrapper.paramName) {
-                org.apache.poi.ss.usermodel.Row row = sheet.createRow(currentRow++);
+             final org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Sheet 0");
+        int currentRow = 0;
              #foreach($pair in $wrapper.correspondanceFieldMethod)
-                row.createCell($pair.order).setCellValue(String.valueOf(data.${pair.method}()));
+final Row row = sheet.createRow(currentRow++);
+                System.out.println();
              #end
-             }
+             System.out.println();
         } catch(Exception e){
         
         }

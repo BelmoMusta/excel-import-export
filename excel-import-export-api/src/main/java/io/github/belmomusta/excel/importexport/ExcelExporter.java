@@ -95,7 +95,7 @@ public class ExcelExporter<T> extends AbstractMapper {
 				final Row row = sheet.createRow(currentRow++);
 				createRowFromMap(map, row);
 			}
-			
+            System.out.println();
 			writeWorkbookToFile(workbook, outputFile);
 		} catch (IOException e) {
 			throw new ExcelExporterException("Error writing to file ", e);
