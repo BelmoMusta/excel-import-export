@@ -1,18 +1,29 @@
 package $wrapper.aPackage;
+import $wrapper.className;
+import io.github.belmomusta.excel.importexport.ExcelMapper;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class ${wrapper.simplifiedClassName}ExcelMapper implements io.github.belmomusta.excel.importexport.ExcelMapper<$wrapper.className> {
+import java.util.List;
+import java.io.File;
+
+public class ${wrapper.simplifiedClassName}ExcelMapper implements ExcelMapper<$wrapper.simplifiedClassName> {
     
     @Override
-    public void extractToFile(java.util.Collection<$wrapper.className> $wrapper.paramName,
-                              java.io.File destFile) {
-        try (org.apache.poi.xssf.usermodel.XSSFWorkbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook()) {
-            final org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Sheet 0");
-            int currentRow = 0;
-            for ($wrapper.className data : $wrapper.paramName) {
-                org.apache.poi.ss.usermodel.Row row = sheet.createRow(currentRow++);
-             #foreach($pair in $wrapper.correspondanceFieldMethod)
+    public void extractToFile(List<$wrapper.simplifiedClassName> $wrapper.paramName, File destFile) {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            final Sheet sheet = workbook.createSheet("Sheet 0");
+            for (int i = 0; i < ${wrapper.paramName}.size(); i++) {
+                final $wrapper.simplifiedClassName data = ${wrapper.paramName}.get(i);
+                Row row = sheet.createRow(i);
+#foreach($pair in $wrapper.correspondanceFieldMethod)
+#if($pair.ordered)
                 row.createCell($pair.order).setCellValue(String.valueOf(data.${pair.method}()));
-             #end
+#else
+                row.createCell(row.getLastCellNum() + 1).setCellValue(String.valueOf(data.${pair.method}()));
+#end
+#end
              }
         } catch(Exception e){
         

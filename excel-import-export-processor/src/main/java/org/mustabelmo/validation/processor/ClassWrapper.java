@@ -7,6 +7,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -78,7 +79,8 @@ public class ClassWrapper {
                 }
             }
         }
-        return fieldMethodPairs;
+
+        return new ArrayList<>(fieldMethodPairs);
     }
 
     public String getGeneratedClassName() {

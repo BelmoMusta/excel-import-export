@@ -33,10 +33,16 @@ public class FieldMethodPair implements Comparable<FieldMethodPair> {
 
     @Override
     public int compareTo(FieldMethodPair o) {
-        return Comparator.comparing(FieldMethodPair::getOrder).compare(this, o);
+        return Comparator.comparing(FieldMethodPair::getOrder)
+                .thenComparing(FieldMethodPair::getField)
+                .compare(this, o);
     }
 
     public void addHeader(String header) {
         headers.add(header);
+    }
+
+    public boolean isOrdered() {
+        return order != Integer.MAX_VALUE;
     }
 }

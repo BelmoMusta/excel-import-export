@@ -5,11 +5,15 @@ import io.github.belmomusta.excel.importexport.annotation.ExcelRow;
 
 @ExcelRow
 public class CarWithAnnotations {
+    @ExcelColumn
+    private String country;
+
+    @ExcelColumn
+    private String city;
     @ExcelColumn(0)
     private int id;
     @ExcelColumn(1)
     private String name;
-    @ExcelColumn(2)
     private String model;
 
     public CarWithAnnotations() {
@@ -28,6 +32,7 @@ public class CarWithAnnotations {
         return this.name;
     }
 
+    @ExcelColumn(2)
     public String getModel() {
         return this.model;
     }
@@ -47,5 +52,21 @@ public class CarWithAnnotations {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }
