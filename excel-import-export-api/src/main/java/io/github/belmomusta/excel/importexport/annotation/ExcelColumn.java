@@ -8,5 +8,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExcelColumn {
-	int value() default Integer.MAX_VALUE;
+    int value() default Integer.MAX_VALUE;
+
+    String name() default "####";
 }

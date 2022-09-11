@@ -1,13 +1,13 @@
 package org.mustabelmo.validation.processor;
 
 import io.github.belmomusta.excel.importexport.annotation.ExcelColumn;
+import io.github.belmomusta.excel.importexport.annotation.ExcelRow;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -80,7 +80,7 @@ public class ClassWrapper {
             }
         }
 
-        return new ArrayList<>(fieldMethodPairs);
+        return fieldMethodPairs;
     }
 
     public String getGeneratedClassName() {
@@ -89,6 +89,7 @@ public class ClassWrapper {
 
     public VelocityWrapper getVelocityWrapper() {
         VelocityWrapper wrapper = new VelocityWrapper();
+        lookForHeaders(annotatedElement, wrapper);
         wrapper.setSimplifiedClassName(annotatedElement.getSimpleName().toString());
         if (annotatedElement instanceof TypeElement) {
             Name qualifiedName = ((TypeElement) annotatedElement).getQualifiedName();
@@ -102,6 +103,29 @@ public class ClassWrapper {
 
         }
         return wrapper;
+    }
+
+    private void lookForHeaders(Element annotatedElement, VelocityWrapper wrapper) {
+        ExcelRow excelRow = annotatedElement.getAnnotation(ExcelRow.class);
+        if (excelRow != null) {
+            if (!excelRow.ignoreHeaders()) {
+                wrapper.setWithHeaders(true);
+            } else {
+                return;
+            }
+            for (Element enclosedElement : annotatedElement.getEnclosedElements()) {
+                ExcelColumn excelColumn = enclosedElement.getAnnotation(ExcelColumn.class);
+                if (excelColumn != null) {
+                    String headerName = excelColumn.name();
+                    int order = excelColumn.value();
+                    if (headerName.equals("####")) {
+                        headerName = enclosedElement.getSimpleName().toString();
+                    }
+                    Header header = new Header(headerName, order);
+                    wrapper.addHeader(header);
+                }
+            }
+        }
     }
 
 }

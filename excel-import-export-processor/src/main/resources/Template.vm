@@ -14,9 +14,14 @@ public class ${wrapper.simplifiedClassName}ExcelMapper implements ExcelMapper<$w
     public void extractToFile(List<$wrapper.simplifiedClassName> $wrapper.paramName, File destFile) {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             final Sheet sheet = workbook.createSheet("Sheet 0");
-            for (int i = 0; i < ${wrapper.paramName}.size(); i++) {
-                final $wrapper.simplifiedClassName data = ${wrapper.paramName}.get(i);
-                Row row = sheet.createRow(i);
+#if($wrapper.withHeaders)
+    #foreach($header in $wrapper.headers)
+        // write headers here
+    #end
+#end
+        int currentRow = 0;
+        for ($wrapper.simplifiedClassName data : ${wrapper.paramName}) {
+                Row row = sheet.createRow(currentRow++);
 #foreach($pair in $wrapper.correspondanceFieldMethod)
 #if($pair.ordered)
                 row.createCell($pair.order).setCellValue(String.valueOf(data.${pair.method}()));

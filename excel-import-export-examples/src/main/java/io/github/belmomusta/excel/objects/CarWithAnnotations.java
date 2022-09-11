@@ -3,7 +3,7 @@ package io.github.belmomusta.excel.objects;
 import io.github.belmomusta.excel.importexport.annotation.ExcelColumn;
 import io.github.belmomusta.excel.importexport.annotation.ExcelRow;
 
-@ExcelRow
+@ExcelRow(ignoreHeaders = false)
 public class CarWithAnnotations {
     @ExcelColumn
     private String country;

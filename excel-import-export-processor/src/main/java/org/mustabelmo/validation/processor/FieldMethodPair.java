@@ -1,20 +1,18 @@
 package org.mustabelmo.validation.processor;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 
-public class FieldMethodPair implements Comparable<FieldMethodPair> {
-    private int order;
+public class FieldMethodPair extends ExcelCellWrapper {
     private final String field;
     private final String method;
-    private Collection<String> headers = new ArrayList<>();
 
     public FieldMethodPair(String field, String method) {
         this.field = field;
         this.method = method;
     }
 
+
+    @SuppressWarnings({"all","used in velocity"})
     public String getMethod() {
         return method;
     }
@@ -23,26 +21,10 @@ public class FieldMethodPair implements Comparable<FieldMethodPair> {
         return field;
     }
 
-    public void setOrder(int order) {
-        this.order = order;
-    }
-
-    public int getOrder() {
-        return order;
-    }
-
     @Override
-    public int compareTo(FieldMethodPair o) {
+    public int compareTo(ExcelCellWrapper o) {
         return Comparator.comparing(FieldMethodPair::getOrder)
                 .thenComparing(FieldMethodPair::getField)
-                .compare(this, o);
-    }
-
-    public void addHeader(String header) {
-        headers.add(header);
-    }
-
-    public boolean isOrdered() {
-        return order != Integer.MAX_VALUE;
+                .compare(this, (FieldMethodPair) o);
     }
 }
