@@ -8,7 +8,7 @@ public class JavaFileWriter {
     public static void writeJavaClass(ClassWrapper classWrapper, ProcessingEnvironment processingEnv) {
         try {
             VelocityWrapper wrapper = classWrapper.getVelocityWrapper();
-            final JavaFileObject builderFile = processingEnv.getFiler().createSourceFile(classWrapper.getGeneratedClassName());
+            final JavaFileObject builderFile = processingEnv.getFiler().createSourceFile(classWrapper.getFQNOfGeneratedClass());
             VelocityGenerator.generateHtmlFile(wrapper, new File(builderFile.getName()));
 
         } catch (Exception e) {

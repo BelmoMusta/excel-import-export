@@ -31,7 +31,7 @@
                 <version>2.2.4</version>
                 <configuration>
                     <defaultOutputDirectory>
-                        ${project.build.directory}/generated-sources/validation
+                        ${project.build.directory}/generated-sources
                     </defaultOutputDirectory>
                     <processors>
                         <processor>org.mustabelmo.validation.processor.ExcelProcessor</processor>

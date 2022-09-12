@@ -8,6 +8,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -15,21 +16,20 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class ClassWrapper {
-
-    private final String generatedClassName;
+    
     private Element annotatedElement;
     private List<MethodWrapper> enclosedMethods;
-
     private List<FieldWrapper> enclosedFields;
-
-    private ClassWrapper(String generatedClassName) {
-        this.generatedClassName = generatedClassName;
+    private String fQNOfGeneratedClass;
+    
+    private ClassWrapper() {
     }
 
     public static ClassWrapper of(Element annotatedElement) {
 
         String generatedClassName = annotatedElement.getSimpleName().toString() + "ExcelMapper";
-        ClassWrapper classWrapper = new ClassWrapper(generatedClassName);
+        Name qualifiedName = ((TypeElement) annotatedElement).getQualifiedName();
+        ClassWrapper classWrapper = new ClassWrapper();
         classWrapper.annotatedElement = annotatedElement;
         classWrapper.enclosedMethods = annotatedElement.getEnclosedElements().stream()
                 .filter(e -> e.getKind() == ElementKind.METHOD)
@@ -39,6 +39,11 @@ public class ClassWrapper {
                 .filter(e -> e.getKind() == ElementKind.FIELD)
                 .map(FieldWrapper::new)
                 .collect(Collectors.toList());
+        String aPackage = qualifiedName.toString();
+        int index = aPackage.lastIndexOf('.');
+        String packageName = aPackage.substring(0, index - 1);
+        classWrapper.fQNOfGeneratedClass = packageName+".excel.export." + generatedClassName;
+    
         for (Class<? extends Annotation> annotation : AnnotationsRegistrer.ANNOTATIONS) {
             for (MethodWrapper methodWrapper : classWrapper.enclosedMethods) {
                 Annotation foundAnnotation = methodWrapper.wrappedMethod.getAnnotation(annotation);
@@ -82,20 +87,21 @@ public class ClassWrapper {
 
         return fieldMethodPairs;
     }
-
-    public String getGeneratedClassName() {
-        return generatedClassName;
+    
+    public String getFQNOfGeneratedClass() {
+        return fQNOfGeneratedClass;
     }
-
+    
     public VelocityWrapper getVelocityWrapper() {
         VelocityWrapper wrapper = new VelocityWrapper();
-        lookForHeaders(annotatedElement, wrapper);
+        lookForHeaders(wrapper);
         wrapper.setSimplifiedClassName(annotatedElement.getSimpleName().toString());
         if (annotatedElement instanceof TypeElement) {
             Name qualifiedName = ((TypeElement) annotatedElement).getQualifiedName();
-            String aPackage = qualifiedName.toString();
+            String aPackage = getFQNOfGeneratedClass();
             int index = aPackage.lastIndexOf('.');
-            wrapper.setAPackage(aPackage.substring(0, index - 1));
+            String packageName = aPackage.substring(0, index);
+            wrapper.setAPackage(packageName);
             wrapper.setClassName(qualifiedName.toString());
 
             Collection<FieldMethodPair> correspondanceFieldMethod = getCorrespondanceFieldMethod();
@@ -105,24 +111,37 @@ public class ClassWrapper {
         return wrapper;
     }
 
-    private void lookForHeaders(Element annotatedElement, VelocityWrapper wrapper) {
+    private void lookForHeaders(VelocityWrapper wrapper) {
         ExcelRow excelRow = annotatedElement.getAnnotation(ExcelRow.class);
-        if (excelRow != null) {
-            if (!excelRow.ignoreHeaders()) {
-                wrapper.setWithHeaders(true);
+        if (!excelRow.ignoreHeaders()) {
+            wrapper.setWithHeaders(true);
+        } else {
+            return;
+        }
+        for (FieldWrapper enclosedField : this.enclosedFields) {
+            ExcelColumn excelColumn = enclosedField.getAnnotation(ExcelColumn.class);
+            if (excelColumn != null) {
+                String headerName = excelColumn.name();
+                int order = excelColumn.value();
+                if (ExcelColumn.DEFAULT_NAME.equals(headerName)) {
+                    headerName = enclosedField.getName();
+                }
+                Header header = new Header(headerName, order);
+                wrapper.addHeader(header);
             } else {
-                return;
-            }
-            for (Element enclosedElement : annotatedElement.getEnclosedElements()) {
-                ExcelColumn excelColumn = enclosedElement.getAnnotation(ExcelColumn.class);
-                if (excelColumn != null) {
-                    String headerName = excelColumn.name();
-                    int order = excelColumn.value();
-                    if (headerName.equals("####")) {
-                        headerName = enclosedElement.getSimpleName().toString();
+                for (MethodWrapper enclosedMethod : this.enclosedMethods) {
+                    if (enclosedField.getName().equals(enclosedMethod.getPossibleFieldName())) {
+                        ExcelColumn excelColumnOnMethod = enclosedMethod.getAnnotation(ExcelColumn.class);
+                        if(excelColumnOnMethod != null){
+                            String headerName = excelColumnOnMethod.name();
+                            if (ExcelColumn.DEFAULT_NAME.equals(headerName)) {
+                                headerName = enclosedField.getName();
+                            }
+                            Header header = new Header(headerName, excelColumnOnMethod.value());
+                            wrapper.addHeader(header);
+                            break;
+                        }
                     }
-                    Header header = new Header(headerName, order);
-                    wrapper.addHeader(header);
                 }
             }
         }

@@ -2,7 +2,7 @@ package org.mustabelmo.validation.processor;
 
 import java.util.Comparator;
 
-public class FieldMethodPair extends ExcelCellWrapper {
+public class FieldMethodPair extends ExcelCellWrapper implements Comparable<FieldMethodPair> {
     private final String field;
     private final String method;
 
@@ -22,9 +22,9 @@ public class FieldMethodPair extends ExcelCellWrapper {
     }
 
     @Override
-    public int compareTo(ExcelCellWrapper o) {
+    public int compareTo(FieldMethodPair o) {
         return Comparator.comparing(FieldMethodPair::getOrder)
                 .thenComparing(FieldMethodPair::getField)
-                .compare(this, (FieldMethodPair) o);
+                .compare(this,  o);
     }
 }

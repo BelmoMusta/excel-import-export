@@ -1,6 +1,6 @@
 package $wrapper.aPackage;
 import $wrapper.className;
-import io.github.belmomusta.excel.importexport.ExcelMapper;
+import io.github.belmomusta.excel.importexport.AbstractExcelMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -8,30 +8,42 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.util.List;
 import java.io.File;
 
-public class ${wrapper.simplifiedClassName}ExcelMapper implements ExcelMapper<$wrapper.simplifiedClassName> {
+public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapper<$wrapper.simplifiedClassName> {
     
     @Override
     public void extractToFile(List<$wrapper.simplifiedClassName> $wrapper.paramName, File destFile) {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             final Sheet sheet = workbook.createSheet("Sheet 0");
-#if($wrapper.withHeaders)
-    #foreach($header in $wrapper.headers)
-        // write headers here
-    #end
-#end
-        int currentRow = 0;
-        for ($wrapper.simplifiedClassName data : ${wrapper.paramName}) {
-                Row row = sheet.createRow(currentRow++);
-#foreach($pair in $wrapper.correspondanceFieldMethod)
-#if($pair.ordered)
-                row.createCell($pair.order).setCellValue(String.valueOf(data.${pair.method}()));
-#else
-                row.createCell(row.getLastCellNum() + 1).setCellValue(String.valueOf(data.${pair.method}()));
-#end
-#end
+            writeHeaders(sheet);
+            for ($wrapper.simplifiedClassName data : ${wrapper.paramName}) {
+                createRows(sheet, data);
              }
+            writeWorkbookToFile(workbook, destFile);
         } catch(Exception e){
         
         }
     }
+#if($wrapper.withHeaders)
+    @Override
+    protected void writeHeaders(Sheet sheet) {
+        Row header = sheet.createRow(0);
+#foreach($header in $wrapper.headers)
+#if($header.ordered)
+        header.createCell($header.order).setCellValue("${header.name}");
+#else
+        header.createCell(header.getLastCellNum()).setCellValue("${header.name}");
+#end
+#end
+    }
+#end
+    private void createRows(Sheet sheet, $wrapper.simplifiedClassName data) {
+        final Row row = sheet.createRow(sheet.getLastRowNum() + 1);
+#foreach($pair in $wrapper.correspondanceFieldMethod)
+#if($pair.ordered)
+        row.createCell($pair.order).setCellValue(String.valueOf(data.${pair.method}()));
+#else
+        row.createCell(row.getLastCellNum()).setCellValue(String.valueOf(data.${pair.method}()));
+#end
+#end
+}
 }

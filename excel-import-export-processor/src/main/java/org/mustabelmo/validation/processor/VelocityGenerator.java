@@ -26,6 +26,7 @@ public class VelocityGenerator {
         Template t = ve.getTemplate("Template.vm");
         VelocityContext context = new VelocityContext();
         context.put("wrapper", wrapper);
+        destFile.getParentFile().mkdirs();
         FileWriter fileWriter = new FileWriter(destFile);
         t.merge(context, fileWriter);
         fileWriter.close();

@@ -1,15 +1,14 @@
 package org.mustabelmo.validation.processor;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.TreeSet;
 
 public class VelocityWrapper {
     private String aPackage;
     private String simplifiedClassName;
     private String className;
 
-    private Collection<Header> headers = new ArrayList<>();
-
+    private Collection<Header> headers = new TreeSet<>();
     private ParamNameStrategy paramNameStrategy = new DefaultParamNameStrategy();
     private Collection<FieldMethodPair> correspondanceFieldMethod;
     private boolean withHeaders;

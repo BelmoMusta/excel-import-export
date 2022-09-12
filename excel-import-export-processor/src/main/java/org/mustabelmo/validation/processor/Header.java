@@ -1,6 +1,9 @@
 package org.mustabelmo.validation.processor;
 
-public class Header extends ExcelCellWrapper {
+import java.util.Comparator;
+import java.util.function.Function;
+
+public class Header extends ExcelCellWrapper implements Comparable<Header> {
     private final String name;
 
     public Header(String name, int order) {
@@ -16,5 +19,12 @@ public class Header extends ExcelCellWrapper {
     @Override
     public String toString() {
         return name;
+    }
+    
+    @Override
+    public int compareTo(Header o) {
+        return Comparator.comparing(Header::getOrder)
+                .thenComparing(Header::getName)
+                .compare(this, o);
     }
 }

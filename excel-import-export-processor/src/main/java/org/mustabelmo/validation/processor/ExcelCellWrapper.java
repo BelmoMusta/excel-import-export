@@ -1,11 +1,8 @@
 package org.mustabelmo.validation.processor;
 
-import java.util.Comparator;
-
-public class ExcelCellWrapper implements Comparable<ExcelCellWrapper> {
+public class ExcelCellWrapper {
     private int order;
-
-
+    
     public int getOrder() {
         return order;
     }
@@ -16,10 +13,5 @@ public class ExcelCellWrapper implements Comparable<ExcelCellWrapper> {
 
     public boolean isOrdered() {
         return order != Integer.MAX_VALUE;
-    }
-
-    @Override
-    public int compareTo(ExcelCellWrapper o) {
-        return Comparator.comparing(ExcelCellWrapper::getOrder).compare(this, o);
     }
 }
