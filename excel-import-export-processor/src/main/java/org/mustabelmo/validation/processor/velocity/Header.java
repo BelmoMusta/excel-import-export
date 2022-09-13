@@ -1,7 +1,6 @@
-package org.mustabelmo.validation.processor;
+package org.mustabelmo.validation.processor.velocity;
 
 import java.util.Comparator;
-import java.util.function.Function;
 
 public class Header extends ExcelCellWrapper implements Comparable<Header> {
     private final String name;

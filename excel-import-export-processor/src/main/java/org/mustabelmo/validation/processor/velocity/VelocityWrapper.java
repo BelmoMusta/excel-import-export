@@ -1,4 +1,7 @@
-package org.mustabelmo.validation.processor;
+package org.mustabelmo.validation.processor.velocity;
+
+import org.mustabelmo.validation.processor.DefaultParamNameStrategy;
+import org.mustabelmo.validation.processor.ParamNameStrategy;
 
 import java.util.Collection;
 import java.util.TreeSet;

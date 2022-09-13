@@ -1,4 +1,4 @@
-package org.mustabelmo.validation.processor;
+package org.mustabelmo.validation.processor.velocity;
 
 import java.util.Comparator;
 

@@ -1,14 +1,14 @@
 package io.github.belmomusta.excel.objects;
 
 import io.github.belmomusta.excel.importexport.ExcelMapper;
-//import io.github.belmomusta.excel.object.excel.export.CarWithAnnotationsExcelMapper;
+import io.github.belmomusta.excel.object.excel.export.CarWithAnnotationsExcelMapper;
 
 import java.io.File;
 import java.util.Arrays;
 
 public class Main {
 	public static void main(String[] args) {
-	//	ExcelMapper<CarWithAnnotations> excelMapper = new CarWithAnnotationsExcelMapper();
+	ExcelMapper<CarWithAnnotations> excelMapper = new CarWithAnnotationsExcelMapper();
 		
 		final CarWithAnnotations car = new CarWithAnnotations();
 		car.setId(22);
@@ -18,7 +18,7 @@ public class Main {
 		car.setCountry("Maroc");
 		
 		final File destinationFile = new File("cars-exported-with-annotations.xlsx");
-		//excelMapper.extractToFile(Arrays.asList(car), destinationFile);
+		excelMapper.extractToFile(Arrays.asList(car), destinationFile);
 		
 	}
 }

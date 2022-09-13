@@ -15,7 +15,7 @@
         <url>https://github.com/BelmoMusta/excel-import-export</url>
         <name>Excel Import Export</name>
     </organization>
-    <inceptionYear>2020</inceptionYear>
+    <inceptionYear>2022</inceptionYear>
     <developers>
         <developer>
             <name>Mustapha Belmokhtar</name>
@@ -178,22 +178,22 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.6</version>
+            <version>2.11.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.15</version>
+            <version>5.2.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.15</version>
+            <version>5.2.2</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

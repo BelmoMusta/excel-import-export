@@ -1,4 +1,4 @@
-package org.mustabelmo.validation.processor;
+package org.mustabelmo.validation.processor.velocity;
 
 public class ExcelCellWrapper {
     private int order;
