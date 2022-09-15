@@ -69,4 +69,9 @@ public class CarWithAnnotations {
     public void setCity(String city) {
         this.city = city;
     }
+
+    @ExcelColumn(name = "foo")
+    public String getFoo(){
+        return "foo";
+    }
 }

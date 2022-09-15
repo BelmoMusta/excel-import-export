@@ -1,9 +1,19 @@
 package io.github.belmomusta.excel.objects;
 
+import io.github.belmomusta.excel.importexport.annotation.ExcelColumn;
+import io.github.belmomusta.excel.importexport.annotation.ExcelRow;
+
+@ExcelRow(ignoreHeaders = false)
 public class Car {
-	private String name;
-	private String model;
-	private int id;
+	@ExcelColumn
+    private String name;
+	@ExcelColumn
+    private String model;
+	@ExcelColumn
+    private int id;
+
+    @ExcelColumn
+    private int foo;
 	
 	public Car() {}
 	
@@ -27,4 +37,8 @@ public class Car {
 	public void setModel(String model) {this.model = model; }
 	
 	public void setId(int id) {this.id = id; }
+
+    public int getFoo() {
+        return foo;
+    }
 }

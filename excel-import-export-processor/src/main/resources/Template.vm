@@ -1,4 +1,5 @@
 package $wrapper.aPackage;
+
 import $wrapper.className;
 import io.github.belmomusta.excel.importexport.AbstractExcelMapper;
 import org.apache.poi.ss.usermodel.Row;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.io.File;
 
 public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapper<$wrapper.simplifiedClassName> {
-    
+
     @Override
     public void extractToFile(List<$wrapper.simplifiedClassName> $wrapper.paramName, File destFile) {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
@@ -17,12 +18,13 @@ public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapp
             writeHeaders(sheet);
             for ($wrapper.simplifiedClassName data : ${wrapper.paramName}) {
                 createRows(sheet, data);
-             }
+            }
             writeWorkbookToFile(workbook, destFile);
-        } catch(Exception e){
-        
+        } catch (Exception e) {
+
         }
     }
+
 #if($wrapper.withHeaders)
     @Override
     protected void writeHeaders(Sheet sheet) {
@@ -36,6 +38,7 @@ public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapp
 #end
     }
 #end
+
     private void createRows(Sheet sheet, $wrapper.simplifiedClassName data) {
         final Row row = sheet.createRow(sheet.getLastRowNum() + 1);
 #foreach($pair in $wrapper.correspondanceFieldMethod)
@@ -45,5 +48,5 @@ public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapp
         row.createCell(row.getLastCellNum()).setCellValue(String.valueOf(data.${pair.method}()));
 #end
 #end
-}
+    }
 }
