@@ -38,6 +38,7 @@ public class Car {
 	
 	public void setId(int id) {this.id = id; }
 
+    @ExcelColumn
     public int getFoo() {
         return foo;
     }

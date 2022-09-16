@@ -17,7 +17,7 @@ public class Main {
 		car.setCity("POPO");
 		car.setCountry("Maroc");
 		
-		final File destinationFile = new File("cars-exported-with-annotations.xlsx");
+		final File destinationFile = new File("cars.xlsx");
 		excelMapper.extractToFile(Arrays.asList(car), destinationFile);
 		
 	}

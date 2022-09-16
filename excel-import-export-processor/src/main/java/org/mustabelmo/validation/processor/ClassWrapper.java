@@ -13,6 +13,7 @@ import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -49,7 +50,7 @@ public class ClassWrapper {
 
         for (Class<? extends Annotation> annotation : AnnotationsRegistrer.ANNOTATIONS) {
             for (MethodWrapper methodWrapper : classWrapper.enclosedMethods) {
-                Annotation foundAnnotation = methodWrapper.wrappedMethod.getAnnotation(annotation);
+                Annotation foundAnnotation = methodWrapper.wrappedElement.getAnnotation(annotation);
                 if (foundAnnotation == null) {
                     foundAnnotation = classWrapper.lookForAnnotationInPossibleField(methodWrapper);
                     if (foundAnnotation != null) {
@@ -75,7 +76,7 @@ public class ClassWrapper {
     public Collection<FieldMethodPair> getCorrespondanceFieldMethod() {
         Set<FieldMethodPair> fieldMethodPairs = new TreeSet<>();
         for (MethodWrapper aMethod : this.enclosedMethods) {
-            if (aMethod.isMethod() && aMethod.isValid()) {
+            if (aMethod.isValid()) {
                 String possibleFieldNameForMethod = aMethod.getPossibleFieldName();
                 if (possibleFieldNameForMethod != null) {
                     FieldMethodPair fieldMethodPair = new FieldMethodPair(possibleFieldNameForMethod, aMethod.getName());
@@ -97,7 +98,8 @@ public class ClassWrapper {
 
     public VelocityWrapper getVelocityWrapper() {
         VelocityWrapper wrapper = new VelocityWrapper();
-        lookForHeaders(wrapper);
+        List<Header> headers = lookForHeaders();
+        wrapper.setHeaders(headers);
         wrapper.setSimplifiedClassName(annotatedElement.getSimpleName().toString());
         if (annotatedElement instanceof TypeElement) {
             Name qualifiedName = ((TypeElement) annotatedElement).getQualifiedName();
@@ -114,14 +116,14 @@ public class ClassWrapper {
         return wrapper;
     }
 
-    private void lookForHeaders(VelocityWrapper wrapper) {
+    public  List<Header> lookForHeaders() {
+
         ExcelRow excelRow = annotatedElement.getAnnotation(ExcelRow.class);
-        if (!excelRow.ignoreHeaders()) {
-            wrapper.setWithHeaders(true);
-        } else {
-            return;
+        if (excelRow.ignoreHeaders()) {
+            return Collections.emptyList();
         }
 
+        List<Header> headers = new ArrayList<>();
         List<String> fieldsNotHavingHeaders = new ArrayList<>();
         List<String> processedFields = new ArrayList<>();
         for (FieldWrapper enclosedField : this.enclosedFields) {
@@ -134,7 +136,7 @@ public class ClassWrapper {
                 }
                 Header header = new Header(headerName, order);
                 processedFields.add(enclosedField.getName());
-                wrapper.addHeader(header);
+                headers.add(header);
             } else {
                 fieldsNotHavingHeaders.add(enclosedField.getName());
             }
@@ -151,7 +153,7 @@ public class ClassWrapper {
                             headerName = fieldName;
                         }
                         Header header = new Header(headerName, excelColumnOnMethod.value());
-                        wrapper.addHeader(header);
+                        headers.add(header);
                         methodHasField = true;
                         break;
                     }
@@ -164,10 +166,11 @@ public class ClassWrapper {
                         headerName = excelColumnOnMethod.name();
                     }
                     Header header = new Header(headerName, excelColumnOnMethod.value());
-                    wrapper.addHeader(header);
+                    headers.add(header);
                 }
             }
         }
+        return headers;
     }
 
 }

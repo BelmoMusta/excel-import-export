@@ -14,7 +14,6 @@ public class VelocityWrapper {
     private Collection<Header> headers = new TreeSet<>();
     private ParamNameStrategy paramNameStrategy = new DefaultParamNameStrategy();
     private Collection<FieldMethodPair> correspondanceFieldMethod;
-    private boolean withHeaders;
 
     public String getSimplifiedClassName() {
         return simplifiedClassName;
@@ -60,15 +59,11 @@ public class VelocityWrapper {
         return headers;
     }
 
-    public void addHeader(Header header) {
-        headers.add(header);
-    }
-
-    public void setWithHeaders(boolean withHeaders) {
-        this.withHeaders = withHeaders;
+    public void setHeaders(Collection<Header> headers) {
+        this.headers = headers;
     }
 
     public boolean isWithHeaders() {
-        return withHeaders;
+        return !headers.isEmpty();
     }
 }
