@@ -24,6 +24,7 @@ public class FieldMethodPair extends ExcelCellWrapper implements Comparable<Fiel
     @Override
     public int compareTo(FieldMethodPair o) {
         return Comparator.comparing(FieldMethodPair::getOrder)
+                .thenComparing(FieldMethodPair::getMethod)
                 .thenComparing(FieldMethodPair::getField)
                 .compare(this,  o);
     }

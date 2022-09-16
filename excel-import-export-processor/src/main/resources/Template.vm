@@ -6,13 +6,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.util.List;
+import java.util.Collection;
 import java.io.File;
 
 public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapper<$wrapper.simplifiedClassName> {
 
     @Override
-    public void extractToFile(List<$wrapper.simplifiedClassName> $wrapper.paramName, File destFile) {
+    public void extractToFile(Collection<$wrapper.simplifiedClassName> $wrapper.paramName, File destFile) {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             final Sheet sheet = workbook.createSheet("Sheet 0");
             writeHeaders(sheet);
@@ -33,7 +33,7 @@ public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapp
 #if($header.ordered)
         header.createCell($header.order).setCellValue("${header.name}");
 #else
-        header.createCell(header.getLastCellNum()).setCellValue("${header.name}");
+        addCell(header).setCellValue("${header.name}");
 #end
 #end
     }
@@ -43,9 +43,9 @@ public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapp
         final Row row = sheet.createRow(sheet.getLastRowNum() + 1);
 #foreach($pair in $wrapper.correspondanceFieldMethod)
 #if($pair.ordered)
-        row.createCell($pair.order).setCellValue(String.valueOf(data.${pair.method}()));
+        row.createCell($pair.order).setCellValue(valueOf(data.${pair.method}()));
 #else
-        row.createCell(row.getLastCellNum()).setCellValue(String.valueOf(data.${pair.method}()));
+        addCell(row).setCellValue(valueOf(data.${pair.method}()));
 #end
 #end
     }

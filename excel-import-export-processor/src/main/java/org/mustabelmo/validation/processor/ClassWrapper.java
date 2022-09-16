@@ -76,15 +76,20 @@ public class ClassWrapper {
     public Collection<FieldMethodPair> getCorrespondanceFieldMethod() {
         Set<FieldMethodPair> fieldMethodPairs = new TreeSet<>();
         for (MethodWrapper aMethod : this.enclosedMethods) {
+            ExcelColumn annotation = aMethod.getAnnotation(ExcelColumn.class);
             if (aMethod.isValid()) {
                 String possibleFieldNameForMethod = aMethod.getPossibleFieldName();
                 if (possibleFieldNameForMethod != null) {
                     FieldMethodPair fieldMethodPair = new FieldMethodPair(possibleFieldNameForMethod, aMethod.getName());
-                    ExcelColumn annotation = aMethod.getAnnotation(ExcelColumn.class);
+                    
                     if (annotation != null) {
                         fieldMethodPair.setOrder(annotation.value());
                     }
                     fieldMethodPairs.add(fieldMethodPair);
+                } else if(annotation != null){
+                    FieldMethodPair methodPair = new FieldMethodPair(aMethod.getName(), aMethod.getName());
+                    methodPair.setOrder(annotation.value());
+                    fieldMethodPairs.add(methodPair);
                 }
             }
         }
@@ -98,7 +103,7 @@ public class ClassWrapper {
 
     public VelocityWrapper getVelocityWrapper() {
         VelocityWrapper wrapper = new VelocityWrapper();
-        List<Header> headers = lookForHeaders();
+        Collection<Header> headers = lookForHeaders();
         wrapper.setHeaders(headers);
         wrapper.setSimplifiedClassName(annotatedElement.getSimpleName().toString());
         if (annotatedElement instanceof TypeElement) {
@@ -116,14 +121,14 @@ public class ClassWrapper {
         return wrapper;
     }
 
-    public  List<Header> lookForHeaders() {
+    public Set<Header> lookForHeaders() {
 
         ExcelRow excelRow = annotatedElement.getAnnotation(ExcelRow.class);
         if (excelRow.ignoreHeaders()) {
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
 
-        List<Header> headers = new ArrayList<>();
+        Set<Header> headers = new TreeSet<>();
         List<String> fieldsNotHavingHeaders = new ArrayList<>();
         List<String> processedFields = new ArrayList<>();
         for (FieldWrapper enclosedField : this.enclosedFields) {

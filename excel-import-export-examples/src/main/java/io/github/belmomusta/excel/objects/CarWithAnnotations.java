@@ -20,6 +20,7 @@ public class CarWithAnnotations {
     }
 
     @Override
+    @ExcelColumn(name = "KKKKK")
     public String toString() {
         return "must.belmo.excel.importexport.objects.Car{" +
                 "name='" + name + '\'' +

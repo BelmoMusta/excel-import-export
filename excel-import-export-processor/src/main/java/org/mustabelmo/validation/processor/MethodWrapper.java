@@ -17,7 +17,6 @@ public class MethodWrapper extends ElementWrapper {
         final ExecutableElement executableMethod = (ExecutableElement) wrappedElement;
         TypeMirror returnType = ((ExecutableElement) wrappedElement).getReturnType();
 
-
         return returnType.getKind() != TypeKind.VOID
                 && !executableMethod.getModifiers().contains(Modifier.ABSTRACT)
                 && !executableMethod.getModifiers().contains(Modifier.PRIVATE)
