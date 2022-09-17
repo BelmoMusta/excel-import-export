@@ -1,4 +1,4 @@
-package io.github.belmomusta.excel.importexport.exception;
+package io.github.belmomusta.excel.api.exception;
 
 public class ExcelExporterException extends Exception {
 	public ExcelExporterException(String s) {

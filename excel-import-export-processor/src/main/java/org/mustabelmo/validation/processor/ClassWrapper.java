@@ -1,9 +1,8 @@
 package org.mustabelmo.validation.processor;
 
-import io.github.belmomusta.excel.importexport.annotation.ExcelColumn;
-import io.github.belmomusta.excel.importexport.annotation.ExcelRow;
+import io.github.belmomusta.excel.api.annotation.ExcelColumn;
+import io.github.belmomusta.excel.api.annotation.ExcelRow;
 import org.mustabelmo.validation.processor.velocity.FieldMethodPair;
-import org.mustabelmo.validation.processor.velocity.Header;
 import org.mustabelmo.validation.processor.velocity.VelocityWrapper;
 
 import javax.lang.model.element.Element;
@@ -11,9 +10,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -72,40 +69,59 @@ public class ClassWrapper {
         return null;
     }
 
-
     public Collection<FieldMethodPair> getCorrespondanceFieldMethod() {
         Set<FieldMethodPair> fieldMethodPairs = new TreeSet<>();
-        for (MethodWrapper aMethod : this.enclosedMethods) {
-            ExcelColumn annotation = aMethod.getAnnotation(ExcelColumn.class);
-            if (aMethod.isValid()) {
-                String possibleFieldNameForMethod = aMethod.getPossibleFieldName();
-                if (possibleFieldNameForMethod != null) {
-                    FieldMethodPair fieldMethodPair = new FieldMethodPair(possibleFieldNameForMethod, aMethod.getName());
-                    
-                    if (annotation != null) {
-                        fieldMethodPair.setOrder(annotation.value());
+        this.enclosedMethods.stream()
+                .filter(MethodWrapper::isValid)
+                .forEach(aMethod -> {
+                    ExcelColumn annotation = aMethod.getAnnotation(ExcelColumn.class);
+                    String possibleFieldNameForMethod = aMethod.getPossibleFieldName();
+                    if (possibleFieldNameForMethod != null) {
+                        FieldMethodPair fieldMethodPair = new FieldMethodPair(possibleFieldNameForMethod, aMethod.getName());
+                        fff(annotation, possibleFieldNameForMethod, fieldMethodPair);
+                        fieldMethodPairs.add(fieldMethodPair);
+                    } else if(annotation != null){
+                        ssss(fieldMethodPairs, aMethod, annotation);
                     }
-                    fieldMethodPairs.add(fieldMethodPair);
-                } else if(annotation != null){
-                    FieldMethodPair methodPair = new FieldMethodPair(aMethod.getName(), aMethod.getName());
-                    methodPair.setOrder(annotation.value());
-                    fieldMethodPairs.add(methodPair);
-                }
-            }
-        }
+                });
 
         return fieldMethodPairs;
     }
-
+    
+    private void ssss(Set<FieldMethodPair> fieldMethodPairs, MethodWrapper aMethod, ExcelColumn annotation) {
+        FieldMethodPair methodPair = new FieldMethodPair(aMethod.getName());
+        if(ExcelColumn.DEFAULT_NAME.equals(annotation.name())){
+            methodPair.setHeaderName(aMethod.getName());
+        } else {
+            methodPair.setHeaderName(annotation.name());
+        }
+        methodPair.setOrder(annotation.value());
+        fieldMethodPairs.add(methodPair);
+    }
+    
+    private void fff(ExcelColumn annotation, String possibleFieldNameForMethod, FieldMethodPair fieldMethodPair) {
+        if (annotation != null) {
+            fieldMethodPair.setOrder(annotation.value());
+            if(ExcelColumn.DEFAULT_NAME.equals(annotation.name())){
+                fieldMethodPair.setHeaderName(possibleFieldNameForMethod);
+            } else {
+                fieldMethodPair.setHeaderName(annotation.name());
+            }
+        }
+    }
+    
     public String getFQNOfGeneratedClass() {
         return fQNOfGeneratedClass;
     }
 
     public VelocityWrapper getVelocityWrapper() {
         VelocityWrapper wrapper = new VelocityWrapper();
-        Collection<Header> headers = lookForHeaders();
-        wrapper.setHeaders(headers);
         wrapper.setSimplifiedClassName(annotatedElement.getSimpleName().toString());
+        ExcelRow excelRow = annotatedElement.getAnnotation(ExcelRow.class);
+        wrapper.setUseFQNs(excelRow.useFQNs());
+        if (!excelRow.ignoreHeaders()) {
+            wrapper.setWithHeaders(true);
+        }
         if (annotatedElement instanceof TypeElement) {
             Name qualifiedName = ((TypeElement) annotatedElement).getQualifiedName();
             String aPackage = getFQNOfGeneratedClass();
@@ -120,62 +136,4 @@ public class ClassWrapper {
         }
         return wrapper;
     }
-
-    public Set<Header> lookForHeaders() {
-
-        ExcelRow excelRow = annotatedElement.getAnnotation(ExcelRow.class);
-        if (excelRow.ignoreHeaders()) {
-            return Collections.emptySet();
-        }
-
-        Set<Header> headers = new TreeSet<>();
-        List<String> fieldsNotHavingHeaders = new ArrayList<>();
-        List<String> processedFields = new ArrayList<>();
-        for (FieldWrapper enclosedField : this.enclosedFields) {
-            ExcelColumn excelColumn = enclosedField.getAnnotation(ExcelColumn.class);
-            if (excelColumn != null) {
-                String headerName = excelColumn.name();
-                int order = excelColumn.value();
-                if (ExcelColumn.DEFAULT_NAME.equals(headerName)) {
-                    headerName = enclosedField.getName();
-                }
-                Header header = new Header(headerName, order);
-                processedFields.add(enclosedField.getName());
-                headers.add(header);
-            } else {
-                fieldsNotHavingHeaders.add(enclosedField.getName());
-            }
-        }
-
-        for (MethodWrapper enclosedMethod : this.enclosedMethods) {
-            ExcelColumn excelColumnOnMethod = enclosedMethod.getAnnotation(ExcelColumn.class);
-            if (excelColumnOnMethod != null) {
-                boolean methodHasField = false;
-                for (String fieldName : fieldsNotHavingHeaders) {
-                    if (fieldName.equals(enclosedMethod.getPossibleFieldName())) {
-                        String headerName = excelColumnOnMethod.name();
-                        if (ExcelColumn.DEFAULT_NAME.equals(headerName)) {
-                            headerName = fieldName;
-                        }
-                        Header header = new Header(headerName, excelColumnOnMethod.value());
-                        headers.add(header);
-                        methodHasField = true;
-                        break;
-                    }
-                }
-                if (!methodHasField && !processedFields.contains(enclosedMethod.getPossibleFieldName())) {
-                    String headerName;
-                    if (ExcelColumn.DEFAULT_NAME.equals(excelColumnOnMethod.name())) {
-                        headerName = enclosedMethod.getName();
-                    } else {
-                        headerName = excelColumnOnMethod.name();
-                    }
-                    Header header = new Header(headerName, excelColumnOnMethod.value());
-                    headers.add(header);
-                }
-            }
-        }
-        return headers;
-    }
-
 }

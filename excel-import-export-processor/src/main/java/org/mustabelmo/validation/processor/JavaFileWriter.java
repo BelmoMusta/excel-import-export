@@ -8,14 +8,17 @@ import javax.tools.JavaFileObject;
 import java.io.File;
 
 public class JavaFileWriter {
+    private JavaFileWriter(){
+        throw new IllegalStateException();
+    }
     public static void writeJavaClass(ClassWrapper classWrapper, ProcessingEnvironment processingEnv) {
         try {
             VelocityWrapper wrapper = classWrapper.getVelocityWrapper();
             final JavaFileObject builderFile = processingEnv.getFiler().createSourceFile(classWrapper.getFQNOfGeneratedClass());
-            VelocityGenerator.generateHtmlFile(wrapper, new File(builderFile.getName()));
+            VelocityGenerator.generateJavaClassFile(wrapper, new File(builderFile.getName()));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new JavaFileWriterException(e);
         }
     }
 }

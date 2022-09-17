@@ -4,14 +4,14 @@ import org.mustabelmo.validation.processor.DefaultParamNameStrategy;
 import org.mustabelmo.validation.processor.ParamNameStrategy;
 
 import java.util.Collection;
-import java.util.TreeSet;
 
 public class VelocityWrapper {
     private String aPackage;
     private String simplifiedClassName;
     private String className;
-
-    private Collection<Header> headers = new TreeSet<>();
+    private boolean withHeaders;
+    private boolean useFQNs;
+    
     private ParamNameStrategy paramNameStrategy = new DefaultParamNameStrategy();
     private Collection<FieldMethodPair> correspondanceFieldMethod;
 
@@ -55,15 +55,19 @@ public class VelocityWrapper {
         return correspondanceFieldMethod;
     }
 
-    public Collection<Header> getHeaders() {
-        return headers;
-    }
-
-    public void setHeaders(Collection<Header> headers) {
-        this.headers = headers;
-    }
-
     public boolean isWithHeaders() {
-        return !headers.isEmpty();
+        return withHeaders;
+    }
+    
+    public void setWithHeaders(boolean withHeaders) {
+        this.withHeaders = withHeaders;
+    }
+    
+    public boolean isUseFQNs() {
+        return useFQNs;
+    }
+    
+    public void setUseFQNs(boolean useFQNs) {
+        this.useFQNs = useFQNs;
     }
 }

@@ -1,4 +1,4 @@
-package io.github.belmomusta.excel.importexport.annotation;
+package io.github.belmomusta.excel.api.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

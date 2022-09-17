@@ -1,21 +1,19 @@
 package io.github.belmomusta.excel.objects;
 
-import io.github.belmomusta.excel.importexport.annotation.ExcelColumn;
-import io.github.belmomusta.excel.importexport.annotation.ExcelRow;
+import io.github.belmomusta.excel.api.annotation.ExcelColumn;
+import io.github.belmomusta.excel.api.annotation.ExcelRow;
 
-//@ExcelRow(ignoreHeaders = false)
+@ExcelRow(ignoreHeaders = false)
 public class Car {
 	@ExcelColumn
     private String name;
-	@ExcelColumn
+	@ExcelColumn(5)
     private String model;
 	@ExcelColumn
     private int id;
 
-    @ExcelColumn
+    //@ExcelColumn
     private int foo;
-	
-	public Car() {}
 	
 	@Override
 	public String toString() {

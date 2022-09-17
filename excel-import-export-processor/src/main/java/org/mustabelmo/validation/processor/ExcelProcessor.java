@@ -1,7 +1,7 @@
 package org.mustabelmo.validation.processor;
 
 
-import io.github.belmomusta.excel.importexport.annotation.ExcelColumn;
+import io.github.belmomusta.excel.api.annotation.ExcelColumn;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -12,14 +12,11 @@ import javax.lang.model.element.TypeElement;
 import java.util.Set;
 
 
-@SupportedAnnotationTypes("io.github.belmomusta.excel.importexport.annotation.ExcelRow")
+@SupportedAnnotationTypes("io.github.belmomusta.excel.api.annotation.ExcelRow")
 public class ExcelProcessor extends AbstractProcessor {
-    static {
-        AnnotationsRegistrer.register(ExcelColumn.class);
-    }
-
+    
     public ExcelProcessor() {
-
+        AnnotationsRegistrer.register(ExcelColumn.class);
     }
 
     @Override
@@ -40,8 +37,7 @@ public class ExcelProcessor extends AbstractProcessor {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            throw new JavaAnnotationProcessingException(e);
         }
 
         return true;

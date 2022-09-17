@@ -1,7 +1,8 @@
 package $wrapper.aPackage;
 
 import $wrapper.className;
-import io.github.belmomusta.excel.importexport.AbstractExcelMapper;
+import io.github.belmomusta.excel.api.export.AbstractExcelMapper;
+import io.github.belmomusta.excel.api.exception.ExcelExporterException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -12,28 +13,28 @@ import java.io.File;
 public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapper<$wrapper.simplifiedClassName> {
 
     @Override
-    public void extractToFile(Collection<$wrapper.simplifiedClassName> $wrapper.paramName, File destFile) {
+    public void exportToFile(Collection<? extends $wrapper.simplifiedClassName> $wrapper.paramName, File destFile) throws ExcelExporterException{
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-            final Sheet sheet = workbook.createSheet("Sheet 0");
+            final Sheet sheet = workbook.createSheet("${wrapper.simplifiedClassName}");
             writeHeaders(sheet);
             for ($wrapper.simplifiedClassName data : ${wrapper.paramName}) {
                 createRows(sheet, data);
             }
             writeWorkbookToFile(workbook, destFile);
         } catch (Exception e) {
-
+            throw new ExcelExporterException("Error while exporting " + ${wrapper.simplifiedClassName}.class.getName(), e);
         }
     }
 
 #if($wrapper.withHeaders)
     @Override
     protected void writeHeaders(Sheet sheet) {
-        Row header = sheet.createRow(0);
-#foreach($header in $wrapper.headers)
+        final Row header = sheet.createRow(0);
+#foreach($header in $wrapper.correspondanceFieldMethod)
 #if($header.ordered)
-        header.createCell($header.order).setCellValue("${header.name}");
+        addCellWithValue(header, $header.order, "${header.name}");
 #else
-        addCell(header).setCellValue("${header.name}");
+        addCellWithValue(header, "${header.name}");
 #end
 #end
     }
@@ -43,9 +44,9 @@ public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapp
         final Row row = sheet.createRow(sheet.getLastRowNum() + 1);
 #foreach($pair in $wrapper.correspondanceFieldMethod)
 #if($pair.ordered)
-        row.createCell($pair.order).setCellValue(valueOf(data.${pair.method}()));
+        addCellWithValue(row, $pair.order, valueOf(data.${pair.method}()));
 #else
-        addCell(row).setCellValue(valueOf(data.${pair.method}()));
+        addCellWithValue(row, valueOf(data.${pair.method}()));
 #end
 #end
     }

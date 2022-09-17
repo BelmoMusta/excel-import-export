@@ -1,7 +1,7 @@
 package io.github.belmomusta.excel.objects;
 
-import io.github.belmomusta.excel.importexport.annotation.ExcelColumn;
-import io.github.belmomusta.excel.importexport.annotation.ExcelRow;
+import io.github.belmomusta.excel.api.annotation.ExcelColumn;
+import io.github.belmomusta.excel.api.annotation.ExcelRow;
 
 @ExcelRow(ignoreHeaders = false)
 public class CarWithAnnotations {
@@ -16,9 +16,7 @@ public class CarWithAnnotations {
     private String name;
     private String model;
 
-    public CarWithAnnotations() {
-    }
-
+   
     @Override
     @ExcelColumn(name = "KKKKK")
     public String toString() {

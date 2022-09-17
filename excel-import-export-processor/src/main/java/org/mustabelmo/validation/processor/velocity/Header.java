@@ -1,16 +1,16 @@
 package org.mustabelmo.validation.processor.velocity;
 
-import java.util.Comparator;
-
-public class Header extends ExcelCellWrapper implements Comparable<Header> {
+public class Header extends  FieldMethodPair {
     private final String name;
-
-    public Header(String name, int order) {
+    public Header(String name){
+        this(name, name);
+    }
+    public Header(String name, String method) {
+        super(name, method);
         this.name = name;
-        super.setOrder(order);
     }
 
-
+    @Override
     public String getName() {
         return name;
     }
@@ -19,11 +19,5 @@ public class Header extends ExcelCellWrapper implements Comparable<Header> {
     public String toString() {
         return name;
     }
-    
-    @Override
-    public int compareTo(Header o) {
-        return Comparator.comparing(Header::getOrder)
-                .thenComparing(Header::getName)
-                .compare(this, o);
-    }
+
 }
