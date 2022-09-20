@@ -2,20 +2,6 @@ package $wrapper.aPackage;
 
 public class ${wrapper.simplifiedClassName}ExcelMapper extends io.github.belmomusta.excel.api.export.AbstractExcelMapper<$wrapper.className> {
 
-    @Override
-    public void exportToFile(java.util.Collection<? extends $wrapper.className> $wrapper.paramName, java.io.File destFile) throws io.github.belmomusta.excel.api.exception.ExcelExporterException{
-        try (org.apache.poi.xssf.usermodel.XSSFWorkbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook()) {
-            final org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("${wrapper.simplifiedClassName}");
-            writeHeaders(sheet);
-            for ($wrapper.className data : ${wrapper.paramName}) {
-                createRows(sheet, data);
-            }
-            writeWorkbookToFile(workbook, destFile);
-        } catch (Exception e) {
-            throw new io.github.belmomusta.excel.api.exception.ExcelExporterException("Error while exporting " + ${wrapper.simplifiedClassName}.class.getName(), e);
-        }
-    }
-
 #if($wrapper.withHeaders)
     @Override
     protected void writeHeaders(org.apache.poi.ss.usermodel.Sheet sheet) {
@@ -30,7 +16,8 @@ public class ${wrapper.simplifiedClassName}ExcelMapper extends io.github.belmomu
     }
 #end
 
-    private void createRows(org.apache.poi.ss.usermodel.Sheet sheet, $wrapper.className data) {
+    @Override
+    protected void createRows(org.apache.poi.ss.usermodel.Sheet sheet, $wrapper.className data) {
         final org.apache.poi.ss.usermodel.Row row = sheet.createRow(sheet.getLastRowNum() + 1);
 #foreach($pair in $wrapper.correspondanceFieldMethod)
 #if($pair.ordered)
@@ -39,5 +26,10 @@ public class ${wrapper.simplifiedClassName}ExcelMapper extends io.github.belmomu
         addCellWithValue(row, valueOf(data.${pair.method}()));
 #end
 #end
+    }
+
+    @Override
+    public java.lang.String getClassName(){
+        return ${wrapper.className}.class.getName();
     }
 }

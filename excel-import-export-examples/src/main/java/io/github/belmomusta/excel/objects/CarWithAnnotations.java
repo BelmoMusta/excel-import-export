@@ -3,6 +3,8 @@ package io.github.belmomusta.excel.objects;
 import io.github.belmomusta.excel.api.annotation.ExcelColumn;
 import io.github.belmomusta.excel.api.annotation.ExcelRow;
 
+import java.util.Date;
+
 @ExcelRow(ignoreHeaders = false)
 public class CarWithAnnotations {
     @ExcelColumn
@@ -70,7 +72,7 @@ public class CarWithAnnotations {
     }
 
     @ExcelColumn(name = "foo")
-    public String getFoo(){
-        return "foo";
+    public Date getFoo(){
+        return new Date();
     }
 }

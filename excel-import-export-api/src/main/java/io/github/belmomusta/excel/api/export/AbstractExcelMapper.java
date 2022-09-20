@@ -34,8 +34,6 @@ public abstract class AbstractExcelMapper<T> implements ExcelExporter<T> {
         }
     }
     
-    protected abstract String getClassName();
-    
     @Override
     public final void exportToFile(T t, File destFile) throws ExcelExporterException{
         exportToFile(Collections.singletonList(t), destFile);

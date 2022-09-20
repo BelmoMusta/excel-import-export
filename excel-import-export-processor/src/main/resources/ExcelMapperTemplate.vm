@@ -2,13 +2,8 @@ package $wrapper.aPackage;
 
 import $wrapper.className;
 import io.github.belmomusta.excel.api.export.AbstractExcelMapper;
-import io.github.belmomusta.excel.api.exception.ExcelExporterException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.util.Collection;
-import java.io.File;
 
 public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapper<$wrapper.simplifiedClassName> {
 
@@ -39,7 +34,7 @@ public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapp
     }
 
     @Override
-    protected String getClassName(){
+    public String getClassName(){
         return ${wrapper.simplifiedClassName}.class.getName();
     }
 }
