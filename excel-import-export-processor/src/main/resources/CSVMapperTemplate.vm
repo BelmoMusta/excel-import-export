@@ -1,0 +1,41 @@
+package $wrapper.aPackage;
+
+import io.github.belmomusta.excel.api.csv.AbstractCSVExporter;
+import io.github.belmomusta.excel.objects.CarWithAnnotations;
+import io.github.belmomusta.excel.api.export.AbstractExcelMapper;
+import io.github.belmomusta.excel.api.exception.ExcelExporterException;
+import $wrapper.className;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class ${wrapper.simplifiedClassName}CSVExporter extends AbstractCSVExporter<$wrapper.simplifiedClassName> {
+
+    @Override
+    protected String convertObjectToLine(${wrapper.simplifiedClassName} item) {
+        final List<String> cells = new ArrayList<>();
+
+#foreach($pair in $wrapper.correspondanceFieldMethod)
+        cells.add(valueOf(item.${pair.method}()));
+#end
+        return cells.stream()
+                    .map(this::valueOf)
+                    .collect(Collectors.joining(","));
+        }
+
+#if($wrapper.withHeaders)
+    @Override
+    protected String writeHeaders() {
+        final List<String> headers = new ArrayList<>();
+#foreach($header in $wrapper.correspondanceFieldMethod)
+        headers.add("${header.name}");
+#end
+        return headers.stream()
+                    .collect(Collectors.joining(","));
+    }
+#end
+}

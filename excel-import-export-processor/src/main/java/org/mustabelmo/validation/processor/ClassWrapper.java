@@ -22,6 +22,7 @@ public class ClassWrapper {
     private List<MethodWrapper> enclosedMethods;
     private List<FieldWrapper> enclosedFields;
     private String fQNOfGeneratedClass;
+    private String fQNOfCSVGeneratedClass;
 
     private ClassWrapper() {
     }
@@ -29,6 +30,7 @@ public class ClassWrapper {
     public static ClassWrapper of(Element annotatedElement) {
 
         String generatedClassName = annotatedElement.getSimpleName().toString() + "ExcelMapper";
+        String generatedCSVClassName = annotatedElement.getSimpleName().toString() + "CSVExporter";
         Name qualifiedName = ((TypeElement) annotatedElement).getQualifiedName();
         ClassWrapper classWrapper = new ClassWrapper();
         classWrapper.annotatedElement = annotatedElement;
@@ -44,6 +46,7 @@ public class ClassWrapper {
         int index = aPackage.lastIndexOf('.');
         String packageName = aPackage.substring(0, index - 1);
         classWrapper.fQNOfGeneratedClass = packageName + ".excel.export." + generatedClassName;
+        classWrapper.fQNOfCSVGeneratedClass = packageName + ".csv.export." + generatedCSVClassName;
 
         for (Class<? extends Annotation> annotation : AnnotationsRegistrer.ANNOTATIONS) {
             for (MethodWrapper methodWrapper : classWrapper.enclosedMethods) {
@@ -135,5 +138,9 @@ public class ClassWrapper {
 
         }
         return wrapper;
+    }
+    
+    public String getFQNOfCSVGeneratedClass() {
+        return fQNOfCSVGeneratedClass;
     }
 }

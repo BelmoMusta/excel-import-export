@@ -14,11 +14,27 @@ import java.util.Collections;
 import java.util.Optional;
 
 public abstract class AbstractExcelMapper<T> implements ExcelExporter<T> {
-    protected void writeWorkbookToFile(XSSFWorkbook workbook, File outputFile) throws IOException {
+    protected final void writeWorkbookToFile(XSSFWorkbook workbook, File outputFile) throws IOException {
         final FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
         workbook.write(fileOutputStream);
         workbook.close();
     }
+    protected abstract void createRows(Sheet sheet, T data);
+    @Override
+    public void exportToFile(Collection<? extends T> pCar, File destFile) throws ExcelExporterException{
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            final Sheet sheet = workbook.createSheet("Car");
+            writeHeaders(sheet);
+            for (T data : pCar) {
+                createRows(sheet, data);
+            }
+            writeWorkbookToFile(workbook, destFile);
+        } catch (Exception e) {
+            throw new ExcelExporterException("Error while exporting " + getClassName(), e);
+        }
+    }
+    
+    protected abstract String getClassName();
     
     @Override
     public final void exportToFile(T t, File destFile) throws ExcelExporterException{

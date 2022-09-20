@@ -16,15 +16,25 @@ public class VelocityGenerator {
         throw new IllegalStateException();
     }
     public static void generateJavaClassFile(VelocityWrapper wrapper, File destFile) throws IOException {
+        String templateName = "CSVMapperTemplate.vm";
+        common(wrapper, templateName, destFile);
+    
+    }
+    
+    public static void generateExcelExporterJavaClassFile(VelocityWrapper wrapper, File destFile) throws IOException {
+        String templateName = getTemplateName(wrapper.isUseFQNs());
+        common(wrapper, templateName, destFile);
+    }
+    
+    private static void common(VelocityWrapper wrapper, String templateName, File destFile) throws IOException {
         VelocityEngine ve = new VelocityEngine();
-        ve.setProperty("runtime.log.logsystem.logger", NullLogChute.class.getName());
         final ClassLoader oldContextClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(VelocityGenerator.class.getClassLoader());
         ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         ve.setProperty("classpath.resource.loader.class",
                 ClasspathResourceLoader.class.getName());
         ve.init();
-        Template t = ve.getTemplate(getTemplateName(wrapper.isUseFQNs()));
+        Template t = ve.getTemplate(templateName);
         VelocityContext context = new VelocityContext();
         context.put("wrapper", wrapper);
         destFile.getParentFile().mkdirs();
@@ -32,7 +42,6 @@ public class VelocityGenerator {
         t.merge(context, fileWriter);
         fileWriter.close();
         Thread.currentThread().setContextClassLoader(oldContextClassLoader);
-
     }
     
     private static String getTemplateName(boolean isUseFQNs) {

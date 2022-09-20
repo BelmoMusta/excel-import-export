@@ -12,20 +12,6 @@ import java.io.File;
 
 public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapper<$wrapper.simplifiedClassName> {
 
-    @Override
-    public void exportToFile(Collection<? extends $wrapper.simplifiedClassName> $wrapper.paramName, File destFile) throws ExcelExporterException{
-        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-            final Sheet sheet = workbook.createSheet("${wrapper.simplifiedClassName}");
-            writeHeaders(sheet);
-            for ($wrapper.simplifiedClassName data : ${wrapper.paramName}) {
-                createRows(sheet, data);
-            }
-            writeWorkbookToFile(workbook, destFile);
-        } catch (Exception e) {
-            throw new ExcelExporterException("Error while exporting " + ${wrapper.simplifiedClassName}.class.getName(), e);
-        }
-    }
-
 #if($wrapper.withHeaders)
     @Override
     protected void writeHeaders(Sheet sheet) {
@@ -40,7 +26,8 @@ public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapp
     }
 #end
 
-    private void createRows(Sheet sheet, $wrapper.simplifiedClassName data) {
+    @Override
+    protected void createRows(Sheet sheet, $wrapper.simplifiedClassName data) {
         final Row row = sheet.createRow(sheet.getLastRowNum() + 1);
 #foreach($pair in $wrapper.correspondanceFieldMethod)
 #if($pair.ordered)
@@ -49,5 +36,10 @@ public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapp
         addCellWithValue(row, valueOf(data.${pair.method}()));
 #end
 #end
+    }
+
+    @Override
+    protected String getClassName(){
+        return ${wrapper.simplifiedClassName}.class.getName();
     }
 }
