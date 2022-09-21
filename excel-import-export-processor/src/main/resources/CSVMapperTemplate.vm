@@ -1,27 +1,26 @@
 package $wrapper.aPackage;
-
-import io.github.belmomusta.excel.api.csv.AbstractCSVExporter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+#if(!$config.useFQNs)
+import $config.abstractCSVExporterFullClassName;
+import $config.arrayListFullClassName;
+import $config.collectionFullClassName;
 import $wrapper.className;
+#end
 
-public class ${wrapper.simplifiedClassName}CSVExporter extends AbstractCSVExporter<$wrapper.simplifiedClassName> {
+public class ${wrapper.simplifiedClassName}CSVExporter extends ${config.abstractCSVExporterClassName}<$config.currentClassName> {
 
     @Override
-    protected Collection<String> getEntries(${wrapper.simplifiedClassName} item) {
-        final List<String> cells = new ArrayList<>();
+    protected ${config.collectionClassName}<$config.stringClassName> getEntries(${config.currentClassName} item) {
+        final ${config.collectionClassName}<$config.stringClassName> cells = new ${config.arrayListClassName}<>();
 #foreach($pair in $wrapper.correspondanceFieldMethod)
         cells.add(valueOf(item.${pair.method}()));
 #end
         return cells;
    }
-
 #if($wrapper.withHeaders)
+
     @Override
-    protected Collection<String> getHeaderEntries() {
-        final List<String> headers = new ArrayList<>();
+    protected ${config.collectionClassName}<$config.stringClassName> getHeaderEntries() {
+        final ${config.collectionClassName}<$config.stringClassName> headers = new ${config.arrayListClassName}<>();
 #foreach($header in $wrapper.correspondanceFieldMethod)
         headers.add("${header.name}");
 #end
@@ -30,7 +29,7 @@ public class ${wrapper.simplifiedClassName}CSVExporter extends AbstractCSVExport
 #end
 
     @Override
-    public String getClassName(){
-        return ${wrapper.simplifiedClassName}.class.getName();
+    public $config.stringClassName getClassName(){
+        return ${config.currentClassName}.class.getName();
     }
 }

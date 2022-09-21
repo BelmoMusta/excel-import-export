@@ -4,7 +4,6 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.log.NullLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 import java.io.File;
@@ -16,17 +15,17 @@ public class VelocityGenerator {
         throw new IllegalStateException();
     }
     public static void generateJavaClassFile(VelocityWrapper wrapper, File destFile) throws IOException {
-        String templateName = "CSVMapperTemplate.vm";
-        common(wrapper, templateName, destFile);
+        common(wrapper, "CSVMapperTemplate.vm", destFile);
     
     }
     
     public static void generateExcelExporterJavaClassFile(VelocityWrapper wrapper, File destFile) throws IOException {
-        String templateName = getTemplateName(wrapper.isUseFQNs());
-        common(wrapper, templateName, destFile);
+        common(wrapper, "ExcelMapperTemplate.vm", destFile);
     }
     
     private static void common(VelocityWrapper wrapper, String templateName, File destFile) throws IOException {
+        VelocityConfig config = new VelocityConfig(wrapper.isUseFQNs());
+        config.setFullCurrentClassName(wrapper.getClassName());
         VelocityEngine ve = new VelocityEngine();
         final ClassLoader oldContextClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(VelocityGenerator.class.getClassLoader());
@@ -36,6 +35,7 @@ public class VelocityGenerator {
         ve.init();
         Template t = ve.getTemplate(templateName);
         VelocityContext context = new VelocityContext();
+        context.put("config", config);
         context.put("wrapper", wrapper);
         destFile.getParentFile().mkdirs();
         FileWriter fileWriter = new FileWriter(destFile);
@@ -43,13 +43,4 @@ public class VelocityGenerator {
         fileWriter.close();
         Thread.currentThread().setContextClassLoader(oldContextClassLoader);
     }
-    
-    private static String getTemplateName(boolean isUseFQNs) {
-        if(isUseFQNs) {
-            return "ExcelMapperTemplateWithFQNs.vm";
-        }
-        return "ExcelMapperTemplate.vm";
-        
-    }
-    
 }

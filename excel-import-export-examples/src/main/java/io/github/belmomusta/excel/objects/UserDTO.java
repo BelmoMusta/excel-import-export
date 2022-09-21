@@ -3,7 +3,7 @@ package io.github.belmomusta.excel.objects;
 import io.github.belmomusta.excel.api.annotation.ExcelColumn;
 import io.github.belmomusta.excel.api.annotation.ExcelRow;
 
-@ExcelRow(ignoreHeaders = false)
+@ExcelRow(ignoreHeaders = true, useFQNs = false)
 public class UserDTO {
 	@ExcelColumn
 	private String email;

@@ -57,7 +57,9 @@ public abstract class AbstractCSVExporter<T> implements CSVExporter<T> {
                 .collect(Collectors.joining(COMMA));
     }
     protected abstract Collection<String> getEntries(T item);
-    protected abstract Collection<String> getHeaderEntries();
+    protected Collection<String> getHeaderEntries(){
+        return Collections.emptyList();
+    }
     
     protected final Collection<String> convertObjectsToLines(Collection<? extends T> collection){
         return collection.stream()

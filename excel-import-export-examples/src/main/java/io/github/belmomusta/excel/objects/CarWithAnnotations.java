@@ -5,7 +5,7 @@ import io.github.belmomusta.excel.api.annotation.ExcelRow;
 
 import java.util.Date;
 
-@ExcelRow(ignoreHeaders = false)
+@ExcelRow(ignoreHeaders = true, useFQNs = true)
 public class CarWithAnnotations {
     @ExcelColumn
     private String country;

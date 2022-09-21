@@ -1,16 +1,17 @@
 package $wrapper.aPackage;
+#if(!$config.useFQNs)
+import $config.fullCurrentClassName;
+import $config.abstractExcelMapperFullClassName;
+import $config.rowFullClassName;
+import $config.sheetFullClassName;
+#end
 
-import $wrapper.className;
-import io.github.belmomusta.excel.api.export.AbstractExcelMapper;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-
-public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapper<$wrapper.simplifiedClassName> {
+public class ${wrapper.simplifiedClassName}ExcelMapper extends $config.abstractExcelMapperClassName<$config.currentClassName> {
 
 #if($wrapper.withHeaders)
     @Override
-    protected void writeHeaders(Sheet sheet) {
-        final Row header = sheet.createRow(0);
+    protected void writeHeaders($config.sheetClassName sheet) {
+        final $config.rowClassName header = sheet.createRow(0);
 #foreach($header in $wrapper.correspondanceFieldMethod)
 #if($header.ordered)
         addCellWithValue(header, $header.order, "${header.name}");
@@ -22,8 +23,8 @@ public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapp
 #end
 
     @Override
-    protected void createRows(Sheet sheet, $wrapper.simplifiedClassName data) {
-        final Row row = sheet.createRow(sheet.getLastRowNum() + 1);
+    protected void createRows($config.sheetClassName sheet, $config.currentClassName data) {
+        final $config.rowClassName row = sheet.createRow(sheet.getLastRowNum() + 1);
 #foreach($pair in $wrapper.correspondanceFieldMethod)
 #if($pair.ordered)
         addCellWithValue(row, $pair.order, valueOf(data.${pair.method}()));
@@ -34,7 +35,7 @@ public class ${wrapper.simplifiedClassName}ExcelMapper extends AbstractExcelMapp
     }
 
     @Override
-    public String getClassName(){
-        return ${wrapper.simplifiedClassName}.class.getName();
+    public $config.stringClassName getClassName(){
+        return ${config.currentClassName}.class.getName();
     }
 }
