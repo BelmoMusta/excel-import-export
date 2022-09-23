@@ -1,1 +1,2 @@
-22,a car name,My modessssl,"""must.belmo.excel.importexport.objects.Car{name='a car name', model='My modessssl', id=22}""",Maroc,POPO,Wed Sep 21 16:03:55 WEST 2022
+id,name,model,KKKKK,country,city,foo
+22,a car name,My model,"""must.belmo.excel.importexport.objects.Car{name='a car name', model='My model', id=22}""",Maroc,rabat,Thu Sep 22 15:06:49 WEST 2022

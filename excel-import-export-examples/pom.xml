@@ -37,7 +37,10 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
-                            <processor>org.mustabelmo.validation.processor.ExcelProcessor</processor>
+                            <processors>
+                            <processor>io.github.belmomusta.exporter.processor.ExcelProcessor</processor>
+                            <processor>io.github.belmomusta.exporter.processor.CSVProcessor</processor>
+                            </processors>
                         </configuration>
                     </execution>
                 </executions>

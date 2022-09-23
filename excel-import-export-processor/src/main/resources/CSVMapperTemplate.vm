@@ -4,15 +4,15 @@ import $config.abstractCSVExporterFullClassName;
 import $config.arrayListFullClassName;
 import $config.collectionFullClassName;
 import $wrapper.className;
-#end
 
+#end
 public class ${wrapper.simplifiedClassName}CSVExporter extends ${config.abstractCSVExporterClassName}<$config.currentClassName> {
 
     @Override
-    protected ${config.collectionClassName}<$config.stringClassName> getEntries(${config.currentClassName} item) {
+    protected ${config.collectionClassName}<$config.stringClassName> getEntries(${config.currentClassName} object) {
         final ${config.collectionClassName}<$config.stringClassName> cells = new ${config.arrayListClassName}<>();
 #foreach($pair in $wrapper.correspondanceFieldMethod)
-        cells.add(valueOf(item.${pair.method}()));
+        cells.add(valueOf(object.${pair.method}()));
 #end
         return cells;
    }
@@ -31,5 +31,9 @@ public class ${wrapper.simplifiedClassName}CSVExporter extends ${config.abstract
     @Override
     public $config.stringClassName getClassName(){
         return ${config.currentClassName}.class.getName();
+    }
+    @Override
+    public $config.stringClassName getSimpleClassName(){
+        return ${config.currentClassName}.class.getSimpleName();
     }
 }

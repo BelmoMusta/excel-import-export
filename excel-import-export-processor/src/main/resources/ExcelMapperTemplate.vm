@@ -6,9 +6,9 @@ import $config.rowFullClassName;
 import $config.sheetFullClassName;
 #end
 
-public class ${wrapper.simplifiedClassName}ExcelMapper extends $config.abstractExcelMapperClassName<$config.currentClassName> {
-
+public class ${wrapper.simplifiedClassName}ExcelExporter extends $config.abstractExcelMapperClassName<$config.currentClassName> {
 #if($wrapper.withHeaders)
+
     @Override
     protected void writeHeaders($config.sheetClassName sheet) {
         final $config.rowClassName header = sheet.createRow(0);
@@ -23,13 +23,13 @@ public class ${wrapper.simplifiedClassName}ExcelMapper extends $config.abstractE
 #end
 
     @Override
-    protected void createRows($config.sheetClassName sheet, $config.currentClassName data) {
-        final $config.rowClassName row = sheet.createRow(sheet.getLastRowNum() + 1);
+    protected void createRows($config.sheetClassName sheet, $config.currentClassName object) {
+        final $config.rowClassName excel = sheet.createRow(sheet.getLastRowNum() + 1);
 #foreach($pair in $wrapper.correspondanceFieldMethod)
 #if($pair.ordered)
-        addCellWithValue(row, $pair.order, valueOf(data.${pair.method}()));
+        addCellWithValue(excel, $pair.order, valueOf(object.${pair.method}()));
 #else
-        addCellWithValue(row, valueOf(data.${pair.method}()));
+        addCellWithValue(excel, valueOf(object.${pair.method}()));
 #end
 #end
     }
@@ -37,5 +37,10 @@ public class ${wrapper.simplifiedClassName}ExcelMapper extends $config.abstractE
     @Override
     public $config.stringClassName getClassName(){
         return ${config.currentClassName}.class.getName();
+    }
+
+    @Override
+    public $config.stringClassName getSimpleClassName(){
+        return ${config.currentClassName}.class.getSimpleName();
     }
 }
