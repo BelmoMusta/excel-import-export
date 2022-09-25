@@ -7,7 +7,7 @@
     <artifactId>excel-import-export</artifactId>
     <version>2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Excel Imort Export Parent</name>
+    <name>Excel Import Export Parent</name>
     <description>Excel import and export tools</description>
     <url>https://github.com/BelmoMusta/excel-import-export</url>
 
@@ -35,7 +35,7 @@
         <connection>scm:git:git://github.com/BelmoMusta/excel-import-export.git</connection>
         <developerConnection>scm:git:git@github.com/BelmoMusta/excel-import-export.git</developerConnection>
         <url>https://github.com/BelmoMusta/excel-import-export</url>
-        <tag>excel-impex-1.0</tag>
+        <tag>excel-impex-2.0</tag>
     </scm>
 
     <licenses>
