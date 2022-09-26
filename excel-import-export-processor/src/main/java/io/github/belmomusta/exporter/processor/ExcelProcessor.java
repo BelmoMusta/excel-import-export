@@ -1,10 +1,13 @@
 package io.github.belmomusta.exporter.processor;
 
-import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
 
-@SupportedAnnotationTypes("io.github.belmomusta.exporter.api.annotation.Excel")
 public class ExcelProcessor extends CommonProcessor {
+	
+	public ExcelProcessor(ProcessingEnvironment processingEnv) {
+		super(processingEnv);
+	}
 	
 	@Override
 	protected ClassWrapper getWrapper(Element aClass) {

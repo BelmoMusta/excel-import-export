@@ -4,8 +4,8 @@ import io.github.belmomusta.exporter.api.annotation.CSV;
 import io.github.belmomusta.exporter.api.annotation.ToColumn;
 import io.github.belmomusta.exporter.api.annotation.Excel;
 
-@Excel(ignoreHeaders = false, useFQNs = true)
-@CSV(ignoreHeaders = true, useFQNs = true)
+@Excel()
+@CSV()
 public class Car {
 	@ToColumn
     private String name;
