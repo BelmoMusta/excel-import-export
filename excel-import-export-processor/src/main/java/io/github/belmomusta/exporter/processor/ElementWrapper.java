@@ -9,6 +9,8 @@ public abstract class ElementWrapper {
     protected final Element wrappedElement;
 
     private final List<Annotation> annotations = new ArrayList<>();
+    
+    String formatter;
 
     protected ElementWrapper(Element method) {
         this.wrappedElement = method;
@@ -39,5 +41,12 @@ public abstract class ElementWrapper {
     public boolean add(Annotation annotation) {
         return annotations.add(annotation);
     }
-
+    
+    public void setFormatter(String formatter) {
+        this.formatter = formatter;
+    }
+    
+    public String getFormatter() {
+        return formatter;
+    }
 }

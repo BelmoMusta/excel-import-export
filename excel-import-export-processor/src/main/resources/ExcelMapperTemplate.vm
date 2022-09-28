@@ -26,10 +26,16 @@ public class ${wrapper.simplifiedClassName}ExcelExporter extends $config.abstrac
     protected void createRows($config.sheetClassName sheet, $config.currentClassName object) {
         final $config.rowClassName excel = sheet.createRow(sheet.getLastRowNum() + 1);
 #foreach($pair in $wrapper.correspondanceFieldMethod)
-#if($pair.ordered)
-        addCellWithValue(excel, $pair.order, valueOf(object.${pair.method}()));
+#if($pair.formatter)
+    #set($formatterInstance = "io.github.belmomusta.exporter.api.formatter.Formatter ${pair}")
+    #set( $formatter = ", new ${pair.formatter}()" )
 #else
-        addCellWithValue(excel, valueOf(object.${pair.method}()));
+    #set( $formatter = "" )
+#end
+#if($pair.ordered)
+        addCellWithValue(excel, $pair.order, valueOf(object.${pair.method}()${formatter}));
+#else
+        addCellWithValue(excel, valueOf(object.${pair.method}()${formatter}));
 #end
 #end
     }

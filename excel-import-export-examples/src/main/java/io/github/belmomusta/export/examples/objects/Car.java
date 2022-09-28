@@ -1,8 +1,13 @@
 package io.github.belmomusta.export.examples.objects;
 
 import io.github.belmomusta.exporter.api.annotation.CSV;
+import io.github.belmomusta.exporter.api.annotation.ExcelFormat;
 import io.github.belmomusta.exporter.api.annotation.ToColumn;
 import io.github.belmomusta.exporter.api.annotation.Excel;
+import io.github.belmomusta.exporter.api.formatter.DateFormatter;
+import io.github.belmomusta.exporter.api.formatter.DefaultFormatterImpl;
+
+import java.util.Date;
 
 @Excel()
 @CSV()
@@ -16,6 +21,9 @@ public class Car {
 	
 	@ToColumn
     private int foo;
+	@ToColumn
+	@ExcelFormat(formatter = DateFormatter.class)
+	private Date creationDate;
 	
 	@Override
 	public String toString() {
@@ -45,5 +53,13 @@ public class Car {
 	@ToColumn
 	public String name(){
 		return "name";
+	}
+	
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 }

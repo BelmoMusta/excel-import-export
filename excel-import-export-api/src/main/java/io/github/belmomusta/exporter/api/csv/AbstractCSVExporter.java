@@ -1,6 +1,7 @@
 package io.github.belmomusta.exporter.api.csv;
 
 import io.github.belmomusta.exporter.api.exception.ExporterException;
+import io.github.belmomusta.exporter.api.formatter.Formatter;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -63,6 +64,13 @@ public abstract class AbstractCSVExporter<T> implements CSVExporter<T> {
     protected final String valueOf(Object object) {
         return Optional.ofNullable(object)
                 .map(String::valueOf)
+                .map(this::escapeSpecialCharacters)
+                .orElse(EMPTY_STRING);
+    }
+    
+    protected final<X> String valueOf(X object, Formatter<X> formatter) {
+        return Optional.ofNullable(object)
+                .map(formatter::format)
                 .map(this::escapeSpecialCharacters)
                 .orElse(EMPTY_STRING);
     }

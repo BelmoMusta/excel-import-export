@@ -3,6 +3,7 @@ package io.github.belmomusta.exporter.processor;
 import io.github.belmomusta.exporter.api.annotation.CSV;
 import io.github.belmomusta.exporter.api.annotation.Excel;
 import io.github.belmomusta.exporter.api.annotation.ToColumn;
+import org.apache.commons.lang3.AnnotationUtils;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -17,6 +18,7 @@ import java.util.Set;
 })
 
 public class ExportProcessor extends AbstractProcessor {
+	public static ProcessingEnvironment processingEnvironment;
 	CommonProcessor excel;
 	CommonProcessor csv;
 	
@@ -30,6 +32,7 @@ public class ExportProcessor extends AbstractProcessor {
 		super.init(processingEnv);
 		excel = new ExcelProcessor(processingEnv);
 		csv = new CSVProcessor(processingEnv);
+		processingEnvironment = processingEnv;
 	}
 	
 	@Override

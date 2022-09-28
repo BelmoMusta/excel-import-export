@@ -5,14 +5,15 @@ import java.util.Comparator;
 public class FieldMethodPair extends ExcelCellWrapper implements Comparable<FieldMethodPair> {
     private final String field;
     private final String method;
-    private  String headerName;
+    private String headerName;
+    private String formatter;
 
     public FieldMethodPair(String field, String method) {
         this.field = field;
         this.method = method;
     }
     
-    public FieldMethodPair( String method) {
+    public FieldMethodPair(String method) {
         this(method, method);
     }
 
@@ -40,5 +41,13 @@ public class FieldMethodPair extends ExcelCellWrapper implements Comparable<Fiel
     
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
+    }
+    
+    public String getFormatter() {
+        return formatter;
+    }
+    
+    public void setFormatter(String formatter) {
+        this.formatter = formatter;
     }
 }
