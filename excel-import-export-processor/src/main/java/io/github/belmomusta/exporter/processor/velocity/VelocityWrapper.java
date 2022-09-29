@@ -1,6 +1,8 @@
 package io.github.belmomusta.exporter.processor.velocity;
 
 import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class VelocityWrapper {
     private String aPackage;
@@ -66,5 +68,12 @@ public class VelocityWrapper {
     
     public void setUseFQNs(boolean useFQNs) {
         this.useFQNs = useFQNs;
+    }
+    
+    public Collection<FormatterWrapper> getFormatters(){
+        return correspondanceFieldMethod.stream()
+                .map(FieldMethodPair::getFormatter)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 }

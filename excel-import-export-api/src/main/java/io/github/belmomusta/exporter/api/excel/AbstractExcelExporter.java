@@ -23,14 +23,14 @@ public abstract class AbstractExcelExporter<T> extends AbstractExporter<T> {
     @Override
     public void exportToFile(Collection<? extends T> objects, File destFile) throws ExporterException {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-            final Sheet sheet = workbook.createSheet(getSimpleClassName());
+            final Sheet sheet = workbook.createSheet(getClassClass().getSimpleName());
             writeHeaders(sheet);
             for (T object : objects) {
                 createRows(sheet, object);
             }
             writeWorkbookToFile(workbook, destFile);
         } catch (Exception e) {
-            throw new ExporterException(getClassName(), e);
+            throw new ExporterException(getClassClass().getName(), e);
         }
     }
     

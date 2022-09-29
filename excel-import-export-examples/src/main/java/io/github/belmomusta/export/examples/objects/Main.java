@@ -20,6 +20,7 @@ public class Main {
 		car.setModel("My new model");
 		car.setName("Porsche");
 		car.setCreationDate(new Date());
+		car.setPrice(300000.99);
 		final String destinationFile = ("cars.xlsx");
 		excelExporter.exportToFile(car, destinationFile);
 		csvExporter.exportToFile(car, "cars.csv");

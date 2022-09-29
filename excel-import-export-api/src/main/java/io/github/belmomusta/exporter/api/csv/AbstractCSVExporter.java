@@ -46,7 +46,7 @@ public abstract class AbstractCSVExporter<T> implements CSVExporter<T> {
                 printWriter.println(line);
             }
         } catch (Exception exception) {
-            throw new ExporterException(getClassName(), exception);
+            throw new ExporterException(getClassClass().getName(), exception);
         }
     }
     

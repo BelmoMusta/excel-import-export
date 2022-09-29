@@ -6,7 +6,7 @@ public class FieldMethodPair extends ExcelCellWrapper implements Comparable<Fiel
     private final String field;
     private final String method;
     private String headerName;
-    private String formatter;
+    FormatterWrapper formatterWrapper;
 
     public FieldMethodPair(String field, String method) {
         this.field = field;
@@ -43,11 +43,12 @@ public class FieldMethodPair extends ExcelCellWrapper implements Comparable<Fiel
         this.headerName = headerName;
     }
     
-    public String getFormatter() {
-        return formatter;
-    }
     
     public void setFormatter(String formatter) {
-        this.formatter = formatter;
+        formatterWrapper = new FormatterWrapper(formatter);
+    }
+    
+    public FormatterWrapper getFormatter() {
+        return formatterWrapper;
     }
 }

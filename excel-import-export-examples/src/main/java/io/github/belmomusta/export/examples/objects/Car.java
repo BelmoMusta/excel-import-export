@@ -4,17 +4,17 @@ import io.github.belmomusta.exporter.api.annotation.CSV;
 import io.github.belmomusta.exporter.api.annotation.ExcelFormat;
 import io.github.belmomusta.exporter.api.annotation.ToColumn;
 import io.github.belmomusta.exporter.api.annotation.Excel;
+import io.github.belmomusta.exporter.api.formatter.CurrencyFormatter;
 import io.github.belmomusta.exporter.api.formatter.DateFormatter;
-import io.github.belmomusta.exporter.api.formatter.DefaultFormatterImpl;
 
 import java.util.Date;
 
-@Excel()
+@Excel(useFQNs = false)
 @CSV()
 public class Car {
 	@ToColumn
     private String name;
-	@ToColumn(5)
+	@ToColumn
     private String model;
 	@ToColumn
     private int id;
@@ -22,8 +22,14 @@ public class Car {
 	@ToColumn
     private int foo;
 	@ToColumn
-	@ExcelFormat(formatter = DateFormatter.class)
 	private Date creationDate;
+	
+	@ExcelFormat(formatter = DateFormatter.class)
+	@ToColumn
+	private Date updateDate;
+	@ToColumn
+	@ExcelFormat(formatter = CurrencyFormatter.class)
+	private double price;
 	
 	@Override
 	public String toString() {
@@ -55,11 +61,24 @@ public class Car {
 		return "name";
 	}
 	
+	@ExcelFormat(formatter = DateFormatter.class)
 	public Date getCreationDate() {
 		return creationDate;
 	}
 	
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+	}
+	
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+	
+	public double getPrice() {
+		return price;
+	}
+	
+	public void setPrice(double price) {
+		this.price = price;
 	}
 }
