@@ -1,1 +1,3 @@
-Porsche,My new model,22,0,name,2022-09-30,,"""300 000,99 MAD"""
+model,id,foo,creationDate,updateDate,price,name
+My new model,22,0,2022-10-01,,"""300 000,99 MAD""",Porsche
+My new model,22,0,2022-10-01,,"""300 000,99 MAD""",Porsche

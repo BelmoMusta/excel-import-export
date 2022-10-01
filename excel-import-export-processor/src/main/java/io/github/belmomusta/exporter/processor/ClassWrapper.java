@@ -16,7 +16,10 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,11 +38,11 @@ public class ClassWrapper {
 	}
 	
 	public static ClassWrapper of(Element annotatedElement) {
-		return common(annotatedElement, ".excel.export.", "ExcelExporter");
+		return common(annotatedElement, ".export.excel.", "ExcelExporter");
 	}
 	
 	public static ClassWrapper ofCSV(Element annotatedElement) {
-		return common(annotatedElement, ".csv.export.", "CSVExporter");
+		return common(annotatedElement, ".export.csv.", "CSVExporter");
 	}
 	
 	private static ClassWrapper common(Element annotatedElement, String packagePrefix, String classSuffix) {
@@ -171,7 +174,25 @@ public class ClassWrapper {
 					}
 					
 				});
-		return fieldMethodPairs;
+		
+		int i = 0;
+		Set<FieldMethodPair> set = new TreeSet<>((a, b) -> {
+			if(a.getOrder() == b.getOrder()){
+				return 1;
+			}
+			return a.getOrder() - b.getOrder();
+		});
+		for (FieldMethodPair fieldMethodPair : fieldMethodPairs) {
+			if (!fieldMethodPair.isOrdered()) {
+				fieldMethodPair.setOrder(i++);
+ 			} else {
+ 				i = i + 1;
+			}
+		}
+		
+		set.addAll(fieldMethodPairs);
+		
+		return new ArrayList<>(set);
 	}
 	
 	private void applyHeaders(Set<FieldMethodPair> fieldMethodPairs, MethodWrapper aMethod, ToColumn annotation) {
@@ -220,6 +241,7 @@ public class ClassWrapper {
 			wrapper.setClassName(qualifiedName.toString());
 			wrapper.setSimplifiedClassName(annotatedElement.getSimpleName().toString());
 			Collection<FieldMethodPair> correspondanceFieldMethod = getCorrespondanceFieldMethod();
+			
 			wrapper.setCorrespondanceFieldMethod(correspondanceFieldMethod);
 		}
 		return wrapper;

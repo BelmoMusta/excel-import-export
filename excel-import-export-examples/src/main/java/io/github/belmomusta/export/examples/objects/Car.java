@@ -4,15 +4,13 @@ import io.github.belmomusta.exporter.api.annotation.CSV;
 import io.github.belmomusta.exporter.api.annotation.ExcelFormat;
 import io.github.belmomusta.exporter.api.annotation.ToColumn;
 import io.github.belmomusta.exporter.api.annotation.Excel;
-import io.github.belmomusta.exporter.api.formatter.CurrencyFormatter;
-import io.github.belmomusta.exporter.api.formatter.DateFormatter;
 
 import java.util.Date;
 
-@Excel(useFQNs = false)
+@Excel(ignoreHeaders = true)
 @CSV()
 public class Car {
-	@ToColumn
+	@ToColumn(9)
     private String name;
 	@ToColumn
     private String model;
@@ -56,7 +54,6 @@ public class Car {
     public int getFoo() {
         return foo;
     }
-	@ToColumn
 	public String name(){
 		return "name";
 	}

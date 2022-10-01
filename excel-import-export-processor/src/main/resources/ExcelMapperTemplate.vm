@@ -1,63 +1,48 @@
+#set($lastIndx = $wrapper.correspondanceFieldMethod.size() - 1)
+#set($beforLastIndx = $wrapper.correspondanceFieldMethod.size() - 2)
 package $wrapper.aPackage;
 #if(!$config.useFQNs)
 import $config.fullCurrentClassName;
 import $config.abstractExcelMapperFullClassName;
-import $config.rowFullClassName;
-import $config.sheetFullClassName;
-#if($wrapper.formatters.size() > 0)
-import io.github.belmomusta.exporter.api.formatter.Formatter;
-#foreach($formatter_ in $wrapper.formatters)
-import ${formatter_.fullFQN};
+import $config.listFullClassName;
+import $config.arraysFullClassName;
+#parse("FormatterImports.vm")
 #end
-#set($formatterInterface="Formatter")
-#end
-#else
-    #set($formatterInterface="io.github.belmomusta.exporter.api.formatter.Formatter")
-#end
-
 public class ${wrapper.simplifiedClassName}ExcelExporter extends $config.abstractExcelMapperClassName<$config.currentClassName> {
-#foreach($formatter_ in $wrapper.formatters)
-#if(!$config.useFQNs)
-#set($formatterClassName=${formatter_.simpleName})
-#else
-#set($formatterClassName=${formatter_.fullFQN})
-#end
-    final $formatterInterface $formatter_.instanceName = new ${formatterClassName}();
-#end
+#parse("FormatterAttributes.vm")
 #if($wrapper.withHeaders)
 
     @Override
-    protected void writeHeaders($config.sheetClassName sheet) {
-        final $config.rowClassName header = sheet.createRow(0);
-#foreach($header in $wrapper.correspondanceFieldMethod)
-#if($header.ordered)
-        addCellWithValue(header, $header.order, "${header.name}");
-#else
-        addCellWithValue(header, "${header.name}");
+    protected $config.listClassName<String> getHeadersEntries() {
+         return ${config.arraysClassName}.asList(
+#foreach($i in [0 .. $beforLastIndx])
+            "$wrapper.correspondanceFieldMethod.get($i).name",
 #end
-#end
+            "$wrapper.correspondanceFieldMethod.get($lastIndx).name");
     }
 #end
 
     @Override
-    protected void createRows($config.sheetClassName sheet, $config.currentClassName object) {
-        final $config.rowClassName aRow = sheet.createRow(sheet.getLastRowNum() + 1);
-#foreach($pair in $wrapper.correspondanceFieldMethod)
+    protected $config.listClassName<String> getRowEntries($config.currentClassName object) {
+        return ${config.arraysClassName}.asList(
+#foreach($i in [0 .. $beforLastIndx])
+#set($pair = $wrapper.correspondanceFieldMethod.get($i))
 #if($pair.formatter)
-    #set( $formatter = ", ${pair.formatter.instanceName}" )
+#set( $formatter = ", ${pair.formatter.instanceName}" )
 #else
-    #set( $formatter = "" )
+#set( $formatter = "" )
 #end
-#if($pair.ordered)
-        addCellWithValue(aRow, $pair.order, valueOf(object.${pair.method}()${formatter}));
+            valueOf(object.${pair.method}()${formatter}),
+#end
+#set($pair = $wrapper.correspondanceFieldMethod.get($lastIndx))
+#if($pair.formatter)
+#set( $formatter = ", ${pair.formatter.instanceName}" )
 #else
-        addCellWithValue(aRow, valueOf(object.${pair.method}()${formatter}));
+#set( $formatter = "" )
 #end
-#end
+            valueOf(object.${pair.method}()${formatter}));
     }
 
-    @Override
-    public Class<? extends ${config.currentClassName}> getClassClass() {
-        return ${config.currentClassName}.class;
-    }
+#parse("ClassNameMethod.vm")
+
 }

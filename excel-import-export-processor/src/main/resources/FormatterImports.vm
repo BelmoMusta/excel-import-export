@@ -1,0 +1,7 @@
+#if($wrapper.formatters.size() > 0)
+import $config.formatterFullClassName;
+#foreach($formatter_ in $wrapper.formatters)
+import ${formatter_.fullFQN};
+#end
+
+#end

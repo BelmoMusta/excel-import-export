@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 public @interface ToColumn {
     String DEFAULT_NAME = "####";
     
-    int value() default Integer.MAX_VALUE;
+    int value() default Integer.MAX_VALUE; // order
 
     String name() default DEFAULT_NAME;
 }

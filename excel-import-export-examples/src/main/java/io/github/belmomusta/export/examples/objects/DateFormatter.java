@@ -1,4 +1,6 @@
-package io.github.belmomusta.exporter.api.formatter;
+package io.github.belmomusta.export.examples.objects;
+
+import io.github.belmomusta.exporter.api.formatter.Formatter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -2,11 +2,14 @@ package io.github.belmomusta.exporter.processor.velocity;
 
 import io.github.belmomusta.exporter.api.csv.AbstractCSVExporter;
 import io.github.belmomusta.exporter.api.excel.AbstractExcelExporter;
+import io.github.belmomusta.exporter.api.formatter.Formatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -51,6 +54,19 @@ public class VelocityConfig {
 	public String getArrayListClassName() {
 		return nameOfAClass(ArrayList.class);
 	}
+	public String getListClassName() {
+		return nameOfAClass(List.class);
+	}
+	public String getListFullClassName() {
+		return fullNameOfAClass(List.class);
+	}
+	
+	public String getArraysFullClassName() {
+		return fullNameOfAClass(Arrays.class);
+	}
+	public String getArraysClassName() {
+		return nameOfAClass(Arrays.class);
+	}
 	
 	public String getCollectionClassName() {
 		return nameOfAClass(Collection.class);
@@ -92,6 +108,14 @@ public class VelocityConfig {
 	public String getStringClassName() {
 		return nameOfAClass(String.class);
 	}
+	public String getFormatterClassName() {
+		return nameOfAClass(Formatter.class);
+	}
+	
+	public String getFormatterFullClassName() {
+		return fullNameOfAClass(Formatter.class);
+	}
+	
 	
 	private <X> String nameOfAClass(Class<X> value) {
 		return Optional.of(value)

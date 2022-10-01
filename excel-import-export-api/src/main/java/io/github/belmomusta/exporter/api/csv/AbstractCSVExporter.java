@@ -46,7 +46,7 @@ public abstract class AbstractCSVExporter<T> implements CSVExporter<T> {
                 printWriter.println(line);
             }
         } catch (Exception exception) {
-            throw new ExporterException(getClassClass().getName(), exception);
+            throw new ExporterException(getClassName().getName(), exception);
         }
     }
     
@@ -61,7 +61,7 @@ public abstract class AbstractCSVExporter<T> implements CSVExporter<T> {
         return Collections.emptyList();
     }
     
-    protected final String valueOf(Object object) {
+    protected final <X> String valueOf(X object) {
         return Optional.ofNullable(object)
                 .map(String::valueOf)
                 .map(this::escapeSpecialCharacters)

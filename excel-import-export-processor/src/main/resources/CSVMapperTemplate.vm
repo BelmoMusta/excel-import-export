@@ -1,40 +1,24 @@
 package $wrapper.aPackage;
 #if(!$config.useFQNs)
+
 import $config.abstractCSVExporterFullClassName;
 import $config.arrayListFullClassName;
 import $config.collectionFullClassName;
 import $wrapper.className;
-#if($wrapper.formatters.size() > 0)
-import io.github.belmomusta.exporter.api.formatter.Formatter;
-#foreach($formatter_ in $wrapper.formatters)
-import ${formatter_.fullFQN};
-#end
-#set($formatterInterface="Formatter")
-#end
-
-#else
-    #set($formatterInterface="io.github.belmomusta.exporter.api.formatter.Formatter")
-
+#parse("FormatterImports.vm")
 #end
 public class ${wrapper.simplifiedClassName}CSVExporter extends ${config.abstractCSVExporterClassName}<$config.currentClassName> {
-#foreach($formatter_ in $wrapper.formatters)
-#if(!$config.useFQNs)
-#set($formatterClassName=${formatter_.simpleName})
-#else
-#set($formatterClassName=${formatter_.fullFQN})
-#end
-    final $formatterInterface $formatter_.instanceName = new ${formatterClassName}();
-#end
+#parse("FormatterAttributes.vm")
 
     @Override
     protected ${config.collectionClassName}<$config.stringClassName> getEntries(${config.currentClassName} object) {
         final ${config.collectionClassName}<$config.stringClassName> cells = new ${config.arrayListClassName}<>();
 #foreach($pair in $wrapper.correspondanceFieldMethod)
-    #if($pair.formatter)
-        #set( $formatter = ", ${pair.formatter.instanceName}" )
-    #else
-        #set( $formatter = "" )
-    #end
+#if($pair.formatter)
+#set( $formatter = ", ${pair.formatter.instanceName}" )
+#else
+#set( $formatter = "" )
+#end
         cells.add(valueOf(object.${pair.method}()${formatter}));
 #end
         return cells;
@@ -51,8 +35,6 @@ public class ${wrapper.simplifiedClassName}CSVExporter extends ${config.abstract
     }
 #end
 
-    @Override
-    public Class<? extends ${config.currentClassName}> getClassClass() {
-        return ${config.currentClassName}.class;
-    }
+#parse("ClassNameMethod.vm")
+
 }

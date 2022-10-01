@@ -1,0 +1,4 @@
+    @Override
+    public Class<? extends ${config.currentClassName}> getClassName() {
+        return ${config.currentClassName}.class;
+    }

@@ -19,5 +19,5 @@ public interface CommonExporter<T> {
     void exportToFile(T object, File destFile) throws ExporterException;
     void exportToFile(Collection<? extends T> objects, String destFile) throws ExporterException;
     void exportToFile(Collection<? extends T> objects, File destFile) throws ExporterException;
-    Class<? extends T> getClassClass();
+    Class<? extends T> getClassName();
 }
