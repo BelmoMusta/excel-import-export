@@ -10,7 +10,8 @@ import java.util.Date;
 @Excel(ignoreHeaders = false,useFQNs = false)
 @CSV()
 public class Car {
-	@ToColumn
+	@ToColumn(name = "musta id")
+	@ColumnFormat(formatter = IdConverter.class)
 	private int id;
 	@ToColumn(9)
     private String name;
