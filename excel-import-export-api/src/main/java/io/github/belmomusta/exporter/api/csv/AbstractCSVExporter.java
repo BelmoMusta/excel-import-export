@@ -1,36 +1,19 @@
 package io.github.belmomusta.exporter.api.csv;
 
+import io.github.belmomusta.exporter.api.common.AbstractExporter;
 import io.github.belmomusta.exporter.api.exception.ExporterException;
 import io.github.belmomusta.exporter.api.formatter.Formatter;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public abstract class AbstractCSVExporter<T> implements CSVExporter<T> {
+public abstract class AbstractCSVExporter<T> extends AbstractExporter<T> implements CSVExporter<T> {
     
-    protected abstract Collection<String> getEntries(T object);
-    
-    @Override
-    public final void exportToFile(T object, File destFile) throws ExporterException {
-        exportToFile(Collections.singletonList(object), destFile);
-    }
-    
-    @Override
-    public final void exportToFile(T object, String destFile) throws ExporterException {
-        exportToFile(object, new File(destFile));
-    }
-    
-    @Override
-    public final void exportToFile(Collection<? extends T> objects, String destFile) throws ExporterException {
-        exportToFile(objects, new File(destFile));
-    }
-
     protected String writeHeaders() {
-        return String.join(COMMA, getHeaderEntries());
+        return String.join(COMMA, getHeadersEntries());
     }
     
     @Override
@@ -51,24 +34,22 @@ public abstract class AbstractCSVExporter<T> implements CSVExporter<T> {
     }
     
     protected final String convertObjectToLine(T object) {
-        final Collection<String> cells = getEntries(object);
+        final Collection<String> cells = getRowEntries(object);
         return cells.stream()
                 .map(this::valueOf)
                 .collect(Collectors.joining(COMMA));
     }
     
-    protected Collection<String> getHeaderEntries(){
-        return Collections.emptyList();
-    }
-    
-    protected final <X> String valueOf(X object) {
+    @Override
+    public final <X> String valueOf(X object) {
         return Optional.ofNullable(object)
                 .map(String::valueOf)
                 .map(this::escapeSpecialCharacters)
                 .orElse(EMPTY_STRING);
     }
     
-    protected final<X> String valueOf(X object, Formatter<X> formatter) {
+    @Override
+    public final<X> String valueOf(X object, Formatter<X> formatter) {
         return Optional.ofNullable(object)
                 .map(formatter::format)
                 .map(this::escapeSpecialCharacters)

@@ -4,4 +4,6 @@ import $config.formatterFullClassName;
 import ${formatter_.fullFQN};
 #end
 
+#else
+
 #end

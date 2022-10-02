@@ -2,7 +2,7 @@ package io.github.belmomusta.exporter.processor;
 
 import io.github.belmomusta.exporter.api.annotation.CSV;
 import io.github.belmomusta.exporter.api.annotation.Excel;
-import io.github.belmomusta.exporter.api.annotation.ExcelFormat;
+import io.github.belmomusta.exporter.api.annotation.ColumnFormat;
 import io.github.belmomusta.exporter.api.annotation.ToColumn;
 import io.github.belmomusta.exporter.processor.velocity.ExcelVelocityWrapper;
 import io.github.belmomusta.exporter.processor.velocity.FieldMethodPair;
@@ -18,8 +18,6 @@ import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -97,7 +95,7 @@ public class ClassWrapper {
 	}
 	
 	private static void lookForFormatters(ClassWrapper classWrapper) {
-		Element formatAnnotation = ExportProcessor.processingEnvironment.getElementUtils().getTypeElement(ExcelFormat.class.getName());
+		Element formatAnnotation = ExportProcessor.processingEnvironment.getElementUtils().getTypeElement(ColumnFormat.class.getName());
 		for (MethodWrapper method : classWrapper.enclosedMethods) {
 			boolean formatterFound = tryToFindFormatters(formatAnnotation, method, method.wrappedElement.getAnnotationMirrors());
 			

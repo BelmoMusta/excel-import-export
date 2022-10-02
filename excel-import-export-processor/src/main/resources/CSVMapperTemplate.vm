@@ -1,40 +1,4 @@
-package $wrapper.aPackage;
-#if(!$config.useFQNs)
-
-import $config.abstractCSVExporterFullClassName;
-import $config.arrayListFullClassName;
-import $config.collectionFullClassName;
-import $wrapper.className;
-#parse("FormatterImports.vm")
-#end
-public class ${wrapper.simplifiedClassName}CSVExporter extends ${config.abstractCSVExporterClassName}<$config.currentClassName> {
-#parse("FormatterAttributes.vm")
-
-    @Override
-    protected ${config.collectionClassName}<$config.stringClassName> getEntries(${config.currentClassName} object) {
-        final ${config.collectionClassName}<$config.stringClassName> cells = new ${config.arrayListClassName}<>();
-#foreach($pair in $wrapper.correspondanceFieldMethod)
-#if($pair.formatter)
-#set( $formatter = ", ${pair.formatter.instanceName}" )
-#else
-#set( $formatter = "" )
-#end
-        cells.add(valueOf(object.${pair.method}()${formatter}));
-#end
-        return cells;
-   }
-#if($wrapper.withHeaders)
-
-    @Override
-    protected ${config.collectionClassName}<$config.stringClassName> getHeaderEntries() {
-        final ${config.collectionClassName}<$config.stringClassName> headers = new ${config.arrayListClassName}<>();
-#foreach($header in $wrapper.correspondanceFieldMethod)
-        headers.add("${header.name}");
-#end
-        return headers;
-    }
-#end
-
-#parse("ClassNameMethod.vm")
-
-}
+#set($exporterName = "CSVExporter")
+#set($classToExtend = ${config.abstractCSVExporterClassName})
+#set($classToImport = $config.abstractCSVExporterFullClassName)
+#parse("CommonMapperTemplate.vm")
