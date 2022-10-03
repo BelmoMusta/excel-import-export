@@ -14,7 +14,7 @@ public class ${wrapper.simplifiedClassName}${exporterName} extends ${classToExte
 #parse("FormatterAttributes.vm")
 
     @Override
-    public $config.listClassName<String> getHeadersEntries() {
+    public $config.listClassName<$config.stringClassName> getHeadersEntries() {
 #if($wrapper.withHeaders)
          return ${config.arraysClassName}.asList(
 #foreach($i in [0 .. $beforLastIndx])
@@ -27,7 +27,7 @@ public class ${wrapper.simplifiedClassName}${exporterName} extends ${classToExte
     }
 
     @Override
-    public $config.listClassName<String> getRowEntries($config.currentClassName object) {
+    public $config.listClassName<$config.stringClassName> getRowEntries($config.currentClassName object) {
         return ${config.arraysClassName}.asList(
 #foreach($i in [0 .. $beforLastIndx])
 #set($pair = $wrapper.correspondanceFieldMethod.get($i))
