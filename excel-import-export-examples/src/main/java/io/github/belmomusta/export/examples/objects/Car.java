@@ -78,10 +78,4 @@ public class Car extends AbstractCar {
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	
-	@Override
-	@ToColumn
-	public String getNameFromAbstract() {
-		return super.getNameFromAbstract();
-	}
 }

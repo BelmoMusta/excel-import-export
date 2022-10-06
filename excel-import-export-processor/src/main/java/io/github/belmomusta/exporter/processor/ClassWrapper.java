@@ -15,6 +15,8 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,9 +29,16 @@ import java.util.stream.Collectors;
 public class ClassWrapper {
 	
 	private Element annotatedElement;
-	private List<MethodWrapper> enclosedMethods;
-	private List<FieldWrapper> enclosedFields;
+	private List<MethodWrapper> enclosedMethods = new ArrayList<>();
+	private List<FieldWrapper> enclosedFields = new ArrayList<>();
 	private String fQNOfGeneratedClass;
+	
+	Set<FieldMethodPair> inheditedPublicMethods = new TreeSet<>((a, b) -> {
+		if(a.getOrder() == b.getOrder()){
+			return 1;
+		}
+		return a.getOrder() - b.getOrder();
+	});
 	
 	private ClassWrapper(Element annotatedElement) {
 		this.annotatedElement = annotatedElement;
@@ -52,7 +61,35 @@ public class ClassWrapper {
 		classWrapper.fQNOfGeneratedClass = packageName + packagePrefix + generatedClassName;
 		assignAnnotations(classWrapper);
 		lookForFormatters(classWrapper);
+		fillFromInheditedClasses((TypeElement) annotatedElement, classWrapper);
 		return classWrapper;
+	}
+	
+	private static void fillFromInheditedClasses(TypeElement annotatedElement, ClassWrapper classWrapper) {
+		List<Element> objects = new ArrayList<>();
+		TypeMirror superclass = annotatedElement.getSuperclass();
+		
+		while(superclass != null){
+			superclass.accept(new MTypeVisitor(), objects);
+			TypeMirror superclass1 = superclass.accept(new InheritanceTreeTypeVisitor(), null, null);
+			
+		}
+		
+		List<ClassWrapper> wrappers = new ArrayList<>();
+		for (Element object : objects) {
+			ClassWrapper anotherWrapper = new ClassWrapper(object);
+			fillMethods(anotherWrapper);
+ 			assignAnnotations(anotherWrapper);
+			lookForFormatters(anotherWrapper);
+			wrappers.add(anotherWrapper);
+		}
+		getInheritedMethods(classWrapper, wrappers);
+	}
+	
+	private static void getInheritedMethods(ClassWrapper classWrapper, List<ClassWrapper> wrappers) {
+		for (ClassWrapper wrapper : wrappers) {
+			classWrapper.addFieldMethodPair(wrapper.getCorrespondanceFieldMethod());
+		}
 	}
 	
 	private static String calculateGeneratedClassName(String classSuffix, ClassWrapper classWrapper) {
@@ -189,8 +226,11 @@ public class ClassWrapper {
 		}
 		
 		set.addAll(fieldMethodPairs);
-		
+		set.addAll(inheditedPublicMethods);
 		return new ArrayList<>(set);
+	}
+	public void addFieldMethodPair(Collection<FieldMethodPair> fieldMethodPair){
+		inheditedPublicMethods.addAll(fieldMethodPair);
 	}
 	
 	private void applyHeaders(Set<FieldMethodPair> fieldMethodPairs, MethodWrapper aMethod, ToColumn annotation) {
