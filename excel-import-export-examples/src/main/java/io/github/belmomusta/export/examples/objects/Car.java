@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Excel(ignoreHeaders = false,useFQNs = false)
 @CSV()
-public class Car extends AbstractCar {
+public class Car extends AbstractCar implements ICar {
 	@ToColumn(name = "musta id")
 	@ColumnFormat(formatter = IdConverter.class)
 	private int id;
@@ -77,5 +77,21 @@ public class Car extends AbstractCar {
 	
 	public void setPrice(double price) {
 		this.price = price;
+	}
+	@Excel
+	@CSV
+public static 	class A{
+		String j;
+		@ToColumn
+		public String getJ() {
+			return j;
+		}
+	}
+}
+@Excel
+class AnotherClass { // will be ignored because not public
+	@ToColumn
+	public String getJ() {
+		return "j";
 	}
 }

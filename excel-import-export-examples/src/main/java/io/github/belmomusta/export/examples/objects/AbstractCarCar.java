@@ -5,12 +5,12 @@ import io.github.belmomusta.exporter.api.annotation.ToColumn;
 
 import java.util.Date;
 
-public abstract class AbstractCar extends AbstractCarCar {
+public abstract class AbstractCarCar {
 	//private Date nameFromAbstract;
 	
 	@ToColumn(9)
 	@ColumnFormat(formatter = DateFormatter.class)
-	public Date getNameFromAbstract() {
+	public Date getNameFromAbstractAbstract() {
 		return null;
 	}
 	

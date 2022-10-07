@@ -3,6 +3,7 @@ package io.github.belmomusta.exporter.processor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import java.util.Set;
 
@@ -18,6 +19,10 @@ public abstract class CommonProcessor  {
 		try {
 			Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(annotation);
 			for (Element aClass : annotatedElements) {
+				if(!aClass.getModifiers().contains(Modifier.PUBLIC)){
+					continue;
+				}
+				
 				final ClassWrapper classWrapper = getWrapper(aClass);
 				process(classWrapper);
 				processed++;

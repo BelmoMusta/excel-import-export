@@ -1,8 +1,8 @@
 package io.github.belmomusta.exporter.processor;
 
 import io.github.belmomusta.exporter.api.annotation.CSV;
-import io.github.belmomusta.exporter.api.annotation.Excel;
 import io.github.belmomusta.exporter.api.annotation.ColumnFormat;
+import io.github.belmomusta.exporter.api.annotation.Excel;
 import io.github.belmomusta.exporter.api.annotation.ToColumn;
 import io.github.belmomusta.exporter.processor.velocity.ExcelVelocityWrapper;
 import io.github.belmomusta.exporter.processor.velocity.FieldMethodPair;
@@ -14,8 +14,8 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Name;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -67,13 +67,7 @@ public class ClassWrapper {
 	
 	private static void fillFromInheditedClasses(TypeElement annotatedElement, ClassWrapper classWrapper) {
 		List<Element> objects = new ArrayList<>();
-		TypeMirror superclass = annotatedElement.getSuperclass();
-		
-		while(superclass != null){
-			superclass.accept(new MTypeVisitor(), objects);
-			TypeMirror superclass1 = superclass.accept(new InheritanceTreeTypeVisitor(), null, null);
-			
-		}
+		lookForSuperClasses(annotatedElement.asType(), objects);
 		
 		List<ClassWrapper> wrappers = new ArrayList<>();
 		for (Element object : objects) {
@@ -84,6 +78,14 @@ public class ClassWrapper {
 			wrappers.add(anotherWrapper);
 		}
 		getInheritedMethods(classWrapper, wrappers);
+	}
+	
+	private static void lookForSuperClasses(TypeMirror annotatedElement, List<Element> objects) {
+		List<? extends TypeMirror> typeMirrors = ExportProcessor.processingEnvironment.getTypeUtils().directSupertypes(annotatedElement);
+		for (TypeMirror supertype : typeMirrors) {
+			supertype.accept(new MTypeVisitor(), objects);
+			lookForSuperClasses(supertype, objects);
+		}
 	}
 	
 	private static void getInheritedMethods(ClassWrapper classWrapper, List<ClassWrapper> wrappers) {
@@ -111,10 +113,15 @@ public class ClassWrapper {
 	}
 	
 	private static String calculatePackageName(TypeElement annotatedElement) {
-		Name qualifiedName = annotatedElement.getQualifiedName();
-		String aPackage = qualifiedName.toString();
-		int index = aPackage.lastIndexOf('.');
-		return aPackage.substring(0, index);
+		Element enclosingElement=annotatedElement;
+		do {
+			enclosingElement = enclosingElement.getEnclosingElement();
+			
+		} while (!(enclosingElement instanceof PackageElement));
+		
+		PackageElement packageElement = (PackageElement) enclosingElement;
+		Name qualifiedName = packageElement.getQualifiedName();
+		return  qualifiedName.toString();
 	}
 	
 	private static void assignAnnotations(ClassWrapper classWrapper) {

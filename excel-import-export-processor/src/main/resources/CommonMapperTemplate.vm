@@ -1,5 +1,4 @@
-#set($lastIndx = $wrapper.correspondanceFieldMethod.size() - 1)
-#set($beforLastIndx = $wrapper.correspondanceFieldMethod.size() - 2)
+
 package $wrapper.aPackage;
 
 #if(!$config.useFQNs)
@@ -17,10 +16,14 @@ public class ${wrapper.simplifiedClassName}${exporterName} extends ${classToExte
     public $config.listClassName<$config.stringClassName> getHeadersEntries() {
 #if($wrapper.withHeaders)
          return ${config.arraysClassName}.asList(
-#foreach($i in [0 .. $beforLastIndx])
-            "$wrapper.correspondanceFieldMethod.get($i).name",
+#foreach($i in $wrapper.correspondanceFieldMethod)
+#if($velocityCount==$wrapper.correspondanceFieldMethod.size())
+                "$i.name");
+#else
+                "$i.name",
 #end
-            "$wrapper.correspondanceFieldMethod.get($lastIndx).name");
+#end
+
 #else
         return ${config.arraysClassName}.asList();
 #end
@@ -29,22 +32,19 @@ public class ${wrapper.simplifiedClassName}${exporterName} extends ${classToExte
     @Override
     public $config.listClassName<$config.stringClassName> getRowEntries($config.currentClassName object) {
         return ${config.arraysClassName}.asList(
-#foreach($i in [0 .. $beforLastIndx])
-#set($pair = $wrapper.correspondanceFieldMethod.get($i))
+#foreach($pair in $wrapper.correspondanceFieldMethod)
 #if($pair.formatter)
 #set( $formatter = ", ${pair.formatter.instanceName}" )
 #else
 #set( $formatter = "" )
 #end
-            valueOf(object.${pair.method}()${formatter}),
-#end
-#set($pair = $wrapper.correspondanceFieldMethod.get($lastIndx))
-#if($pair.formatter)
-#set( $formatter = ", ${pair.formatter.instanceName}" )
+#if($velocityCount==$wrapper.correspondanceFieldMethod.size())
+                valueOf(object.${pair.method}()${formatter}));
 #else
-#set( $formatter = "" )
+                valueOf(object.${pair.method}()${formatter}),
 #end
-            valueOf(object.${pair.method}()${formatter}));
+#end
+
     }
 
 #parse("ClassNameMethod.vm")
