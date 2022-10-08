@@ -58,6 +58,9 @@ public class ClassWrapper {
 		fillFields(classWrapper);
 		String generatedClassName = calculateGeneratedClassName(classSuffix, classWrapper);
 		String packageName = calculatePackageName((TypeElement) classWrapper.annotatedElement);
+		if(packageName.isEmpty()){
+			classWrapper.fQNOfGeneratedClass=generatedClassName;
+		} else
 		classWrapper.fQNOfGeneratedClass = packageName + packagePrefix + generatedClassName;
 		assignAnnotations(classWrapper);
 		lookForFormatters(classWrapper);
@@ -312,9 +315,14 @@ public class ClassWrapper {
 		if (!excel.ignoreHeaders()) {
 			wrapper.setWithHeaders(true);
 		}
+		String packageName = "" ;
 		String aPackage = getFQNOfGeneratedClass();
-		int index = aPackage.lastIndexOf('.');
-		String packageName = aPackage.substring(0, index);
+		if(!aPackage.isEmpty()){
+			int index = aPackage.lastIndexOf('.');
+			if(index>0) {
+				packageName = aPackage.substring(0, index);
+			}
+		}
 		wrapper.setAPackage(packageName);
 		return wrapper;
 	}

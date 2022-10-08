@@ -1,3 +1,3 @@
-model,musta id,foo,creationDate,updateDate,price,name
-My new model,24,0,2022-10-03,,"""300 000,99 MAD""",Porsche
-My new model,24,0,2022-10-03,,"""300 000,99 MAD""",Porsche
+fofo,tototot,model,musta id,foo,creationDate,updateDate,price,name,nameFromAbstract,nameFromAbstractAbstract
+,,My new model,24,0,2022-10-07,,"""300 000,99 MAD""",Porsche,,
+,,My new model,24,0,2022-10-07,,"""300 000,99 MAD""",Porsche,,

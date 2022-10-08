@@ -15,6 +15,9 @@ public class Car extends AbstractCar implements ICar {
 	private int id;
 	@ToColumn(9)
     private String name;
+	
+	@ToColumn(9)
+    private MyEnumeration enumeration;
 	@ToColumn
     private String model;
 
@@ -87,11 +90,35 @@ public static 	class A{
 			return j;
 		}
 	}
+	
+	@Excel
+	@CSV
+	public class AB extends ABC{
+		String j;
+		@ToColumn
+		public String getJ() {
+			return j;
+		}
+	}
+	
+	@Excel
+	@CSV
+	 class ABC{
+		String j;
+		@ToColumn
+		public String getJJ() {
+			return j;
+		}
+	}
+	
+	public MyEnumeration getEnumeration() {
+		return enumeration;
+	}
 }
 @Excel
 class AnotherClass { // will be ignored because not public
 	@ToColumn
-	public String getJ() {
+	public String getInnerFileClass() {
 		return "j";
 	}
 }
