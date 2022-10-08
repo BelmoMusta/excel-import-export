@@ -1,47 +1,35 @@
 package io.github.belmomusta.exporter.processor;
 
 import io.github.belmomusta.exporter.api.annotation.CSV;
-import io.github.belmomusta.exporter.api.annotation.ColumnFormat;
 import io.github.belmomusta.exporter.api.annotation.Excel;
 import io.github.belmomusta.exporter.api.annotation.ToColumn;
-import io.github.belmomusta.exporter.processor.velocity.ExcelVelocityWrapper;
+import io.github.belmomusta.exporter.processor.types.FieldMethodSet;
 import io.github.belmomusta.exporter.processor.velocity.FieldMethodPair;
 import io.github.belmomusta.exporter.processor.velocity.VelocityWrapper;
 
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Name;
-import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 public class ClassWrapper {
 	
-	private Element annotatedElement;
-	private List<MethodWrapper> enclosedMethods = new ArrayList<>();
-	private List<FieldWrapper> enclosedFields = new ArrayList<>();
+	private final Element annotatedElement;
+	private List<MethodWrapper> enclosedMethods;
+	private List<FieldWrapper> enclosedFields;
 	private String fQNOfGeneratedClass;
 	
-	Set<FieldMethodPair> inheditedPublicMethods = new TreeSet<>((a, b) -> {
-		if(a.getOrder() == b.getOrder()){
-			return 1;
-		}
-		return a.getOrder() - b.getOrder();
-	});
+	Set<FieldMethodPair> inheritedMembers ;
 	
-	private ClassWrapper(Element annotatedElement) {
+	 ClassWrapper(Element annotatedElement) {
 		this.annotatedElement = annotatedElement;
+		 inheritedMembers = new FieldMethodSet();
+		 enclosedMethods = new ArrayList<>();
+		 enclosedFields = new ArrayList<>();
 	}
 	
 	public static ClassWrapper of(Element annotatedElement) {
@@ -53,154 +41,18 @@ public class ClassWrapper {
 	}
 	
 	private static ClassWrapper common(Element annotatedElement, String packagePrefix, String classSuffix) {
-		ClassWrapper classWrapper = new ClassWrapper(annotatedElement);
-		fillMethods(classWrapper);
-		fillFields(classWrapper);
-		String generatedClassName = calculateGeneratedClassName(classSuffix, classWrapper);
-		String packageName = calculatePackageName((TypeElement) classWrapper.annotatedElement);
-		if(packageName.isEmpty()){
-			classWrapper.fQNOfGeneratedClass=generatedClassName;
-		} else
-		classWrapper.fQNOfGeneratedClass = packageName + packagePrefix + generatedClassName;
-		assignAnnotations(classWrapper);
-		lookForFormatters(classWrapper);
-		fillFromInheditedClasses((TypeElement) annotatedElement, classWrapper);
+		final ClassWrapper classWrapper = new ClassWrapper(annotatedElement);
+		WrapperUtils.fillMethods(classWrapper);
+		WrapperUtils.fillFields(classWrapper);
+		WrapperUtils.fillFQN(classWrapper, packagePrefix, classSuffix);
+		WrapperUtils.assignAnnotations(classWrapper);
+		WrapperUtils.lookForFormatters(classWrapper);
+		WrapperUtils.fillFromInheritedClasses((TypeElement) annotatedElement, classWrapper);
 		return classWrapper;
 	}
 	
-	private static void fillFromInheditedClasses(TypeElement annotatedElement, ClassWrapper classWrapper) {
-		List<Element> objects = new ArrayList<>();
-		lookForSuperClasses(annotatedElement.asType(), objects);
-		
-		List<ClassWrapper> wrappers = new ArrayList<>();
-		for (Element object : objects) {
-			ClassWrapper anotherWrapper = new ClassWrapper(object);
-			fillMethods(anotherWrapper);
- 			assignAnnotations(anotherWrapper);
-			lookForFormatters(anotherWrapper);
-			wrappers.add(anotherWrapper);
-		}
-		getInheritedMethods(classWrapper, wrappers);
-	}
-	
-	private static void lookForSuperClasses(TypeMirror annotatedElement, List<Element> objects) {
-		List<? extends TypeMirror> typeMirrors = ExportProcessor.processingEnvironment.getTypeUtils().directSupertypes(annotatedElement);
-		for (TypeMirror supertype : typeMirrors) {
-			supertype.accept(new MTypeVisitor(), objects);
-			lookForSuperClasses(supertype, objects);
-		}
-	}
-	
-	private static void getInheritedMethods(ClassWrapper classWrapper, List<ClassWrapper> wrappers) {
-		for (ClassWrapper wrapper : wrappers) {
-			classWrapper.addFieldMethodPair(wrapper.getCorrespondanceFieldMethod());
-		}
-	}
-	
-	private static String calculateGeneratedClassName(String classSuffix, ClassWrapper classWrapper) {
-		return classWrapper.annotatedElement.getSimpleName() + classSuffix;
-	}
-	
-	private static void fillFields(ClassWrapper classWrapper) {
-		classWrapper.enclosedFields = classWrapper.annotatedElement.getEnclosedElements().stream()
-				.filter(e -> e.getKind() == ElementKind.FIELD)
-				.map(FieldWrapper::new)
-				.collect(Collectors.toList());
-	}
-	
-	private static void fillMethods(ClassWrapper classWrapper) {
-		classWrapper.enclosedMethods = classWrapper.annotatedElement.getEnclosedElements().stream()
-				.filter(e -> e.getKind() == ElementKind.METHOD)
-				.map(MethodWrapper::new)
-				.collect(Collectors.toList());
-	}
-	
-	private static String calculatePackageName(TypeElement annotatedElement) {
-		Element enclosingElement=annotatedElement;
-		do {
-			enclosingElement = enclosingElement.getEnclosingElement();
-			
-		} while (!(enclosingElement instanceof PackageElement));
-		
-		PackageElement packageElement = (PackageElement) enclosingElement;
-		Name qualifiedName = packageElement.getQualifiedName();
-		return  qualifiedName.toString();
-	}
-	
-	private static void assignAnnotations(ClassWrapper classWrapper) {
-		for (Class<? extends Annotation> annotation : AnnotationsRegistrer.ANNOTATIONS) {
-			for (MethodWrapper methodWrapper : classWrapper.enclosedMethods) {
-				Annotation foundAnnotation = methodWrapper.wrappedElement.getAnnotation(annotation);
-				if (foundAnnotation == null) {
-					foundAnnotation = classWrapper.lookForAnnotationInPossibleField(methodWrapper);
-					if (foundAnnotation != null) {
-						methodWrapper.add(foundAnnotation);
-					}
-				}
-			}
-		}
-	}
-	
-	private static void lookForFormatters(ClassWrapper classWrapper) {
-		Element formatAnnotation = ExportProcessor.processingEnvironment.getElementUtils().getTypeElement(ColumnFormat.class.getName());
-		for (MethodWrapper method : classWrapper.enclosedMethods) {
-			boolean formatterFound = tryToFindFormatters(formatAnnotation, method, method.wrappedElement.getAnnotationMirrors());
-			
-			if(!formatterFound){
-				for (FieldWrapper enclosedField : classWrapper.enclosedFields) {
-					String possibleFieldName = method.getPossibleFieldName();
-					if(enclosedField.getName().equals(possibleFieldName)) {
-						tryToFindFormatters(formatAnnotation, method, enclosedField.wrappedElement.getAnnotationMirrors());
-						
-					}
-					
-				}
-			}
-		}
-		
-	}
-	
-	private static boolean tryToFindFormatters(Element formatAnnotation, MethodWrapper method, List<?
-			extends AnnotationMirror> mirrors) {
-		boolean formatterFound = false;
-		for (AnnotationMirror annotationMirror : mirrors) {
-			if (annotationMirror.getAnnotationType().equals(formatAnnotation.asType())) {
-				Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues =
-						annotationMirror.getElementValues();
-				for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry :
-						elementValues.entrySet()) {
-					if (formatterFound) {
-						break;
-					}
-					
-					ExecutableElement key = entry.getKey();
-					AnnotationValue value = entry.getValue();
-					
-					if (key.toString().equals("formatter()")) {
-						method.setFormatter(value.getValue().toString());
-						formatterFound = true;
-					}
-				}
-				if(formatterFound){
-					break;
-				}
-			}
-		}
-		return formatterFound;
-	}
-	
-	private Annotation lookForAnnotationInPossibleField(MethodWrapper methodWrapper) {
-		String possibleFieldName = methodWrapper.getPossibleFieldName();
-		for (FieldWrapper enclosedField : this.enclosedFields) {
-			if (enclosedField.getName().equals(possibleFieldName)) {
-				return enclosedField.getAnnotation(ToColumn.class);
-			}
-		}
-		return null;
-	}
-	
 	public Collection<FieldMethodPair> getCorrespondanceFieldMethod() {
-		Set<FieldMethodPair> fieldMethodPairs = new TreeSet<>();
+		Set<FieldMethodPair> fieldMethodPairs = new FieldMethodSet();
 		this.enclosedMethods.stream()
 				.filter(MethodWrapper::isValid)
 				.forEach(aMethod -> {
@@ -209,64 +61,29 @@ public class ClassWrapper {
 					if (annotation != null && possibleFieldNameForMethod != null) {
 						FieldMethodPair fieldMethodPair = new FieldMethodPair(possibleFieldNameForMethod,
 								aMethod.getName());
-						applyHeaders(annotation, possibleFieldNameForMethod, fieldMethodPair);
+						WrapperUtils.applyHeaders(annotation, possibleFieldNameForMethod, fieldMethodPair);
 						fieldMethodPairs.add(fieldMethodPair);
 						if (aMethod.getFormatter() != null) {
 							fieldMethodPair.setFormatter(aMethod.getFormatter());
 						}
 					} else if (annotation != null) {
-						applyHeaders(fieldMethodPairs, aMethod, annotation);
+						WrapperUtils.applyHeaders(fieldMethodPairs, aMethod, annotation);
 					}
-					
 				});
 		
+		assignOrder(fieldMethodPairs);
+		fieldMethodPairs.addAll(inheritedMembers);
+		return fieldMethodPairs;
+	}
+	
+	private void assignOrder(Set<FieldMethodPair> fieldMethodPairs) {
 		int i = 0;
-		Set<FieldMethodPair> set = new TreeSet<>((a, b) -> {
-			if(a.getOrder() == b.getOrder()){
-				return 1;
-			}
-			return a.getOrder() - b.getOrder();
-		});
 		for (FieldMethodPair fieldMethodPair : fieldMethodPairs) {
-			if (!fieldMethodPair.isOrdered()) {
-				fieldMethodPair.setOrder(i++);
- 			} else {
- 				i = i + 1;
+		   if (!fieldMethodPair.isOrdered()) {
+			   fieldMethodPair.setOrder(i);
 			}
-		}
-		
-		set.addAll(fieldMethodPairs);
-		set.addAll(inheditedPublicMethods);
-		return new ArrayList<>(set);
-	}
-	public void addFieldMethodPair(Collection<FieldMethodPair> fieldMethodPair){
-		inheditedPublicMethods.addAll(fieldMethodPair);
-	}
-	
-	private void applyHeaders(Set<FieldMethodPair> fieldMethodPairs, MethodWrapper aMethod, ToColumn annotation) {
-		FieldMethodPair methodPair = new FieldMethodPair(aMethod.getName());
-		if (ToColumn.DEFAULT_NAME.equals(annotation.name())) {
-			methodPair.setHeaderName(aMethod.getName());
-		} else {
-			methodPair.setHeaderName(annotation.name());
-		}
-		methodPair.setOrder(annotation.value());
-		if (aMethod.getFormatter() != null) {
-			methodPair.setFormatter(aMethod.getFormatter());
-		}
-		
-		fieldMethodPairs.add(methodPair);
-	}
-	
-	private void applyHeaders(ToColumn annotation, String possibleFieldNameForMethod, FieldMethodPair fieldMethodPair) {
-		if (annotation != null) {
-			fieldMethodPair.setOrder(annotation.value());
-			if (ToColumn.DEFAULT_NAME.equals(annotation.name())) {
-				fieldMethodPair.setHeaderName(possibleFieldNameForMethod);
-			} else {
-				fieldMethodPair.setHeaderName(annotation.name());
-			}
-		}
+		   i++;
+	   }
 	}
 	
 	public String getFQNOfGeneratedClass() {
@@ -274,16 +91,11 @@ public class ClassWrapper {
 	}
 	
 	public VelocityWrapper getVelocityWrapper() {
-		VelocityWrapper wrapper = null;
-		Excel excel = annotatedElement.getAnnotation(Excel.class);
-		if (excel != null) {
-			wrapper = handleExcel(excel);
-		} else {
-			CSV csv = annotatedElement.getAnnotation(CSV.class);
-			if (csv != null) {
-				wrapper = handleCSV(csv);
-			}
+		VelocityWrapper wrapper = WrapperUtils.handleExcel(this);
+		if (wrapper == null) {
+			wrapper = WrapperUtils.handleCSV(this);
 		}
+		
 		if (wrapper != null && annotatedElement instanceof TypeElement) {
 			Name qualifiedName = ((TypeElement) annotatedElement).getQualifiedName();
 			wrapper.setClassName(qualifiedName.toString());
@@ -295,35 +107,62 @@ public class ClassWrapper {
 		return wrapper;
 	}
 	
-	private VelocityWrapper handleCSV(CSV csv) {
-		VelocityWrapper wrapper;
-		wrapper = new VelocityWrapper();
-		wrapper.setUseFQNs(csv.useFQNs());
-		if (!csv.ignoreHeaders()) {
-			wrapper.setWithHeaders(true);
-		}
-		String csvPackagee = getFQNOfGeneratedClass();
-		int index = csvPackagee.lastIndexOf('.');
-		wrapper.setAPackage(csvPackagee.substring(0, index));
-		return wrapper;
+	public  <A extends Annotation> boolean hasAnnotation(Class<A> a) {
+		return getAnnotation(a) != null;
 	}
 	
-	private VelocityWrapper handleExcel(Excel excel) {
-		VelocityWrapper wrapper;
-		wrapper = new ExcelVelocityWrapper();
-		wrapper.setUseFQNs(excel.useFQNs());
-		if (!excel.ignoreHeaders()) {
-			wrapper.setWithHeaders(true);
-		}
-		String packageName = "" ;
-		String aPackage = getFQNOfGeneratedClass();
-		if(!aPackage.isEmpty()){
-			int index = aPackage.lastIndexOf('.');
-			if(index>0) {
-				packageName = aPackage.substring(0, index);
-			}
-		}
-		wrapper.setAPackage(packageName);
-		return wrapper;
+	public <A extends Annotation> A getAnnotation(Class<A> a) {
+		return annotatedElement.getAnnotation(a);
+	}
+	
+	public boolean isUseFQNs() {
+		 boolean useFQNS = false;
+		 Excel excel = getAnnotation(Excel.class);
+		 if(excel != null){
+			 useFQNS = excel.useFQNs();
+		 } else {
+			 CSV csv = getAnnotation(CSV.class);
+			 if(csv != null){
+				 useFQNS = csv.useFQNs();
+			 }
+		 }
+		 return useFQNS;
+	}
+	public boolean isIgnoreHeaders() {
+		 boolean ignoreHeaders = false;
+		 Excel excel = getAnnotation(Excel.class);
+		 if(excel != null){
+			 ignoreHeaders = excel.ignoreHeaders();
+		 } else {
+			 CSV csv = getAnnotation(CSV.class);
+			 if(csv != null){
+				 ignoreHeaders = csv.ignoreHeaders();
+			 }
+		 }
+		 return ignoreHeaders;
+	}
+	
+	public Element getAnnotatedElement() {
+		return annotatedElement;
+	}
+	
+	public List<MethodWrapper> getEnclosedMethods() {
+		return enclosedMethods;
+	}
+	
+	public List<FieldWrapper> getEnclosedFields() {
+		return enclosedFields;
+	}
+	
+	public void setEnclosedMethods(List<MethodWrapper> enclosedMethods) {
+		this.enclosedMethods = enclosedMethods;
+	}
+	
+	public void setFQNOfGeneratedClass(String fQNOfGeneratedClass) {
+		this.fQNOfGeneratedClass = fQNOfGeneratedClass;
+	}
+	
+	public void setEnclosedFields(List<FieldWrapper> enclosedFields) {
+		this.enclosedFields = enclosedFields;
 	}
 }

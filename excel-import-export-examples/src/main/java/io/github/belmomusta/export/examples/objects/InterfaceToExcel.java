@@ -3,15 +3,14 @@ package io.github.belmomusta.export.examples.objects;
 import io.github.belmomusta.exporter.api.annotation.Excel;
 import io.github.belmomusta.exporter.api.annotation.ToColumn;
 
-@Excel
-public enum MyEnumeration {
-	
-	A,
-	B,
-	
-	;
+@Excel(ignoreHeaders = false)
+public interface InterfaceToExcel {
 	@ToColumn
-	public String getValue(){
-		return this.name();
+	String getSomething();
+	
+	@ToColumn
+	
+	default String toto(){
+		return "toto";
 	}
 }

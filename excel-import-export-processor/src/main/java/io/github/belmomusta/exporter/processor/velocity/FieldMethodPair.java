@@ -51,4 +51,8 @@ public class FieldMethodPair extends ExcelCellWrapper implements Comparable<Fiel
     public FormatterWrapper getFormatter() {
         return formatterWrapper;
     }
+	
+	public String getCall() {
+		return "object." + method + "()";
+	}
 }

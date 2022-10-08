@@ -23,12 +23,16 @@ public class ${wrapper.simplifiedClassName}${exporterName} extends ${classToExte
     @Override
     public $config.listClassName<$config.stringClassName> getHeadersEntries() {
 #if($wrapper.withHeaders)
+#if($wrapper.correspondanceFieldMethod.size()==0)
+        return ${config.arraysClassName}.asList();
+#else
          return ${config.arraysClassName}.asList(
 #foreach($i in $wrapper.correspondanceFieldMethod)
 #if($velocityCount==$wrapper.correspondanceFieldMethod.size())
                 "$i.name");
 #else
                 "$i.name",
+#end
 #end
 #end
 
@@ -39,6 +43,9 @@ public class ${wrapper.simplifiedClassName}${exporterName} extends ${classToExte
 
     @Override
     public $config.listClassName<$config.stringClassName> getRowEntries($config.currentClassName object) {
+#if($wrapper.correspondanceFieldMethod.size()==0)
+        return ${config.arraysClassName}.asList();
+#else
         return ${config.arraysClassName}.asList(
 #foreach($pair in $wrapper.correspondanceFieldMethod)
 #if($pair.formatter)
@@ -47,9 +54,10 @@ public class ${wrapper.simplifiedClassName}${exporterName} extends ${classToExte
 #set( $formatter = "" )
 #end
 #if($velocityCount==$wrapper.correspondanceFieldMethod.size())
-                valueOf(object.${pair.method}()${formatter}));
+                valueOf(${pair.call}${formatter}));
 #else
-                valueOf(object.${pair.method}()${formatter}),
+                valueOf(${pair.call}${formatter}),
+#end
 #end
 #end
 

@@ -7,7 +7,7 @@ import io.github.belmomusta.exporter.api.annotation.Excel;
 
 import java.util.Date;
 
-@Excel(ignoreHeaders = false,useFQNs = false)
+@Excel(ignoreHeaders = false,useFQNs = true)
 @CSV()
 public class Car extends AbstractCar implements ICar {
 	@ToColumn(name = "musta id")
@@ -81,9 +81,9 @@ public class Car extends AbstractCar implements ICar {
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	@Excel
+	@Excel(ignoreHeaders = false)
 	@CSV
-public static 	class A{
+public static class A{
 		String j;
 		@ToColumn
 		public String getJ() {
