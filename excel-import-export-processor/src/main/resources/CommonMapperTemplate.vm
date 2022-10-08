@@ -1,67 +1,10 @@
-#if($!wrapper.aPackage != "")
-package $wrapper.aPackage;
-#else
-    /**
-    WARNING
-    The class $config.fullCurrentClassName is in the default package
-    **/
-#end
-
-#if(!$config.useFQNs)
-#if($!wrapper.aPackage != "")
-import $config.fullCurrentClassName;
-#end
-import $classToImport;
-#parse("FormatterImports.vm")
-import $config.listFullClassName;
-import $config.arraysFullClassName;
-
-#end
+#parse("ImportsTemplate.vm")
 public class ${wrapper.simplifiedClassName}${exporterName} extends ${classToExtend}<$config.currentClassName> {
 #parse("FormatterAttributes.vm")
 
-    @Override
-    public $config.listClassName<$config.stringClassName> getHeadersEntries() {
-#if($wrapper.withHeaders)
-#if($wrapper.correspondanceFieldMethod.size()==0)
-        return ${config.arraysClassName}.asList();
-#else
-         return ${config.arraysClassName}.asList(
-#foreach($i in $wrapper.correspondanceFieldMethod)
-#if($velocityCount==$wrapper.correspondanceFieldMethod.size())
-                "$i.name");
-#else
-                "$i.name",
-#end
-#end
-#end
+#parse("HeadersTemplate.vm")
 
-#else
-        return ${config.arraysClassName}.asList();
-#end
-    }
-
-    @Override
-    public $config.listClassName<$config.stringClassName> getRowEntries($config.currentClassName object) {
-#if($wrapper.correspondanceFieldMethod.size()==0)
-        return ${config.arraysClassName}.asList();
-#else
-        return ${config.arraysClassName}.asList(
-#foreach($pair in $wrapper.correspondanceFieldMethod)
-#if($pair.formatter)
-#set( $formatter = ", ${pair.formatter.instanceName}" )
-#else
-#set( $formatter = "" )
-#end
-#if($velocityCount==$wrapper.correspondanceFieldMethod.size())
-                valueOf(${pair.call}${formatter}));
-#else
-                valueOf(${pair.call}${formatter}),
-#end
-#end
-#end
-
-    }
+#parse("EntriesTemplate.vm")
 
 #parse("ClassNameMethod.vm")
 

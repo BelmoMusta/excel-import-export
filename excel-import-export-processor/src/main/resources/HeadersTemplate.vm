@@ -1,0 +1,21 @@
+    @Override
+    public $config.listClassName<$config.stringClassName> getHeadersEntries() {
+#if($wrapper.withHeaders)
+#if($wrapper.correspondanceFieldMethod.size()==0)
+        return ${config.arraysClassName}.asList();
+#else
+         return ${config.arraysClassName}.asList(
+#foreach($i in $wrapper.correspondanceFieldMethod)
+#if($velocityCount==$wrapper.correspondanceFieldMethod.size())
+#set($endOfLine=");")
+#else
+#set($endOfLine=",")
+#end
+                "$i.name"$endOfLine
+#end
+#end
+
+#else
+        return ${config.arraysClassName}.asList();
+#end
+    }
