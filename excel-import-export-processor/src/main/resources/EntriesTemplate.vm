@@ -15,8 +15,7 @@
 #else
 #set($endOfLine=",")
 #end
-                valueOf(${pair.call}${formatter})$endOfLine
+                valueOf(${pair.getCall(${config.currentClassName})}${formatter})$endOfLine
 #end
 #end
-
     }

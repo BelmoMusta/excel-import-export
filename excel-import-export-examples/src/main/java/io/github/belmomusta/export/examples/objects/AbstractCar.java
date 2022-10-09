@@ -17,4 +17,9 @@ public abstract class AbstractCar extends AbstractCarCar {
 	public void setNameFromAbstract(Date name) {
 		//this.nameFromAbstract = name;
 	}
+	@ToColumn
+	public static String setNameFromAbstract() {
+		//this.nameFromAbstract = name;
+		return "";
+	}
 }

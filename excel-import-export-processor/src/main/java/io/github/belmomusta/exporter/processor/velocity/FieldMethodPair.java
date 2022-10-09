@@ -6,6 +6,7 @@ public class FieldMethodPair extends ExcelCellWrapper implements Comparable<Fiel
     private final String field;
     private final String method;
     private String headerName;
+	boolean isStaticMethod;
     FormatterWrapper formatterWrapper;
 
     public FieldMethodPair(String field, String method) {
@@ -52,7 +53,17 @@ public class FieldMethodPair extends ExcelCellWrapper implements Comparable<Fiel
         return formatterWrapper;
     }
 	
-	public String getCall() {
+	public void setStaticMethod(boolean staticMethod) {
+		isStaticMethod = staticMethod;
+	}
+	
+	public boolean isStaticMethod() {
+		return isStaticMethod;
+	}
+	
+	public String getCall(String className) {
+		if(isStaticMethod)
+			return className+"."+ method + "()";
 		return "object." + method + "()";
 	}
 }

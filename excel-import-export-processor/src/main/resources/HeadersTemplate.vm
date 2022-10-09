@@ -14,7 +14,6 @@
                 "$i.name"$endOfLine
 #end
 #end
-
 #else
         return ${config.arraysClassName}.asList();
 #end

@@ -10,7 +10,7 @@ public interface InterfaceToExcel {
 	
 	@ToColumn
 	
-	default String toto(){
+	static String toto(){
 		return "toto";
 	}
 }

@@ -12,6 +12,7 @@ import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
@@ -141,11 +142,21 @@ public class WrapperUtils {
 	
 	static void getInheritedMethods(ClassWrapper classWrapper, List<ClassWrapper> wrappers) {
 		for (ClassWrapper wrapper : wrappers) {
-			addInheritedFieldMethodPairs(classWrapper, wrapper.getCorrespondanceFieldMethod());
+			Collection<FieldMethodPair> correspondanceFieldMethod = wrapper.getCorrespondanceFieldMethod();
+			Collection<FieldMethodPair> inheritedMetods;
+			if(wrapper.getAnnotatedElement().getKind() == ElementKind.INTERFACE){
+				//  do not take static methods if it is an interface
+				inheritedMetods = correspondanceFieldMethod.stream()
+						.filter(m -> !m.isStaticMethod())
+						.collect(Collectors.toList());
+			} else {
+				inheritedMetods = correspondanceFieldMethod;
+			}
+			addInheritedFieldMethodPairs(classWrapper, inheritedMetods);
 		}
 	}
 	
-	public static void addInheritedFieldMethodPairs(ClassWrapper classWrapper,Collection<FieldMethodPair> fieldMethodPair){
+	public static void addInheritedFieldMethodPairs(ClassWrapper classWrapper, Collection<FieldMethodPair> fieldMethodPair){
 		classWrapper.inheritedMembers.addAll(fieldMethodPair);
 	}
 	
@@ -186,6 +197,7 @@ public class WrapperUtils {
 	
 	static void applyHeaders(Set<FieldMethodPair> fieldMethodPairs, MethodWrapper aMethod, ToColumn annotation) {
 		FieldMethodPair methodPair = new FieldMethodPair(aMethod.getName());
+		methodPair.setStaticMethod(aMethod.isStaticMethod());
 		if (ToColumn.DEFAULT_NAME.equals(annotation.name())) {
 			methodPair.setHeaderName(aMethod.getName());
 		} else {

@@ -18,18 +18,18 @@ public class MethodWrapper extends ElementWrapper {
         TypeMirror returnType = ((ExecutableElement) wrappedElement).getReturnType();
 
         return returnType.getKind() != TypeKind.VOID
-                && !executableMethod.getModifiers().contains(Modifier.STATIC)
+                //&& !executableMethod.getModifiers().contains(Modifier.STATIC)
                 && !executableMethod.getModifiers().contains(Modifier.PRIVATE)
                 && executableMethod.getParameters().isEmpty();
     }
 
     public String getPossibleFieldName() {
         String ret;
-        String correspondantFieldName = wrappedElement.getSimpleName().toString();
-        if (correspondantFieldName.startsWith("is") && correspondantFieldName.length() > 2) {
-            ret = correspondantFieldName.substring(2);
-        } else if (correspondantFieldName.startsWith("get") && correspondantFieldName.length() > 3) {
-            ret = correspondantFieldName.substring(3);
+        String relatedFieldName = wrappedElement.getSimpleName().toString();
+        if (relatedFieldName.startsWith("is") && relatedFieldName.length() > 2) {
+            ret = relatedFieldName.substring(2);
+        } else if (relatedFieldName.startsWith("get") && relatedFieldName.length() > 3) {
+            ret = relatedFieldName.substring(3);
         } else {
             ret = null;
         }
@@ -38,4 +38,8 @@ public class MethodWrapper extends ElementWrapper {
         }
         return ret;
     }
+	
+	public boolean isStaticMethod() {
+		return wrappedElement.getModifiers().contains(Modifier.STATIC);
+	}
 }

@@ -61,6 +61,7 @@ public class ClassWrapper {
 					if (annotation != null && possibleFieldNameForMethod != null) {
 						FieldMethodPair fieldMethodPair = new FieldMethodPair(possibleFieldNameForMethod,
 								aMethod.getName());
+						fieldMethodPair.setStaticMethod(aMethod.isStaticMethod());
 						WrapperUtils.applyHeaders(annotation, possibleFieldNameForMethod, fieldMethodPair);
 						fieldMethodPairs.add(fieldMethodPair);
 						if (aMethod.getFormatter() != null) {

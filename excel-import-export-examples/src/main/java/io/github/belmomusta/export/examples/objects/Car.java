@@ -54,8 +54,8 @@ public class Car extends AbstractCar implements ICar, InterfaceToExcel {
 	public void setId(int id) {this.id = id; }
 
     @ToColumn
-    public int getFoo() {
-        return foo;
+    public static int getFoo() {
+        return 1;
     }
 	public String name(){
 		return "name";
@@ -84,11 +84,11 @@ public class Car extends AbstractCar implements ICar, InterfaceToExcel {
 	
 	@Override
 	public String getSomething() {
-		return null;
+		return "something";
 	}
 	
-	@Excel(ignoreHeaders = false)
-	@CSV
+	//@Excel(ignoreHeaders = false)
+	//@CSV
 public static class A{
 		String j;
 		@ToColumn
@@ -97,8 +97,8 @@ public static class A{
 		}
 	}
 	
-	@Excel
-	@CSV
+	//@Excel
+	//@CSV
 	public class AB extends ABC{
 		String j;
 		@ToColumn
@@ -107,8 +107,8 @@ public static class A{
 		}
 	}
 	
-	@Excel
-	@CSV
+	//@Excel
+	//@CSV
 	 class ABC{
 		String j;
 		@ToColumn
@@ -121,7 +121,7 @@ public static class A{
 		return enumeration;
 	}
 }
-@Excel
+//@Excel
 class AnotherClass { // will be ignored because not public
 	@ToColumn
 	public String getInnerFileClass() {

@@ -21,6 +21,7 @@ public class JavaFileWriter {
             throw new JavaFileWriterException(e);
         }
     }
+
     public static void writeJavaClassForCSV(ClassWrapper classWrapper, ProcessingEnvironment processingEnv) {
         try {
             VelocityWrapper wrapper = classWrapper.getVelocityWrapper();
