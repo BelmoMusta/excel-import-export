@@ -7,12 +7,11 @@ import io.github.belmomusta.exporter.api.annotation.Excel;
 
 import java.util.Date;
 
-@Excel(ignoreHeaders = false,useFQNs = true)
+@Excel(ignoreHeaders = true,useFQNs = false)
 @CSV()
-public class Car extends AbstractCar implements ICar, InterfaceToExcel {
+public class Car implements InterfaceToExcel {
 	@ToColumn(name = "musta id")
-	@ColumnFormat(formatter = IdConverter.class)
-	private int id;
+ 	private int id;
 	@ToColumn(9)
     private String name;
 	
@@ -25,8 +24,7 @@ public class Car extends AbstractCar implements ICar, InterfaceToExcel {
 	@ToColumn
 	private Date creationDate;
 	
-	@ColumnFormat(formatter = DateFormatter.class)
-	@ToColumn
+ 	@ToColumn
 	private Date updateDate;
 	@ToColumn
 	@ColumnFormat(formatter = CurrencyFormatter.class)
@@ -61,8 +59,7 @@ public class Car extends AbstractCar implements ICar, InterfaceToExcel {
 		return "name";
 	}
 	
-	@ColumnFormat(formatter = DateFormatter.class)
-	public Date getCreationDate() {
+ 	public Date getCreationDate() {
 		return creationDate;
 	}
 	
@@ -87,7 +84,7 @@ public class Car extends AbstractCar implements ICar, InterfaceToExcel {
 		return "something";
 	}
 	
-	//@Excel(ignoreHeaders = false)
+	@Excel(ignoreHeaders = false)
 	//@CSV
 public static class A{
 		String j;
@@ -97,7 +94,7 @@ public static class A{
 		}
 	}
 	
-	//@Excel
+	@Excel
 	//@CSV
 	public class AB extends ABC{
 		String j;
@@ -107,7 +104,7 @@ public static class A{
 		}
 	}
 	
-	//@Excel
+	@Excel
 	//@CSV
 	 class ABC{
 		String j;
@@ -119,12 +116,5 @@ public static class A{
 	
 	public MyEnumeration getEnumeration() {
 		return enumeration;
-	}
-}
-//@Excel
-class AnotherClass { // will be ignored because not public
-	@ToColumn
-	public String getInnerFileClass() {
-		return "j";
 	}
 }

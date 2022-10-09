@@ -9,7 +9,6 @@ public interface InterfaceToExcel {
 	String getSomething();
 	
 	@ToColumn
-	
 	static String toto(){
 		return "toto";
 	}
