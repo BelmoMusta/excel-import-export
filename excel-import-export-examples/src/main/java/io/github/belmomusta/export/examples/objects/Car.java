@@ -30,6 +30,13 @@ public class Car implements InterfaceToExcel {
 	@ColumnFormat(formatter = CurrencyFormatter.class)
 	private double price;
 	
+	Inner inner;
+	@Excel
+	@ToColumn
+	public Inner getInner() {
+		return inner;
+	}
+	
 	@Override
 	public String toString() {
 		return "must.belmo.excel.importexport.objects.Car{" +
@@ -82,36 +89,6 @@ public class Car implements InterfaceToExcel {
 	@Override
 	public String getSomething() {
 		return "something";
-	}
-	
-	@Excel(ignoreHeaders = false)
-	//@CSV
-public static class A{
-		String j;
-		@ToColumn
-		public String getJ() {
-			return j;
-		}
-	}
-	
-	@Excel
-	//@CSV
-	public class AB extends ABC{
-		String j;
-		@ToColumn
-		public String getJ() {
-			return j;
-		}
-	}
-	
-	@Excel
-	//@CSV
-	 class ABC{
-		String j;
-		@ToColumn
-		public String getJJ() {
-			return j;
-		}
 	}
 	
 	public MyEnumeration getEnumeration() {

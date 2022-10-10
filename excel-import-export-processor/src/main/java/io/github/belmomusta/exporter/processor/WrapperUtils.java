@@ -12,7 +12,6 @@ import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
@@ -116,7 +115,7 @@ public class WrapperUtils {
 	
 	static void fillMethods(ClassWrapper classWrapper) {
 		Predicate<Element> predicate = e -> e.getKind() == ElementKind.METHOD;
-		Function<Element, MethodWrapper> mapper = MethodWrapper::new;
+		Function<Element, MethodWrapper> mapper = getMapper();
 		
 		final List<MethodWrapper> methodWrappers = classWrapper.getAnnotatedElement()
 				.getEnclosedElements().stream()
@@ -124,6 +123,10 @@ public class WrapperUtils {
 				.map(mapper)
 				.collect(Collectors.toList());
 		classWrapper.setEnclosedMethods(methodWrappers);
+	}
+	
+	private static Function<Element, MethodWrapper> getMapper() {
+		return MethodWrapper::new;
 	}
 	
 	static void fillFQN(ClassWrapper classWrapper, String packagePrefix, String classSuffix) {
@@ -195,7 +198,7 @@ public class WrapperUtils {
 		getInheritedMethods(classWrapper, wrappers);
 	}
 	
-	static void applyHeaders(Set<FieldMethodPair> fieldMethodPairs, MethodWrapper aMethod, ToColumn annotation) {
+	static FieldMethodPair applyHeaders(Set<FieldMethodPair> fieldMethodPairs, MethodWrapper aMethod, ToColumn annotation) {
 		FieldMethodPair methodPair = new FieldMethodPair(aMethod.getName());
 		methodPair.setStaticMethod(aMethod.isStaticMethod());
 		if (ToColumn.DEFAULT_NAME.equals(annotation.name())) {
@@ -209,6 +212,7 @@ public class WrapperUtils {
 		}
 		
 		fieldMethodPairs.add(methodPair);
+		return methodPair;
 	}
 	
 	static void applyHeaders(ToColumn annotation, String possibleFieldNameForMethod, FieldMethodPair fieldMethodPair) {

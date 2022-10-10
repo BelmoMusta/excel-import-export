@@ -8,8 +8,11 @@ import io.github.belmomusta.exporter.processor.velocity.FieldMethodPair;
 import io.github.belmomusta.exporter.processor.velocity.VelocityWrapper;
 
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,23 +61,60 @@ public class ClassWrapper {
 				.forEach(aMethod -> {
 					ToColumn annotation = aMethod.getAnnotation(ToColumn.class);
 					String possibleFieldNameForMethod = aMethod.getPossibleFieldName();
+					 FieldMethodPair fieldMethodPair = null;
 					if (annotation != null && possibleFieldNameForMethod != null) {
-						FieldMethodPair fieldMethodPair = new FieldMethodPair(possibleFieldNameForMethod,
+						 fieldMethodPair = new FieldMethodPair(possibleFieldNameForMethod,
 								aMethod.getName());
 						fieldMethodPair.setStaticMethod(aMethod.isStaticMethod());
 						WrapperUtils.applyHeaders(annotation, possibleFieldNameForMethod, fieldMethodPair);
-						fieldMethodPairs.add(fieldMethodPair);
 						if (aMethod.getFormatter() != null) {
 							fieldMethodPair.setFormatter(aMethod.getFormatter());
 						}
 					} else if (annotation != null) {
-						WrapperUtils.applyHeaders(fieldMethodPairs, aMethod, annotation);
+						 fieldMethodPair = WrapperUtils.applyHeaders(fieldMethodPairs, aMethod,
+								annotation);
+					}
+					
+					if (fieldMethodPair != null) {
+						boolean innerChyHaja = assingInnerMethods(fieldMethodPairs, aMethod,
+								fieldMethodPair);
+						if (!innerChyHaja){
+							fieldMethodPairs.add(fieldMethodPair);
+						}
 					}
 				});
 		
 		assignOrder(fieldMethodPairs);
 		fieldMethodPairs.addAll(inheritedMembers);
 		return fieldMethodPairs;
+	}
+	
+	private boolean assingInnerMethods(Set<FieldMethodPair> fieldMethodPairs, MethodWrapper aMethod,
+						   FieldMethodPair fieldMethodPair) {
+		boolean innerMethodsExist = false;
+		
+		Element method_ = aMethod.wrappedElement;
+		if(method_ instanceof ExecutableElement){
+			ExecutableElement executableElement = (ExecutableElement) method_;
+			TypeMirror returnType = executableElement.getReturnType();
+			if (returnType instanceof DeclaredType) {
+				DeclaredType declaredType = (DeclaredType) returnType;
+				Element innerElemt = declaredType.asElement();
+				if (method_.getAnnotation(Excel.class) != null) {
+					ClassWrapper innerWrapper = new ClassWrapper(innerElemt);
+					WrapperUtils.fillMethods(innerWrapper);
+					List<MethodWrapper> methodWrappers = innerWrapper.getEnclosedMethods();
+					for (MethodWrapper methodWrapper : methodWrappers) {
+						innerMethodsExist =true;
+						FieldMethodPair m = new FieldMethodPair(methodWrapper.getName(),
+								aMethod.getName()+"()."+methodWrapper.getName());
+						m.setOrder(fieldMethodPair.getOrder());
+						fieldMethodPairs.add(m);
+					}
+				}
+			}
+		}
+		return innerMethodsExist;
 	}
 	
 	private void assignOrder(Set<FieldMethodPair> fieldMethodPairs) {
