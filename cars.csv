@@ -1,3 +1,3 @@
-fofo,tototot,something,setNameFromAbstract,name,enumeration,model,musta id,foo,creationDate,updateDate,price,nameFromAbstract,nameFromAbstractAbstract
-,,something,,Porsche,,My new model,24,1,2022-10-09,,"""300 000,99 MAD""",,
-,,something,,Porsche,,My new model,24,1,2022-10-09,,"""300 000,99 MAD""",,
+something,model,name,enumeration,Inner Object['id'],Inner Object['getAnotherId'],musta id,foo,creationDate,updateDate,price
+something,My new model,Porsche,,,,22,1,Mon Oct 10 17:33:27 WEST 2022,,"""300 000,99 MAD"""
+something,My new model,Porsche,,,,22,1,Mon Oct 10 17:33:27 WEST 2022,,"""300 000,99 MAD"""

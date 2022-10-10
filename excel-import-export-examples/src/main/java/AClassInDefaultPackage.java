@@ -4,11 +4,11 @@ import io.github.belmomusta.exporter.api.annotation.ToColumn;
 
 @Excel(ignoreHeaders = false)
 @CSV(useFQNs = true)
-public class CC {
+public class AClassInDefaultPackage {
 	private String h;
 	
-	//@ToColumn
-	@ToColumn(name = "musta") public String getH() {
+	@ToColumn(name = "musta")
+	public String getH() {
 		return h;
 	}
 }

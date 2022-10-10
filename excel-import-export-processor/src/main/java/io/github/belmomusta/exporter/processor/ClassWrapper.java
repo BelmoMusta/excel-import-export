@@ -2,20 +2,13 @@ package io.github.belmomusta.exporter.processor;
 
 import io.github.belmomusta.exporter.api.annotation.CSV;
 import io.github.belmomusta.exporter.api.annotation.Excel;
-import io.github.belmomusta.exporter.api.annotation.ToColumn;
 import io.github.belmomusta.exporter.processor.types.FieldMethodSet;
 import io.github.belmomusta.exporter.processor.velocity.FieldMethodPair;
-import io.github.belmomusta.exporter.processor.velocity.VelocityWrapper;
 
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.TypeMirror;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -25,14 +18,16 @@ public class ClassWrapper {
 	private List<MethodWrapper> enclosedMethods;
 	private List<FieldWrapper> enclosedFields;
 	private String fQNOfGeneratedClass;
-	
-	Set<FieldMethodPair> inheritedMembers ;
+	private Set<FieldMethodPair> inheritedMembers ;
+	private ExcelCsvProperties properties;
 	
 	 ClassWrapper(Element annotatedElement) {
 		this.annotatedElement = annotatedElement;
 		 inheritedMembers = new FieldMethodSet();
 		 enclosedMethods = new ArrayList<>();
 		 enclosedFields = new ArrayList<>();
+		 properties = new ExcelCsvProperties(this);
+		 
 	}
 	
 	public static ClassWrapper of(Element annotatedElement) {
@@ -49,106 +44,16 @@ public class ClassWrapper {
 		WrapperUtils.fillFields(classWrapper);
 		WrapperUtils.fillFQN(classWrapper, packagePrefix, classSuffix);
 		WrapperUtils.assignAnnotations(classWrapper);
-		WrapperUtils.lookForFormatters(classWrapper);
+		FormatterUtils.lookForFormatters(classWrapper);
 		WrapperUtils.fillFromInheritedClasses((TypeElement) annotatedElement, classWrapper);
 		return classWrapper;
-	}
-	
-	public Collection<FieldMethodPair> getCorrespondanceFieldMethod() {
-		Set<FieldMethodPair> fieldMethodPairs = new FieldMethodSet();
-		this.enclosedMethods.stream()
-				.filter(MethodWrapper::isValid)
-				.forEach(aMethod -> {
-					ToColumn annotation = aMethod.getAnnotation(ToColumn.class);
-					String possibleFieldNameForMethod = aMethod.getPossibleFieldName();
-					 FieldMethodPair fieldMethodPair = null;
-					if (annotation != null && possibleFieldNameForMethod != null) {
-						 fieldMethodPair = new FieldMethodPair(possibleFieldNameForMethod,
-								aMethod.getName());
-						fieldMethodPair.setStaticMethod(aMethod.isStaticMethod());
-						WrapperUtils.applyHeaders(annotation, possibleFieldNameForMethod, fieldMethodPair);
-						if (aMethod.getFormatter() != null) {
-							fieldMethodPair.setFormatter(aMethod.getFormatter());
-						}
-					} else if (annotation != null) {
-						 fieldMethodPair = WrapperUtils.applyHeaders(fieldMethodPairs, aMethod,
-								annotation);
-					}
-					
-					if (fieldMethodPair != null) {
-						boolean innerChyHaja = assingInnerMethods(fieldMethodPairs, aMethod,
-								fieldMethodPair);
-						if (!innerChyHaja){
-							fieldMethodPairs.add(fieldMethodPair);
-						}
-					}
-				});
-		
-		assignOrder(fieldMethodPairs);
-		fieldMethodPairs.addAll(inheritedMembers);
-		return fieldMethodPairs;
-	}
-	
-	private boolean assingInnerMethods(Set<FieldMethodPair> fieldMethodPairs, MethodWrapper aMethod,
-						   FieldMethodPair fieldMethodPair) {
-		boolean innerMethodsExist = false;
-		
-		Element method_ = aMethod.wrappedElement;
-		if(method_ instanceof ExecutableElement){
-			ExecutableElement executableElement = (ExecutableElement) method_;
-			TypeMirror returnType = executableElement.getReturnType();
-			if (returnType instanceof DeclaredType) {
-				DeclaredType declaredType = (DeclaredType) returnType;
-				Element innerElemt = declaredType.asElement();
-				if (method_.getAnnotation(Excel.class) != null) {
-					ClassWrapper innerWrapper = new ClassWrapper(innerElemt);
-					WrapperUtils.fillMethods(innerWrapper);
-					List<MethodWrapper> methodWrappers = innerWrapper.getEnclosedMethods();
-					for (MethodWrapper methodWrapper : methodWrappers) {
-						innerMethodsExist =true;
-						FieldMethodPair m = new FieldMethodPair(methodWrapper.getName(),
-								aMethod.getName()+"()."+methodWrapper.getName());
-						m.setOrder(fieldMethodPair.getOrder());
-						fieldMethodPairs.add(m);
-					}
-				}
-			}
-		}
-		return innerMethodsExist;
-	}
-	
-	private void assignOrder(Set<FieldMethodPair> fieldMethodPairs) {
-		int i = 0;
-		for (FieldMethodPair fieldMethodPair : fieldMethodPairs) {
-		   if (!fieldMethodPair.isOrdered()) {
-			   fieldMethodPair.setOrder(i);
-			}
-		   i++;
-	   }
 	}
 	
 	public String getFQNOfGeneratedClass() {
 		return fQNOfGeneratedClass;
 	}
 	
-	public VelocityWrapper getVelocityWrapper() {
-		VelocityWrapper wrapper = WrapperUtils.handleExcel(this);
-		if (wrapper == null) {
-			wrapper = WrapperUtils.handleCSV(this);
-		}
-		
-		if (wrapper != null && annotatedElement instanceof TypeElement) {
-			Name qualifiedName = ((TypeElement) annotatedElement).getQualifiedName();
-			wrapper.setClassName(qualifiedName.toString());
-			wrapper.setSimplifiedClassName(annotatedElement.getSimpleName().toString());
-			Collection<FieldMethodPair> correspondanceFieldMethod = getCorrespondanceFieldMethod();
-			
-			wrapper.setCorrespondanceFieldMethod(correspondanceFieldMethod);
-		}
-		return wrapper;
-	}
-	
-	public  <A extends Annotation> boolean hasAnnotation(Class<A> a) {
+	public <A extends Annotation> boolean hasAnnotation(Class<A> a) {
 		return getAnnotation(a) != null;
 	}
 	
@@ -157,30 +62,11 @@ public class ClassWrapper {
 	}
 	
 	public boolean isUseFQNs() {
-		 boolean useFQNS = false;
-		 Excel excel = getAnnotation(Excel.class);
-		 if(excel != null){
-			 useFQNS = excel.useFQNs();
-		 } else {
-			 CSV csv = getAnnotation(CSV.class);
-			 if(csv != null){
-				 useFQNS = csv.useFQNs();
-			 }
-		 }
-		 return useFQNS;
+		 return properties.useFQN;
 	}
+	
 	public boolean isIgnoreHeaders() {
-		 boolean ignoreHeaders = false;
-		 Excel excel = getAnnotation(Excel.class);
-		 if(excel != null){
-			 ignoreHeaders = excel.ignoreHeaders();
-		 } else {
-			 CSV csv = getAnnotation(CSV.class);
-			 if(csv != null){
-				 ignoreHeaders = csv.ignoreHeaders();
-			 }
-		 }
-		 return ignoreHeaders;
+		return properties.ignoreHeaders;
 	}
 	
 	public Element getAnnotatedElement() {
@@ -205,5 +91,28 @@ public class ClassWrapper {
 	
 	public void setEnclosedFields(List<FieldWrapper> enclosedFields) {
 		this.enclosedFields = enclosedFields;
+	}
+	
+	public Set<FieldMethodPair> getInheritedMembers() {
+		return inheritedMembers;
+	}
+	
+	private static class ExcelCsvProperties {
+		boolean useFQN;
+		boolean ignoreHeaders;
+		
+		public ExcelCsvProperties(ClassWrapper classWrapper) {
+			Excel excel = classWrapper.getAnnotation(Excel.class);
+			if(excel != null) {
+				useFQN = excel.useFQNs();
+				ignoreHeaders = excel.ignoreHeaders();
+			} else {
+				CSV csv = classWrapper.getAnnotation(CSV.class);
+				if(csv != null){
+					useFQN = csv.useFQNs();
+					ignoreHeaders = csv.ignoreHeaders();
+				}
+			}
+		}
 	}
 }

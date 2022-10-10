@@ -19,7 +19,7 @@ public abstract class CommonProcessor  {
 		try {
 			Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(annotation);
 			for (Element aClass : annotatedElements) {
-				if(!aClass.getModifiers().contains(Modifier.PUBLIC)){
+				if(!aClass.getModifiers().contains(Modifier.PUBLIC) || !(aClass instanceof TypeElement)){
 					continue;
 				}
 				

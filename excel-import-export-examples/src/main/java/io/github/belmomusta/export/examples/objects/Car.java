@@ -2,12 +2,13 @@ package io.github.belmomusta.export.examples.objects;
 
 import io.github.belmomusta.exporter.api.annotation.CSV;
 import io.github.belmomusta.exporter.api.annotation.ColumnFormat;
-import io.github.belmomusta.exporter.api.annotation.ToColumn;
 import io.github.belmomusta.exporter.api.annotation.Excel;
+import io.github.belmomusta.exporter.api.annotation.ObjectToColumns;
+import io.github.belmomusta.exporter.api.annotation.ToColumn;
 
 import java.util.Date;
 
-@Excel(ignoreHeaders = true,useFQNs = false)
+@Excel(ignoreHeaders = false,useFQNs = false)
 @CSV()
 public class Car implements InterfaceToExcel {
 	@ToColumn(name = "musta id")
@@ -17,7 +18,7 @@ public class Car implements InterfaceToExcel {
 	
 	@ToColumn(9)
     private MyEnumeration enumeration;
-	@ToColumn
+	@ToColumn(2)
     private String model;
 
     private int foo;
@@ -30,9 +31,8 @@ public class Car implements InterfaceToExcel {
 	@ColumnFormat(formatter = CurrencyFormatter.class)
 	private double price;
 	
-	Inner inner;
-	@Excel
-	@ToColumn
+	Inner inner = new Inner();
+	@ObjectToColumns(value = 12, name = "Inner Object")
 	public Inner getInner() {
 		return inner;
 	}

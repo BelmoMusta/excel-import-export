@@ -13,7 +13,7 @@ public class JavaFileWriter {
     }
     public static void writeJavaClassForExcel(ClassWrapper classWrapper, ProcessingEnvironment processingEnv) {
         try {
-            VelocityWrapper wrapper = classWrapper.getVelocityWrapper();
+            VelocityWrapper wrapper = WrapperUtils.getVelocityWrapper(classWrapper);
             final JavaFileObject builderFile = processingEnv.getFiler()
                     .createSourceFile(classWrapper.getFQNOfGeneratedClass());
             VelocityGenerator.generateExcelExporterJavaClassFile(wrapper, new File(builderFile.getName()));
@@ -24,7 +24,7 @@ public class JavaFileWriter {
 
     public static void writeJavaClassForCSV(ClassWrapper classWrapper, ProcessingEnvironment processingEnv) {
         try {
-            VelocityWrapper wrapper = classWrapper.getVelocityWrapper();
+            VelocityWrapper wrapper = WrapperUtils.getVelocityWrapper(classWrapper);
             final JavaFileObject cSVExportbuilderFile = processingEnv.getFiler()
                     .createSourceFile(classWrapper.getFQNOfGeneratedClass());
             VelocityGenerator.generateCSVExporterJavaClassFile(wrapper, new File(cSVExportbuilderFile.getName()));
