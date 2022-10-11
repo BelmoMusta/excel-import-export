@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Excel(ignoreHeaders = false,useFQNs = false)
 @CSV()
-public class Car implements InterfaceToExcel {
+public class Car extends AbstractCar implements InterfaceToExcel {
 	@ToColumn(name = "musta id")
  	private int id;
 	@ToColumn(9)
@@ -27,7 +27,7 @@ public class Car implements InterfaceToExcel {
 	
  	@ToColumn
 	private Date updateDate;
-	@ToColumn
+	@ToColumn(0)
 	@ColumnFormat(formatter = CurrencyFormatter.class)
 	private double price;
 	
@@ -93,5 +93,15 @@ public class Car implements InterfaceToExcel {
 	
 	public MyEnumeration getEnumeration() {
 		return enumeration;
+	}
+	
+	@Override
+	public String getStringId() {
+		return null;
+	}
+	
+	@Override
+	public String stringId() {
+		return null;
 	}
 }

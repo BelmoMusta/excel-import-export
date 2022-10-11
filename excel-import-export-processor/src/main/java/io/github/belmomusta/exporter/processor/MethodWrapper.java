@@ -20,6 +20,7 @@ public class MethodWrapper extends ElementWrapper {
         return returnType.getKind() != TypeKind.VOID
                 //&& !executableMethod.getModifiers().contains(Modifier.STATIC)
                 && !executableMethod.getModifiers().contains(Modifier.PRIVATE)
+                //&& executableMethod.getModifiers().contains(Modifier.PUBLIC)
                 && executableMethod.getParameters().isEmpty();
     }
 

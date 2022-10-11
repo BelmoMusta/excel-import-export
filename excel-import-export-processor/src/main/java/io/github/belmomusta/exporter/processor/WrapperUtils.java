@@ -19,8 +19,10 @@ import javax.lang.model.type.TypeMirror;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -92,7 +94,7 @@ public class WrapperUtils {
 		return classWrapper.getAnnotatedElement().getSimpleName() + classSuffix;
 	}
 	
-	static void getInheritedMethods(ClassWrapper classWrapper, List<ClassWrapper> wrappers) {
+	static void getInheritedMethods(ClassWrapper classWrapper, Collection<ClassWrapper> wrappers) {
 		for (ClassWrapper wrapper : wrappers) {
 			Collection<FieldMethodPair> correspondanceFieldMethod = getFieldMethodPairs(wrapper);
 			Collection<FieldMethodPair> inheritedMetods;
@@ -136,7 +138,7 @@ public class WrapperUtils {
 		final List<Element> objects = new ArrayList<>();
 		lookForSuperClasses(annotatedElement.asType(), objects);
 		
-		final List<ClassWrapper> wrappers = new ArrayList<>();
+		final Set<ClassWrapper> wrappers = new LinkedHashSet<>();
 		for (Element element : objects) {
 			final ClassWrapper anotherWrapper = new ClassWrapper(element);
 			fillMethods(anotherWrapper);
@@ -150,6 +152,7 @@ public class WrapperUtils {
 	static FieldMethodPair lookForMethodPair(Set<FieldMethodPair> fieldMethodPairs, MethodWrapper aMethod, ToColumn annotation) {
 		FieldMethodPair methodPair = new FieldMethodPair(aMethod.getName());
 		methodPair.setStaticMethod(aMethod.isStaticMethod());
+	 
 		if (ToColumn.DEFAULT_NAME.equals(annotation.name())) {
 			methodPair.setHeaderName(aMethod.getName());
 		} else {
