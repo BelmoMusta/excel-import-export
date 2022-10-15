@@ -140,7 +140,7 @@ public class WrapperUtils {
 		
 		final Set<ClassWrapper> wrappers = new LinkedHashSet<>();
 		for (Element element : objects) {
-			final ClassWrapper anotherWrapper = new ClassWrapper(element);
+			final ClassWrapper anotherWrapper = new ClassWrapper(element, classWrapper.getExportType());
 			fillMethods(anotherWrapper);
  			assignAnnotations(anotherWrapper);
 			FormatterUtils.lookForFormatters(anotherWrapper);
@@ -221,7 +221,7 @@ public class WrapperUtils {
 			ObjectToColumns objectToColumns = executableElement.getAnnotation(ObjectToColumns.class);
 			if (objectToColumns == null) return false;
 			
-			ClassWrapper innerWrapper = new ClassWrapper(innerElement);
+			ClassWrapper innerWrapper = new ClassWrapper(innerElement ,ExportType.NONE);
 			fillMethods(innerWrapper);
 			fillFields(innerWrapper);
 			List<MethodWrapper> methodWrappers = innerWrapper.getEnclosedMethods();

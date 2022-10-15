@@ -43,7 +43,9 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
-                            <processor>io.github.belmomusta.exporter.processor.ExportProcessor</processor>
+                            <processors>
+                                <processor>io.github.belmomusta.exporter.processor.ExportProcessor</processor>
+                            </processors>
                         </configuration>
                     </execution>
                 </executions>

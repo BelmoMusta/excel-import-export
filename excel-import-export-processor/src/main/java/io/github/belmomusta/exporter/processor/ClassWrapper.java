@@ -21,29 +21,32 @@ public class ClassWrapper {
 	private String fQNOfGeneratedClass;
 	private Set<FieldMethodPair> inheritedMembers ;
 	private ExcelCsvProperties properties;
+	private ExportType exportType;
 	
-	 ClassWrapper(Element annotatedElement) {
+	 ClassWrapper(Element annotatedElement, ExportType exportType) {
 		this.annotatedElement = annotatedElement;
 		 inheritedMembers = new FieldMethodSet();
 		 enclosedMethods = new ArrayList<>();
 		 enclosedFields = new ArrayList<>();
+		 this.exportType = exportType;
 		 properties = new ExcelCsvProperties(this);
 		 
 	}
 	
+	
 	public static ClassWrapper of(Element annotatedElement) {
-		return common(annotatedElement, ".export.excel.", "ExcelExporter");
+		return common(annotatedElement, ExportType.EXCEL);
 	}
 	
 	public static ClassWrapper ofCSV(Element annotatedElement) {
-		return common(annotatedElement, ".export.csv.", "CSVExporter");
+		return common(annotatedElement, ExportType.CSV);
 	}
 	
-	private static ClassWrapper common(Element annotatedElement, String packagePrefix, String classSuffix) {
-		final ClassWrapper classWrapper = new ClassWrapper(annotatedElement);
+	private static ClassWrapper common(Element annotatedElement, ExportType exportType) {
+		final ClassWrapper classWrapper = new ClassWrapper(annotatedElement, exportType);
 		WrapperUtils.fillMethods(classWrapper);
 		WrapperUtils.fillFields(classWrapper);
-		WrapperUtils.fillFQN(classWrapper, packagePrefix, classSuffix);
+		WrapperUtils.fillFQN(classWrapper, exportType.getPackagePrefix(), exportType.getClassSuffix());
 		WrapperUtils.assignAnnotations(classWrapper);
 		FormatterUtils.lookForFormatters(classWrapper);
 		WrapperUtils.fillFromInheritedClasses((TypeElement) annotatedElement, classWrapper);
@@ -103,13 +106,16 @@ public class ClassWrapper {
 		boolean ignoreHeaders;
 		
 		public ExcelCsvProperties(ClassWrapper classWrapper) {
-			Excel excel = classWrapper.getAnnotation(Excel.class);
-			if(excel != null) {
-				useFQN = excel.useFQNs();
-				ignoreHeaders = excel.ignoreHeaders();
+			if(classWrapper.getExportType() == ExportType.EXCEL){
+				
+				Excel excel = classWrapper.getAnnotation(Excel.class);
+				if (excel != null) {
+					useFQN = excel.useFQNs();
+					ignoreHeaders = excel.ignoreHeaders();
+				}
 			} else {
 				CSV csv = classWrapper.getAnnotation(CSV.class);
-				if(csv != null){
+				if (csv != null) {
 					useFQN = csv.useFQNs();
 					ignoreHeaders = csv.ignoreHeaders();
 				}
@@ -123,6 +129,10 @@ public class ClassWrapper {
 		if (o == null || getClass() != o.getClass()) return false;
 		ClassWrapper that = (ClassWrapper) o;
 		return annotatedElement.equals(that.annotatedElement);
+	}
+	
+	public ExportType getExportType() {
+		return exportType;
 	}
 	
 	@Override

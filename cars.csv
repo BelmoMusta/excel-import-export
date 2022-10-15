@@ -1,3 +1,3 @@
-something,model,name,enumeration,Inner Object['id'],Inner Object['getAnotherId'],musta id,foo,creationDate,updateDate,price
-something,My new model,Porsche,,,,22,1,Mon Oct 10 17:33:27 WEST 2022,,"""300Â 000,99 MAD"""
-something,My new model,Porsche,,,,22,1,Mon Oct 10 17:33:27 WEST 2022,,"""300Â 000,99 MAD"""
+price,stringId,something,stringId,model,fromAbstract,name,enumeration,Inner Object['id'],Inner Object['getAnotherId'],musta id,foo,creationDate,updateDate
+"""300 000,99 MAD""",,something,,My new model,,Porsche,,,,22,1,Wed Oct 12 17:37:14 WET 2022,
+"""300 000,99 MAD""",,something,,My new model,,Porsche,,,,22,1,Wed Oct 12 17:37:14 WET 2022,
