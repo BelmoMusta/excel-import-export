@@ -1,9 +1,8 @@
-import io.github.belmomusta.exporter.api.annotation.CSV;
-import io.github.belmomusta.exporter.api.annotation.Excel;
+import io.github.belmomusta.exporter.api.annotation.Export;
 import io.github.belmomusta.exporter.api.annotation.ToColumn;
+import io.github.belmomusta.exporter.api.common.ExportType;
 
-@Excel(ignoreHeaders = false)
-@CSV(useFQNs = true)
+@Export(type = ExportType.EXCEL, ignoreHeaders = false)
 public class AClassInDefaultPackage {
 	private String h;
 	

@@ -1,9 +1,8 @@
 package io.github.belmomusta.exporter.processor;
 
-import io.github.belmomusta.exporter.api.annotation.CSV;
-import io.github.belmomusta.exporter.api.annotation.Excel;
 import io.github.belmomusta.exporter.api.annotation.ObjectToColumns;
 import io.github.belmomusta.exporter.api.annotation.ToColumn;
+import io.github.belmomusta.exporter.api.common.ExportType;
 import io.github.belmomusta.exporter.processor.types.FieldMethodSet;
 import io.github.belmomusta.exporter.processor.velocity.FieldMethodPair;
 import io.github.belmomusta.exporter.processor.velocity.VelocityWrapper;
@@ -22,7 +21,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -178,20 +176,6 @@ public class WrapperUtils {
 		}
 	}
 	
-	static VelocityWrapper handleExcel(ClassWrapper classWrapper) {
-		if (classWrapper.hasAnnotation(Excel.class)) {
-			return commonHandler(classWrapper);
-		}
-		return null;
-	}
-	
-	
-	static VelocityWrapper handleCSV(ClassWrapper classWrapper) {
-		if (classWrapper.hasAnnotation(CSV.class)) {
-			return commonHandler(classWrapper);
-		}
-		return null;
-	}
 	private static VelocityWrapper commonHandler(ClassWrapper classWrapper) {
 		VelocityWrapper wrapper = new VelocityWrapper();
 		wrapper.setUseFQNs(classWrapper.isUseFQNs());
@@ -222,7 +206,7 @@ public class WrapperUtils {
 			ObjectToColumns objectToColumns = executableElement.getAnnotation(ObjectToColumns.class);
 			if (objectToColumns == null) return false;
 			
-			ClassWrapper innerWrapper = new ClassWrapper(innerElement ,ExportType.NONE);
+			ClassWrapper innerWrapper = new ClassWrapper(innerElement , ExportType.NONE);
 			fillMethods(innerWrapper);
 			fillFields(innerWrapper);
 			List<MethodWrapper> methodWrappers = innerWrapper.getEnclosedMethods();
@@ -318,11 +302,11 @@ public class WrapperUtils {
 	}
 	
 	public static VelocityWrapper getVelocityWrapper(ClassWrapper classWrapper) {
-		VelocityWrapper wrapper = WrapperUtils.handleExcel(classWrapper);
-		if (wrapper == null) {
-			wrapper = WrapperUtils.handleCSV(classWrapper);
+		ExportType export = classWrapper.getExportType();
+		VelocityWrapper wrapper = null;
+		if (export==ExportType.EXCEL || export == ExportType.CSV) {
+			wrapper = WrapperUtils.commonHandler(classWrapper);
 		}
-		
 		if (wrapper != null && classWrapper.getAnnotatedElement() instanceof TypeElement) {
 			Name qualifiedName = ((TypeElement) classWrapper.getAnnotatedElement()).getQualifiedName();
 			wrapper.setClassName(qualifiedName.toString());

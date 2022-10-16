@@ -1,14 +1,14 @@
 # Excel import and export
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.belmomusta/excel-import-export/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.belmomusta/excel-import-export)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.belmomusta/export-import-export/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.belmomusta/export-import-export)
 
-This project contains utilities to import objects from an excel file.
-It also contains functions to export data from objects an to excel file.
+This project contains utilities to import objects from an export file.
+It also contains functions to export data from objects an to export file.
 ## Get it as a maven dependency  :
 
 ```XML
    <dependency>
             <groupId>io.github.belmomusta</groupId>
-            <artifactId>excel-import-export</artifactId>
+            <artifactId>export-import-export</artifactId>
             <version>1.1</version>
    </dependency>
 ```
@@ -17,7 +17,7 @@ Usage:
 
 ```java
 
-final String file = "the path to a valid excel file";
+final String file = "the path to a valid export file";
 final Collection<Car> cars = ExcelImporter.extract(Car.class)
                 .from(file)
                 .inSheetNumber(0)
@@ -26,7 +26,7 @@ final Collection<Car> cars = ExcelImporter.extract(Car.class)
                 .map("model").toCell(2)
                 .get();
 ```
-This snippet creates a collection of cars from the first sheet of an excel workbook.
+This snippet creates a collection of cars from the first sheet of an export workbook.
 The importing is also possible with the annotation marker.
 The object classes to import will have the `@ExcelCell` on the fields that we want to import. 
 For example :
@@ -49,7 +49,7 @@ public class CarWithAnnotations {
 ```
 
 ## 2.  Exporting
-To export a collection of items to an excel file, You an use the `ExcelExporterService` to do so.
+To export a collection of items to an export file, You an use the `ExcelExporterService` to do so.
 Here is a common example of use  :
 
 ### Without annotations

@@ -1,7 +1,7 @@
 package io.github.belmomusta.export.examples.objects;
 
 
-import io.github.belmomusta.export.examples.objects.export.csv.CarCSVExporter;
+
 import io.github.belmomusta.export.examples.objects.export.excel.CarExcelExporter;
 import io.github.belmomusta.exporter.api.common.CommonExporter;
 import io.github.belmomusta.exporter.api.exception.ExporterException;
@@ -13,7 +13,7 @@ import java.util.Date;
 public class Main {
 	public static void main(String[] args) throws ExporterException {
 		CommonExporter<Car> excelExporter = new CarExcelExporter();
-		CommonExporter<Car> csvExporter = new CarCSVExporter();
+	 
 		
 		final Car car = new Car();
 		car.setId(22);
@@ -23,7 +23,7 @@ public class Main {
 		car.setPrice(300000.99);
 		final String destinationFile = ("cars.xlsx");
 		excelExporter.exportToFile(Arrays.asList(car,car), destinationFile);
-		csvExporter.exportToFile(Arrays.asList(car,car), "cars.csv");
+		
 		
 	}
 }

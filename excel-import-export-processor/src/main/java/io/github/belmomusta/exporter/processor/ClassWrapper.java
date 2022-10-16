@@ -1,8 +1,7 @@
 package io.github.belmomusta.exporter.processor;
 
-import io.github.belmomusta.exporter.api.annotation.CSV;
-import io.github.belmomusta.exporter.api.annotation.Excel;
-import io.github.belmomusta.exporter.api.annotation.SpringComponent;
+import io.github.belmomusta.exporter.api.annotation.Export;
+import io.github.belmomusta.exporter.api.common.ExportType;
 import io.github.belmomusta.exporter.processor.types.FieldMethodSet;
 import io.github.belmomusta.exporter.processor.velocity.FieldMethodPair;
 
@@ -58,10 +57,6 @@ public class ClassWrapper {
 		return fQNOfGeneratedClass;
 	}
 	
-	public <A extends Annotation> boolean hasAnnotation(Class<A> a) {
-		return getAnnotation(a) != null;
-	}
-	
 	public <A extends Annotation> A getAnnotation(Class<A> a) {
 		return annotatedElement.getAnnotation(a);
 	}
@@ -108,26 +103,14 @@ public class ClassWrapper {
 		boolean withIoC;
 		
 		public ExcelCsvProperties(ClassWrapper classWrapper) {
-			if(classWrapper.getExportType() == ExportType.EXCEL){
-				
-				Excel excel = classWrapper.getAnnotation(Excel.class);
-				if (excel != null) {
-					useFQN = excel.useFQNs();
-					ignoreHeaders = excel.ignoreHeaders();
-				}
-			} else {
-				CSV csv = classWrapper.getAnnotation(CSV.class);
-				if (csv != null) {
-					useFQN = csv.useFQNs();
-					ignoreHeaders = csv.ignoreHeaders();
-				}
+			Export export = classWrapper.getAnnotation(Export.class);
+			if (export == null || export.type().length ==0) {
+				return;
 			}
 			
-			SpringComponent springComponent = classWrapper.getAnnotation(SpringComponent.class);
-			if(springComponent != null){
-				
-				withIoC = true;
-			}
+			useFQN = export.useFQNs();
+			ignoreHeaders = export.ignoreHeaders();
+			withIoC = export.withIoC();
 		}
 	}
 	

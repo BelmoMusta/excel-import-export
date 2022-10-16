@@ -1,7 +1,6 @@
 package io.github.belmomusta.exporter.processor;
 
-import io.github.belmomusta.exporter.api.annotation.CSV;
-import io.github.belmomusta.exporter.api.annotation.Excel;
+import io.github.belmomusta.exporter.api.annotation.Export;
 import io.github.belmomusta.exporter.api.annotation.ToColumn;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -12,15 +11,12 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import java.util.Set;
 @SupportedAnnotationTypes({
-		"io.github.belmomusta.exporter.api.annotation.Excel",
-		"io.github.belmomusta.exporter.api.annotation.CSV",
+		"io.github.belmomusta.exporter.api.annotation.Export"
 })
 
 public class ExportProcessor extends AbstractProcessor {
 	public static ProcessingEnvironment processingEnvironment;
-	CommonProcessor excel;
-	CommonProcessor csv;
-	
+	CommonProcessor processor;
 	public ExportProcessor() {
 		super();
 		AnnotationsRegistrer.register(ToColumn.class);
@@ -29,8 +25,7 @@ public class ExportProcessor extends AbstractProcessor {
 	@Override
 	public synchronized void init(ProcessingEnvironment processingEnv) {
 		super.init(processingEnv);
-		excel = new ExcelProcessor(processingEnv);
-		csv = new CSVProcessor(processingEnv);
+		processor = new CommonProcessor(processingEnv);
 		processingEnvironment = processingEnv;
 	}
 	
@@ -43,13 +38,9 @@ public class ExportProcessor extends AbstractProcessor {
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 		int processed = 0;
 		for (TypeElement annotation : annotations) {
-			if (annotation.getQualifiedName().toString().equals(Excel.class.getName())) {
-				excel.process(annotation, roundEnv);
+			if (annotation.getQualifiedName().toString().equals(Export.class.getName())) {
+				processor.process(annotation, roundEnv);
 				processed++;
-			} else if (annotation.getQualifiedName().toString().equals(CSV.class.getName())) {
-				csv.process(annotation, roundEnv);
-				processed++;
-				
 			}
 		}
 		return processed > 1;

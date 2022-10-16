@@ -1,9 +1,10 @@
 package io.github.belmomusta.export.examples.objects;
 
-import io.github.belmomusta.exporter.api.annotation.Excel;
+import io.github.belmomusta.exporter.api.annotation.Export;
 import io.github.belmomusta.exporter.api.annotation.ToColumn;
+import io.github.belmomusta.exporter.api.common.ExportType;
 
-@Excel
+@Export(type = ExportType.EXCEL)
 public enum MyEnumeration {
 	
 	A,
@@ -11,6 +12,7 @@ public enum MyEnumeration {
 	
 	;
 	@ToColumn
+	String value;
 	public String getValue(){
 		return this.name();
 	}

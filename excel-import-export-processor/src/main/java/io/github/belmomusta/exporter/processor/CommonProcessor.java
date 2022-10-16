@@ -1,13 +1,19 @@
 package io.github.belmomusta.exporter.processor;
 
+import io.github.belmomusta.exporter.api.annotation.Export;
+import io.github.belmomusta.exporter.api.common.ExportType;
+import io.github.belmomusta.exporter.api.utils.AnnotationsUtils;
+
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
-public abstract class CommonProcessor  {
+public class CommonProcessor  {
 	protected final	ProcessingEnvironment processingEnv;
 	
 	protected CommonProcessor(ProcessingEnvironment processingEnv) {
@@ -23,8 +29,8 @@ public abstract class CommonProcessor  {
 					continue;
 				}
 				
-				final ClassWrapper classWrapper = getWrapper(aClass);
-				process(classWrapper);
+				final List<ClassWrapper> classWrappers = getWrappers(aClass);
+				process(classWrappers);
 				processed++;
 			}
 		} catch (Exception e) {
@@ -34,9 +40,28 @@ public abstract class CommonProcessor  {
 		return processed > 0;
 	}
 	
-	protected abstract ClassWrapper getWrapper(Element aClass);
+	protected List<ClassWrapper> getWrappers(Element aClass){
+		List<ClassWrapper> wrappers = new ArrayList<>();
+		Export export = aClass.getAnnotation(Export.class);
+		if (AnnotationsUtils.isExcel(export)) {
+			wrappers.add(ClassWrapper.of(aClass));
+		}
+		
+		if (AnnotationsUtils.isCSV(export)) {
+			wrappers.add(ClassWrapper.ofCSV(aClass));
+		}
+		return wrappers;
+	}
 	
-	protected abstract void process(ClassWrapper classWrapper);
+	protected void process(List<ClassWrapper> classWrappers){
+		for (ClassWrapper classWrapper : classWrappers) {
+			if (classWrapper.getExportType() == ExportType.EXCEL) {
+				JavaFileWriter.writeJavaClassForExcel(classWrapper, processingEnv);
+			} else if (classWrapper.getExportType() == ExportType.CSV) {
+				JavaFileWriter.writeJavaClassForCSV(classWrapper, processingEnv);
+			}
+		}
+	}
 	
 	
 }
