@@ -195,6 +195,7 @@ public class WrapperUtils {
 	private static VelocityWrapper commonHandler(ClassWrapper classWrapper) {
 		VelocityWrapper wrapper = new VelocityWrapper();
 		wrapper.setUseFQNs(classWrapper.isUseFQNs());
+		wrapper.setWithIoC(classWrapper.isWithIoc());
 		wrapper.setWithHeaders(!classWrapper.isIgnoreHeaders());
 		String packageName = "" ;
 		String aPackage = classWrapper.getFQNOfGeneratedClass();

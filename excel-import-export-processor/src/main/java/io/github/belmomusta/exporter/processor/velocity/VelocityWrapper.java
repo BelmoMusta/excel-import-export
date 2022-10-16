@@ -11,6 +11,7 @@ public class VelocityWrapper {
     private String className;
     private boolean withHeaders;
     private boolean useFQNs;
+    private boolean withIoC;
     
     private Collection<FieldMethodPair> correspondanceFieldMethod;
 
@@ -76,4 +77,12 @@ public class VelocityWrapper {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
+	
+	public boolean isWithIoC() {
+		return withIoC;
+	}
+	
+	public void setWithIoC(boolean withIoC) {
+		this.withIoC = withIoC;
+	}
 }

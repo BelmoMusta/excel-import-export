@@ -4,12 +4,14 @@ import io.github.belmomusta.exporter.api.annotation.CSV;
 import io.github.belmomusta.exporter.api.annotation.ColumnFormat;
 import io.github.belmomusta.exporter.api.annotation.Excel;
 import io.github.belmomusta.exporter.api.annotation.ObjectToColumns;
+import io.github.belmomusta.exporter.api.annotation.SpringComponent;
 import io.github.belmomusta.exporter.api.annotation.ToColumn;
 
 import java.util.Date;
 
 @Excel(ignoreHeaders = false,useFQNs = false)
 @CSV()
+@SpringComponent
 public class Car extends AbstractCar implements InterfaceToExcel {
 	@ToColumn(name = "musta id")
  	private int id;

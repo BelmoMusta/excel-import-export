@@ -1,4 +1,5 @@
 #parse("ImportsTemplate.vm")
+#parse("SpringIoCTemplate.vm")
 public class ${wrapper.simplifiedClassName}${exporterName} extends ${classToExtend}<$config.currentClassName> {
 #parse("FormatterAttributes.vm")
 

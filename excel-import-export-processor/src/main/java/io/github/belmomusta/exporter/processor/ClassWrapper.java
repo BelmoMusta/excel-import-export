@@ -2,6 +2,7 @@ package io.github.belmomusta.exporter.processor;
 
 import io.github.belmomusta.exporter.api.annotation.CSV;
 import io.github.belmomusta.exporter.api.annotation.Excel;
+import io.github.belmomusta.exporter.api.annotation.SpringComponent;
 import io.github.belmomusta.exporter.processor.types.FieldMethodSet;
 import io.github.belmomusta.exporter.processor.velocity.FieldMethodPair;
 
@@ -104,6 +105,7 @@ public class ClassWrapper {
 	private static class ExcelCsvProperties {
 		boolean useFQN;
 		boolean ignoreHeaders;
+		boolean withIoC;
 		
 		public ExcelCsvProperties(ClassWrapper classWrapper) {
 			if(classWrapper.getExportType() == ExportType.EXCEL){
@@ -120,6 +122,12 @@ public class ClassWrapper {
 					ignoreHeaders = csv.ignoreHeaders();
 				}
 			}
+			
+			SpringComponent springComponent = classWrapper.getAnnotation(SpringComponent.class);
+			if(springComponent != null){
+				
+				withIoC = true;
+			}
 		}
 	}
 	
@@ -134,6 +142,11 @@ public class ClassWrapper {
 	public ExportType getExportType() {
 		return exportType;
 	}
+	
+	public boolean isWithIoc() {
+		return properties.withIoC;
+	}
+	
 	
 	@Override
 	public int hashCode() {

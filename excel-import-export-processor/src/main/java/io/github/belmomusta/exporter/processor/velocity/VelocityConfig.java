@@ -116,6 +116,16 @@ public class VelocityConfig {
 		return fullNameOfAClass(Formatter.class);
 	}
 	
+	public String getSpringComponentAnnotation(){
+		String componentAnnotation  = "@org.springframework.stereotype.Component";
+		try {
+			Class.forName("org.springframework.stereotype.Component");
+		} catch (ClassNotFoundException e) {
+			componentAnnotation = "/**\n WARNING : Your project must have Spring dependencies\n**/\n //" + componentAnnotation;
+		}
+		return componentAnnotation;
+	}
+	
 	
 	private <X> String nameOfAClass(Class<X> value) {
 		return Optional.of(value)
