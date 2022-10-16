@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Export(type = {ExportType.EXCEL, ExportType.CSV},
 		ignoreHeaders = false,
-		useFQNs = true,
+		useFQNs = false,
 		withIoC = true)
 
 public class Car extends AbstractCar implements InterfaceToExcel {

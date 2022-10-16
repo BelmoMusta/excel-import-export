@@ -2,7 +2,6 @@ package io.github.belmomusta.exporter.processor;
 
 import io.github.belmomusta.exporter.api.annotation.Export;
 import io.github.belmomusta.exporter.api.common.ExportType;
-import io.github.belmomusta.exporter.api.utils.AnnotationsUtils;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -43,17 +42,15 @@ public class CommonProcessor  {
 	protected List<ClassWrapper> getWrappers(Element aClass){
 		List<ClassWrapper> wrappers = new ArrayList<>();
 		Export export = aClass.getAnnotation(Export.class);
-		if (AnnotationsUtils.isExcel(export)) {
-			wrappers.add(ClassWrapper.of(aClass));
-		}
-		
-		if (AnnotationsUtils.isCSV(export)) {
-			wrappers.add(ClassWrapper.ofCSV(aClass));
+		if(export != null) {
+			for (ExportType exportType : export.type()) {
+				wrappers.add(ClassWrapper.of(aClass, exportType));
+			}
 		}
 		return wrappers;
 	}
 	
-	protected void process(List<ClassWrapper> classWrappers){
+	private void process(List<ClassWrapper> classWrappers){
 		for (ClassWrapper classWrapper : classWrappers) {
 			if (classWrapper.getExportType() == ExportType.EXCEL) {
 				JavaFileWriter.writeJavaClassForExcel(classWrapper, processingEnv);

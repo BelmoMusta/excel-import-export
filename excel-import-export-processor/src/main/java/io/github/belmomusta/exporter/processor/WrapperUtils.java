@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class WrapperUtils {
@@ -55,25 +53,18 @@ public class WrapperUtils {
 	}
 	
 	static String calculatePackageName(TypeElement annotatedElement) {
-		Element enclosingElement = annotatedElement;
-		do {
-			enclosingElement = enclosingElement.getEnclosingElement();
-			
-		} while (!(enclosingElement instanceof PackageElement));
-		
-		PackageElement packageElement = (PackageElement) enclosingElement;
-		Name qualifiedName = packageElement.getQualifiedName();
-		return qualifiedName.toString();
+		PackageElement packageElement =
+				ExportProcessor.processingEnvironment.getElementUtils().getPackageOf(annotatedElement);
+		return packageElement.getQualifiedName().toString();
+
 	}
 	
 	static void fillMethods(ClassWrapper classWrapper) {
-		Predicate<Element> predicate = e -> e.getKind() == ElementKind.METHOD;
-		Function<Element, MethodWrapper> mapper = MethodWrapper::new;
 		
 		final List<MethodWrapper> methodWrappers = classWrapper.getAnnotatedElement()
 				.getEnclosedElements().stream()
-				.filter(predicate)
-				.map(mapper)
+				.filter(e -> e.getKind() == ElementKind.METHOD)
+				.map(MethodWrapper::new)
 				.collect(Collectors.toList());
 		classWrapper.setEnclosedMethods(methodWrappers);
 	}
@@ -104,41 +95,40 @@ public class WrapperUtils {
 			} else {
 				inheritedMetods = correspondanceFieldMethod;
 			}
-			addInheritedFieldMethodPairs(classWrapper, inheritedMetods);
+			
+			classWrapper.getInheritedMembers().addAll(inheritedMetods);
 		}
 	}
 	
-	public static void addInheritedFieldMethodPairs(ClassWrapper classWrapper, Collection<FieldMethodPair> fieldMethodPair){
-		classWrapper.getInheritedMembers().addAll(fieldMethodPair);
-	}
-	
-	static void lookForSuperClasses(TypeMirror annotatedElement, List<Element> objects) {
+	static List<Element> lookForSuperClasses(TypeMirror annotatedElement) {
+		List<Element> objects = new ArrayList<>();
 		List<? extends TypeMirror> typeMirrors = ExportProcessor.processingEnvironment.getTypeUtils().directSupertypes(annotatedElement);
 		for (TypeMirror supertype : typeMirrors) {
-			supertype.accept(new MTypeVisitor(), objects);
-			lookForSuperClasses(supertype, objects);
+			if (supertype instanceof DeclaredType) {
+				DeclaredType declaredType = (DeclaredType) supertype;
+				objects.add(declaredType.asElement());
+			}
 		}
+		return objects;
 	}
 	
 	static void fillFields(ClassWrapper classWrapper) {
-		final Predicate<Element> predicate = e -> e.getKind() == ElementKind.FIELD;
-		final Function<Element, FieldWrapper> mapper = FieldWrapper::new;
 		final List<FieldWrapper> fieldWrappers = classWrapper.getAnnotatedElement()
 				.getEnclosedElements()
 				.stream()
-				.filter(predicate)
-				.map(mapper)
+				.filter(e -> e.getKind() == ElementKind.FIELD)
+				.map(FieldWrapper::new)
 				.collect(Collectors.toList());
 		classWrapper.setEnclosedFields(fieldWrappers);
 	}
 	
 	static void fillFromInheritedClasses(TypeElement annotatedElement, ClassWrapper classWrapper) {
-		final List<Element> objects = new ArrayList<>();
-		lookForSuperClasses(annotatedElement.asType(), objects);
+		final List<Element> objects = lookForSuperClasses(annotatedElement.asType());
 		
 		final Set<ClassWrapper> wrappers = new LinkedHashSet<>();
 		for (Element element : objects) {
 			final ClassWrapper anotherWrapper = new ClassWrapper(element, classWrapper.getExportType());
+			fillFields(anotherWrapper);
 			fillMethods(anotherWrapper);
  			assignAnnotations(anotherWrapper);
 			FormatterUtils.lookForFormatters(anotherWrapper);
