@@ -21,6 +21,7 @@ public abstract class AbstractExcelExporter<T> extends AbstractExporter<T> imple
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             final Sheet sheet = workbook.createSheet(getClassName().getSimpleName());
             writeHeaders(sheet);
+			
             for (T object : objects) {
                 createRows(sheet, object);
             }
