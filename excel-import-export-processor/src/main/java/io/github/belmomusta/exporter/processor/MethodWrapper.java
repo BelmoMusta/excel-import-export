@@ -14,6 +14,9 @@ public class MethodWrapper extends ElementWrapper {
 
     @Override
     public boolean isValid() {
+		if (!(wrappedElement instanceof ExecutableElement)){
+			return true;
+		}
         final ExecutableElement executableMethod = (ExecutableElement) wrappedElement;
         TypeMirror returnType = ((ExecutableElement) wrappedElement).getReturnType();
 
@@ -33,7 +36,7 @@ public class MethodWrapper extends ElementWrapper {
             ret = null;
         }
         if (ret != null) {
-            ret = uncapitalize(ret);
+            ret = WrapperUtils.uncapitalize(ret);
         }
         return ret;
     }

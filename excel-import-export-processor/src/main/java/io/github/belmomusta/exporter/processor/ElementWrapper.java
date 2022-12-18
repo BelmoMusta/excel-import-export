@@ -21,15 +21,8 @@ public abstract class ElementWrapper {
     }
 
     public abstract boolean isValid();
-
-    protected final String uncapitalize(String correspondantFieldName) {
-        char c = correspondantFieldName.charAt(0);
-        c = Character.toLowerCase(c);
-        return c + correspondantFieldName.substring(1);
-
-    }
-
-    public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
+	
+	public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
         for (Annotation anno : annotations) {
             if (anno.annotationType() == annotationType) {
                 return (A) anno;

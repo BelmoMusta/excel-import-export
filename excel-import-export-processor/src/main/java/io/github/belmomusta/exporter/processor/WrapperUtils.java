@@ -7,6 +7,7 @@ import io.github.belmomusta.exporter.processor.types.FieldMethodSet;
 import io.github.belmomusta.exporter.processor.velocity.FieldMethodPair;
 import io.github.belmomusta.exporter.processor.velocity.VelocityWrapper;
 
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
@@ -60,12 +61,26 @@ public class WrapperUtils {
 	}
 	
 	static void fillMethods(ClassWrapper classWrapper) {
+		final List<MethodWrapper> methodWrappers = new ArrayList<>();
+		if (classWrapper.isWithLombok()){
+			for (FieldWrapper enclosedField : classWrapper.getEnclosedFields()) {
+				MethodWrapper derivedWrapper = new LombokMethodWrapper(enclosedField.wrappedElement);
+				methodWrappers.add(derivedWrapper);
+			}
+		}
 		
-		final List<MethodWrapper> methodWrappers = classWrapper.getAnnotatedElement()
+		for (FieldWrapper enclosedField : classWrapper.getEnclosedFields()) {
+			if (enclosedField.isFieldAnnotatedWithLombokGetter()) {
+				MethodWrapper derivedWrapper = new LombokMethodWrapper(enclosedField.wrappedElement);
+				methodWrappers.add(derivedWrapper);
+			}
+		}
+		List<MethodWrapper>  declaredMethods = classWrapper.getAnnotatedElement()
 				.getEnclosedElements().stream()
 				.filter(e -> e.getKind() == ElementKind.METHOD)
 				.map(MethodWrapper::new)
 				.collect(Collectors.toList());
+		  methodWrappers.addAll(declaredMethods);
 		classWrapper.setEnclosedMethods(methodWrappers);
 	}
 	
@@ -197,8 +212,8 @@ public class WrapperUtils {
 			if (objectToColumns == null) return false;
 			
 			ClassWrapper innerWrapper = new ClassWrapper(innerElement , ExportType.NONE);
-			fillMethods(innerWrapper);
 			fillFields(innerWrapper);
+			fillMethods(innerWrapper);
 			List<MethodWrapper> methodWrappers = innerWrapper.getEnclosedMethods();
 			for (MethodWrapper methodWrapper : methodWrappers) {
 				countOfInnerMethods++;
@@ -306,5 +321,32 @@ public class WrapperUtils {
 			wrapper.setCorrespondanceFieldMethod(correspondanceFieldMethod);
 		}
 		return wrapper;
+	}
+	
+	protected static String capitalize(String correspondantFieldName) {
+		char c = correspondantFieldName.charAt(0);
+		c = Character.toUpperCase(c);
+		return c + correspondantFieldName.substring(1);
+
+	}
+	
+	protected static String uncapitalize(String correspondantFieldName) {
+		char c = correspondantFieldName.charAt(0);
+		c = Character.toLowerCase(c);
+		return c + correspondantFieldName.substring(1);
+
+	}
+	
+	public static void fillLombokAnnotations(ClassWrapper classWrapper) {
+		
+		boolean withLombok = false;
+		for (AnnotationMirror annotationMirror : classWrapper.getAnnotatedElement().getAnnotationMirrors()) {
+			if (annotationMirror.getAnnotationType().toString().equals("lombok.Getter")) {
+				withLombok = true;
+				break;
+			}
+		}
+		
+		classWrapper.setWithLombok(withLombok);
 	}
 }

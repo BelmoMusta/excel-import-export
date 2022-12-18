@@ -21,6 +21,7 @@ public abstract class AbstractClassWrapper {
 	private Set<FieldMethodPair> inheritedMembers ;
 	private ExcelCsvProperties properties;
 	private ExportType exportType;
+	private boolean withLombok;
 	
 	 protected AbstractClassWrapper(Element annotatedElement, ExportType exportType) {
 		this.annotatedElement = annotatedElement;
@@ -111,5 +112,13 @@ public abstract class AbstractClassWrapper {
 	@Override
 	public int hashCode() {
 		return Objects.hash(annotatedElement);
+	}
+	
+	public boolean isWithLombok() {
+		return withLombok;
+	}
+	
+	public void setWithLombok(boolean withLombok) {
+		this.withLombok = withLombok;
 	}
 }

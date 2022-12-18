@@ -13,12 +13,14 @@ public class ClassWrapper extends AbstractClassWrapper{
 	
 	public static ClassWrapper of(Element annotatedElement, ExportType exportType) {
 		final ClassWrapper classWrapper = new ClassWrapper(annotatedElement, exportType);
-		WrapperUtils.fillMethods(classWrapper);
+		WrapperUtils.fillLombokAnnotations(classWrapper);
 		WrapperUtils.fillFields(classWrapper);
+		WrapperUtils.fillMethods(classWrapper);
 		WrapperUtils.fillFQN(classWrapper, exportType.getPackagePrefix(), exportType.getClassSuffix());
 		WrapperUtils.assignAnnotations(classWrapper);
 		FormatterUtils.lookForFormatters(classWrapper);
 		WrapperUtils.fillFromInheritedClasses((TypeElement) annotatedElement, classWrapper);
 		return classWrapper;
 	}
+	
 }
