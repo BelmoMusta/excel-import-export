@@ -10,10 +10,10 @@
 #else
 #set( $formatter = "" )
 #end
-#if($velocityCount==$wrapper.correspondanceFieldMethod.size())
-#set($endOfLine=");")
-#else
+#if($foreach.hasNext)
 #set($endOfLine=",")
+#else
+#set($endOfLine=");")
 #end
                 valueOf(${pair.getCall(${config.currentClassName})}${formatter})$endOfLine
 #end

@@ -14,17 +14,12 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.16</version>
+            <version>1.18.28</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
 
-    <parent>
-        <groupId>io.github.belmomusta</groupId>
-        <artifactId>excel-import-export</artifactId>
-        <version>2.0-SNAPSHOT</version>
-    </parent>
-
+    <groupId>io.github.belmomusta</groupId>
     <artifactId>excel-import-export-examples</artifactId>
     <version>2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -33,20 +28,24 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>com.mysema.maven</groupId>
-                <artifactId>apt-maven-plugin</artifactId>
-                <version>1.1.3</version>
+                <groupId>org.bsc.maven</groupId>
+                <artifactId>maven-processor-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <defaultOutputDirectory>
+                        ${project.build.directory}/generated-sources
+                    </defaultOutputDirectory>
+                    <processors>
+                        <processor>io.github.belmomusta.exporter.processor.ExportProcessor</processor>
+                    </processors>
+                </configuration>
                 <executions>
                     <execution>
+                        <id>process</id>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>process</goal>
                         </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
-                            <processors>
-                                <processor>io.github.belmomusta.exporter.processor.ExportProcessor</processor>
-                            </processors>
-                        </configuration>
                     </execution>
                 </executions>
                 <dependencies>
@@ -57,6 +56,34 @@
                         <scope>compile</scope>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.4.0</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

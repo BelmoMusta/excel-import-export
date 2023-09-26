@@ -1,7 +1,5 @@
 package io.github.belmomusta.export.examples.objects;
 
-
-
 import io.github.belmomusta.export.examples.objects.export.excel.CarExcelExporter;
 import io.github.belmomusta.exporter.api.common.CommonExporter;
 import io.github.belmomusta.exporter.api.exception.ExporterException;
@@ -22,7 +20,5 @@ public class Main {
 		car.setPrice(300000.99);
 		final String destinationFile = ("cars.xlsx");
 		excelExporter.exportToFile(Arrays.asList(car,car), destinationFile);
-		
-		
 	}
 }

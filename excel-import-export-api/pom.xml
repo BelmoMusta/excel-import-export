@@ -13,7 +13,7 @@
     <artifactId>excel-import-export-api</artifactId>
     <version>2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>Excel Imort Export API</name>
+    <name>Excel Import Export API</name>
     <description>Excel import and export tools</description>
 
 
