@@ -21,7 +21,7 @@ public abstract class AbstractExcelExporter<T> extends AbstractExporter<T> imple
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             final Sheet sheet = workbook.createSheet(getClassName().getSimpleName());
             writeHeaders(sheet);
-			
+            
             for (T object : objects) {
                 createRows(sheet, object);
             }
@@ -40,6 +40,9 @@ public abstract class AbstractExcelExporter<T> extends AbstractExporter<T> imple
     
     @Override
     public final<X> String valueOf(X object, Formatter<X> formatter) {
+        if (formatter == null){
+            return valueOf(object);
+        }
         return Optional.ofNullable(object)
                 .map(formatter::format)
                 .orElse(EMPTY_STRING);

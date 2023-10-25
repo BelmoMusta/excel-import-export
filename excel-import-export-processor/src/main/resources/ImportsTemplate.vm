@@ -1,18 +1,18 @@
 #if($!wrapper.aPackage != "")
 package $wrapper.aPackage;
 #else
-    /**
-    WARNING
-    The class $config.fullCurrentClassName is in the default package
-    **/
+/**
+WARNING
+The class $config.fullCurrentClassName is in the default package
+**/
 #end
 
 #if(!$config.useFQNs)
-#if($!wrapper.aPackage != "")
-import $config.fullCurrentClassName;
-#end
+    #if($!wrapper.aPackage != "")
+    import $config.fullCurrentClassName;
+    #end
 import $classToImport;
-#parse("FormatterImports.vm")
+    #parse("FormatterImports.vm")
 import $config.listFullClassName;
 import $config.arraysFullClassName;
 

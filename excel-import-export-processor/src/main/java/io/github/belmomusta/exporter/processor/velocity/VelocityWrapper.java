@@ -14,47 +14,47 @@ public class VelocityWrapper {
     private boolean withIoC;
     
     private Collection<FieldMethodPair> correspondanceFieldMethod;
-
+    
     public String getSimplifiedClassName() {
         return simplifiedClassName;
     }
-
+    
     public void setSimplifiedClassName(String simplifiedClassName) {
         this.simplifiedClassName = simplifiedClassName;
     }
-
+    
     public String getClassName() {
         return className;
     }
-
+    
     public void setClassName(String className) {
         this.className = className;
-    }
-    
-    public void setAPackage(String aPackage) {
-        this.aPackage = aPackage;
-    }
-    
-    public void setCsvPackage(String csvPackage) {
-        this.csvPackage = csvPackage;
     }
     
     public String getCsvPackage() {
         return csvPackage;
     }
     
+    public void setCsvPackage(String csvPackage) {
+        this.csvPackage = csvPackage;
+    }
+    
     public String getAPackage() {
         return aPackage;
+    }
+    
+    public void setAPackage(String aPackage) {
+        this.aPackage = aPackage;
+    }
+    
+    public Collection<FieldMethodPair> getCorrespondanceFieldMethod() {
+        return correspondanceFieldMethod;
     }
     
     public void setCorrespondanceFieldMethod(Collection<FieldMethodPair> correspondanceFieldMethod) {
         this.correspondanceFieldMethod = correspondanceFieldMethod;
     }
-
-    public Collection<FieldMethodPair> getCorrespondanceFieldMethod() {
-        return correspondanceFieldMethod;
-    }
-
+    
     public boolean isWithHeaders() {
         return withHeaders;
     }
@@ -71,18 +71,18 @@ public class VelocityWrapper {
         this.useFQNs = useFQNs;
     }
     
-    public Collection<FormatterWrapper> getFormatters(){
+    public Collection<FormatterWrapper> getFormatters() {
         return correspondanceFieldMethod.stream()
                 .map(FieldMethodPair::getFormatter)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
-	
-	public boolean isWithIoC() {
-		return withIoC;
-	}
-	
-	public void setWithIoC(boolean withIoC) {
-		this.withIoC = withIoC;
-	}
+    
+    public boolean isWithIoC() {
+        return withIoC;
+    }
+    
+    public void setWithIoC(boolean withIoC) {
+        this.withIoC = withIoC;
+    }
 }

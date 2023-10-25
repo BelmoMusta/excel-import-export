@@ -1,8 +1,13 @@
 #foreach($formatter_ in $wrapper.formatters)
-#if(!$config.useFQNs)
-#set($formatterClassName=${formatter_.simpleName})
-#else
-#set($formatterClassName=${formatter_.fullFQN})
-#end
-    protected final $config.formatterClassName $formatter_.instanceName = new ${formatterClassName}();
+    #if(!$config.useFQNs)
+        #set($formatterClassName=${formatter_.simpleName})
+    #else
+        #set($formatterClassName=${formatter_.fullFQN})
+    #end
+    #if($wrapper.withIoC)
+        $config.autowiredAnnotation
+    private $config.formatterClassName $formatter_.instanceName;
+    #else
+    private final $config.formatterClassName $formatter_.instanceName = new ${formatterClassName}();
+    #end
 #end

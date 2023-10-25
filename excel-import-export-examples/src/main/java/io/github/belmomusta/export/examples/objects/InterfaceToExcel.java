@@ -6,11 +6,11 @@ import io.github.belmomusta.exporter.api.common.ExportType;
 
 @Export(type = ExportType.EXCEL, ignoreHeaders = false)
 public interface InterfaceToExcel {
-	@ToColumn
-	String getSomething();
-	
-	@ToColumn
-	static String toto(){
-		return "toto";
-	}
+    @ToColumn
+    static String toto() {
+        return "toto";
+    }
+    
+    @ToColumn
+    String getSomething();
 }

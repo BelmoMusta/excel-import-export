@@ -1,20 +1,20 @@
-    @Override
-    public $config.listClassName<$config.stringClassName> getHeadersEntries() {
+@Override
+public $config.listClassName<$config.stringClassName> getHeadersEntries() {
 #if($wrapper.withHeaders)
-#if($wrapper.correspondanceFieldMethod.size()==0)
-        return ${config.arraysClassName}.asList();
+    #if($wrapper.correspondanceFieldMethod.size()==0)
+    return ${config.arraysClassName}.asList();
+    #else
+    return ${config.arraysClassName}.asList(
+        #foreach($i in $wrapper.correspondanceFieldMethod)
+            #if($foreach.hasNext)
+                #set($endOfLine=",")
+            #else
+                #set($endOfLine=");")
+            #end
+        "$i.name"$endOfLine
+        #end
+    #end
 #else
-         return ${config.arraysClassName}.asList(
-#foreach($i in $wrapper.correspondanceFieldMethod)
-#if($foreach.hasNext)
-#set($endOfLine=",")
-#else
-#set($endOfLine=");")
+return ${config.arraysClassName}.asList();
 #end
-                "$i.name"$endOfLine
-#end
-#end
-#else
-        return ${config.arraysClassName}.asList();
-#end
-    }
+}

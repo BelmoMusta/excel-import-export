@@ -7,24 +7,24 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
 public class MethodWrapper extends ElementWrapper {
-
+    
     public MethodWrapper(Element method) {
         super(method);
     }
-
+    
     @Override
     public boolean isValid() {
-		if (!(wrappedElement instanceof ExecutableElement)){
-			return true;
-		}
+        if (!(wrappedElement instanceof ExecutableElement)) {
+            return true;
+        }
         final ExecutableElement executableMethod = (ExecutableElement) wrappedElement;
         TypeMirror returnType = ((ExecutableElement) wrappedElement).getReturnType();
-
+        
         return returnType.getKind() != TypeKind.VOID
                 && !executableMethod.getModifiers().contains(Modifier.PRIVATE)
                 && executableMethod.getParameters().isEmpty();
     }
-
+    
     public String getPossibleFieldName() {
         String ret;
         String relatedFieldName = wrappedElement.getSimpleName().toString();
@@ -40,8 +40,8 @@ public class MethodWrapper extends ElementWrapper {
         }
         return ret;
     }
-	
-	public boolean isStaticMethod() {
-		return wrappedElement.getModifiers().contains(Modifier.STATIC);
-	}
+    
+    public boolean isStaticMethod() {
+        return wrappedElement.getModifiers().contains(Modifier.STATIC);
+    }
 }

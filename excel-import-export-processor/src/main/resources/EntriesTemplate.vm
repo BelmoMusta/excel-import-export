@@ -1,21 +1,21 @@
-    @Override
-    public $config.listClassName<$config.stringClassName> getRowEntries($config.currentClassName object) {
+@Override
+public $config.listClassName<$config.stringClassName> getRowEntries($config.currentClassName object) {
 #if($wrapper.correspondanceFieldMethod.size()==0)
-        return ${config.arraysClassName}.asList();
+return ${config.arraysClassName}.asList();
 #else
-        return ${config.arraysClassName}.asList(
-#foreach($pair in $wrapper.correspondanceFieldMethod)
-#if($pair.formatter)
-#set( $formatter = ", ${pair.formatter.instanceName}" )
-#else
-#set( $formatter = "" )
+return ${config.arraysClassName}.asList(
+    #foreach($pair in $wrapper.correspondanceFieldMethod)
+        #if($pair.formatter)
+            #set( $formatter = ", ${pair.formatter.instanceName}" )
+        #else
+            #set( $formatter = "" )
+        #end
+        #if($foreach.hasNext)
+            #set($endOfLine=",")
+        #else
+            #set($endOfLine=");")
+        #end
+    valueOf(${pair.getCall(${config.currentClassName})}${formatter})$endOfLine
+    #end
 #end
-#if($foreach.hasNext)
-#set($endOfLine=",")
-#else
-#set($endOfLine=");")
-#end
-                valueOf(${pair.getCall(${config.currentClassName})}${formatter})$endOfLine
-#end
-#end
-    }
+}

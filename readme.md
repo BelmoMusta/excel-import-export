@@ -1,8 +1,10 @@
 # Excel import and export
+
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.belmomusta/export-import-export/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.belmomusta/export-import-export)
 
 This project contains utilities to import objects from an export file.
 It also contains functions to export data from objects an to export file.
+
 ## Get it as a maven dependency  :
 
 ```XML
@@ -12,7 +14,9 @@ It also contains functions to export data from objects an to export file.
             <version>1.1</version>
    </dependency>
 ```
+
 Usage:
+
 ## 1. Importing
 
 ```java
@@ -26,9 +30,10 @@ final Collection<Car> cars = ExcelImporter.extract(Car.class)
                 .map("model").toCell(2)
                 .get();
 ```
+
 This snippet creates a collection of cars from the first sheet of an export workbook.
 The importing is also possible with the annotation marker.
-The object classes to import will have the `@ExcelCell` on the fields that we want to import. 
+The object classes to import will have the `@ExcelCell` on the fields that we want to import.
 For example :
 
 ```java
@@ -48,7 +53,8 @@ public class CarWithAnnotations {
 				.get();
 ```
 
-## 2.  Exporting
+## 2. Exporting
+
 To export a collection of items to an export file, You an use the `ExcelExporterService` to do so.
 Here is a common example of use  :
 
@@ -69,7 +75,9 @@ Here is a common example of use  :
  				.map("model").toCell(2)
  				.export();
 ```
+
 ### Export content using method names on the exported class
+
 Used methods should have no args, and have a specific return value, void methods are not supported.
 
 ```java
@@ -87,7 +95,9 @@ final Car car = new Car();
 				.withHeaders("id", "name", "model") // Here you van specify headers
 				.export();
 ```
+
 ### With annotations
+
 ```java
 final CarWithAnnotations car = new CarWithAnnotations();
 		car.setId(22);
@@ -100,7 +110,9 @@ final CarWithAnnotations car = new CarWithAnnotations();
 				.withHeaders("id", "name", "model")
 				.export();
 ```
+
 ### Dependencies :
- - Apache POI 3.15
- - Apache Commons-IO 2.6
- - Junit 4.13 for testing
+
+- Apache POI 3.15
+- Apache Commons-IO 2.6
+- Junit 4.13 for testing

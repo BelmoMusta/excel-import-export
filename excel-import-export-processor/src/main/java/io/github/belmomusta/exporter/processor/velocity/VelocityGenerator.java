@@ -11,9 +11,10 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 public class VelocityGenerator {
-    private VelocityGenerator(){
+    private VelocityGenerator() {
         throw new IllegalStateException();
     }
+    
     public static String generateCSVExporterJavaClassFile(VelocityWrapper wrapper) throws IOException {
         return common(wrapper, "CSVMapperTemplate.vm");
     }
@@ -23,7 +24,7 @@ public class VelocityGenerator {
     }
     
     private static String common(VelocityWrapper wrapper, String templateName) throws IOException {
-        if(wrapper == null) return null;
+        if (wrapper == null) return null;
         VelocityConfig config = new VelocityConfig(wrapper.isUseFQNs());
         config.setFullCurrentClassName(wrapper.getClassName());
         VelocityEngine ve = new VelocityEngine();
