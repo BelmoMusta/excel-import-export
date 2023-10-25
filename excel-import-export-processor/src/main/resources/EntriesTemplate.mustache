@@ -1,0 +1,33 @@
+@Override
+public {{config.listClassName}}<{{config.stringClassName}}> getRowEntries({{config.currentClassName}} object) {
+{{^wrapper.correspondanceFieldMethod}}
+    return ${config.arraysClassName}.asList();
+{{/wrapper.correspondanceFieldMethod}}
+{{#wrapper.correspondanceFieldMethod}}
+    return {{config.arraysClassName}}.asList(
+    {{#wrapper.correspondanceFieldMethod}}
+        {{#formatter}}
+
+        {{/formatter}}
+
+        {{^formatter}}
+        {{/formatter}}
+    {{/wrapper.correspondanceFieldMethod}}
+{{/wrapper.correspondanceFieldMethod}}
+
+return ${config.arraysClassName}.asList(
+    #foreach($pair in $wrapper.correspondanceFieldMethod)
+        #if($pair.formatter)
+            #set( $formatter = ", ${pair.formatter.instanceName}" )
+        #else
+            #set( $formatter = "" )
+        #end
+        #if($foreach.hasNext)
+            #set($endOfLine=",")
+        #else
+            #set($endOfLine=");")
+        #end
+    valueOf(${pair.getCall(${config.currentClassName})}${formatter})$endOfLine
+    #end
+#end
+}

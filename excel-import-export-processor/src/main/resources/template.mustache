@@ -1,0 +1,11 @@
+{{>footer}}
+{{#description}}
+    description is not false
+{{/description}}
+{{#items}}
+Name: {{name}}
+Price: {{price}}
+  {{#features}}
+  Feature: {{description}}
+  {{/features}}
+{{/items}}
