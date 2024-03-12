@@ -1,0 +1,4 @@
+#set($exporterName = "CSVExporter")
+#set($classToExtend = $config.abstractCSVExporterClassName)
+#set($classToImport = $config.abstractCSVExporterFullClassName)
+#parse("CommonMapperTemplate.vm")
