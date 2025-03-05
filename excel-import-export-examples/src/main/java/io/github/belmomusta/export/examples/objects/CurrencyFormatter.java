@@ -1,6 +1,6 @@
-package io.github.belmomusta.export.examples.objects;
+package io.github.mustabelmo.export.examples.objects;
 
-import io.github.belmomusta.exporter.api.formatter.Formatter;
+import io.github.mustabelmo.exporter.api.formatter.Formatter;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

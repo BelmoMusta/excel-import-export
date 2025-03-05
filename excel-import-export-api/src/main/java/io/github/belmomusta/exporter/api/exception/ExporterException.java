@@ -1,4 +1,4 @@
-package io.github.belmomusta.exporter.api.exception;
+package io.github.mustabelmo.exporter.api.exception;
 
 public class ExporterException extends Exception {
 	

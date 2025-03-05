@@ -1,4 +1,4 @@
-package io.github.belmomusta.exporter.processor;
+package io.github.mustabelmo.exporter.processor;
 
 import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;

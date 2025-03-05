@@ -1,7 +1,7 @@
-package io.github.belmomusta.exporter.processor;
+package io.github.mustabelmo.exporter.processor;
 
-import io.github.belmomusta.exporter.api.annotation.Export;
-import io.github.belmomusta.exporter.api.common.ExportType;
+import io.github.mustabelmo.exporter.api.annotation.Export;
+import io.github.mustabelmo.exporter.api.common.ExportType;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;

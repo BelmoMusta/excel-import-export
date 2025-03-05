@@ -1,12 +1,10 @@
-package io.github.belmomusta.exporter;
+package io.github.mustabelmo.exporter;
 
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
-import io.github.belmomusta.exporter.processor.velocity.VelocityConfig;
-import io.github.belmomusta.exporter.processor.velocity.VelocityGenerator;
-import io.github.belmomusta.exporter.processor.velocity.VelocityWrapper;
-import org.apache.velocity.VelocityContext;
+import io.github.mustabelmo.exporter.processor.velocity.VelocityConfig;
+import io.github.mustabelmo.exporter.processor.velocity.VelocityWrapper;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -23,11 +21,11 @@ public class Mustashe {
         wrapper.setSimplifiedClassName("test");
         wrapper.setClassName("test");
         wrapper.setAPackage("com.test");
+        wrapper.setCorrespondanceFieldMethod(Arrays.asList());
         
         VelocityConfig config = new VelocityConfig(wrapper.isUseFQNs());
         config.setFullCurrentClassName(wrapper.getClassName());
-        wrapper.setCorrespondanceFieldMethod(Arrays.asList());
-         MustacheFactory mf = new DefaultMustacheFactory();
+        MustacheFactory mf = new DefaultMustacheFactory();
         Mustache mustache = mf.compile("ClassNameMethod.mustache");
         
         Map context = new LinkedHashMap();
@@ -40,9 +38,10 @@ public class Mustashe {
 }
 
 class Example {
-    public  String string(){
+    public String string() {
         return "test test";
     }
+    
     List<Item> items() {
         return Arrays.asList(
                 new Item("Item 1", "$19.99", Arrays.asList(new Feature("New!"), new Feature("Awesome!"))),
@@ -68,4 +67,4 @@ class Example {
         
         String description;
     }
-    }
+}

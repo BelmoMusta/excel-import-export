@@ -1,6 +1,6 @@
-package io.github.belmomusta.exporter.api.excel;
+package io.github.mustabelmo.exporter.api.excel;
 
-import io.github.belmomusta.exporter.api.common.CommonExporter;
+import io.github.mustabelmo.exporter.api.common.CommonExporter;
 
 public interface ExcelExporter<T> extends CommonExporter<T> {
 

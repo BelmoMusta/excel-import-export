@@ -1,6 +1,6 @@
-package io.github.belmomusta.exporter.processor.types;
+package io.github.mustabelmo.exporter.processor.types;
 
-import io.github.belmomusta.exporter.processor.velocity.FieldMethodPair;
+import io.github.mustabelmo.exporter.processor.velocity.FieldMethodPair;
 
 import java.util.TreeSet;
 

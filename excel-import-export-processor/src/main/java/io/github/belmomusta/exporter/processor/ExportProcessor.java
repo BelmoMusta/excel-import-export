@@ -1,7 +1,7 @@
-package io.github.belmomusta.exporter.processor;
+package io.github.mustabelmo.exporter.processor;
 
-import io.github.belmomusta.exporter.api.annotation.Export;
-import io.github.belmomusta.exporter.api.annotation.ToColumn;
+import io.github.mustabelmo.exporter.api.annotation.Export;
+import io.github.mustabelmo.exporter.api.annotation.ToColumn;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -12,7 +12,7 @@ import javax.lang.model.element.TypeElement;
 import java.util.Set;
 
 @SupportedAnnotationTypes({
-        "io.github.belmomusta.exporter.api.annotation.Export"
+        "io.github.mustabelmo.exporter.api.annotation.Export"
 })
 
 public class ExportProcessor extends AbstractProcessor {

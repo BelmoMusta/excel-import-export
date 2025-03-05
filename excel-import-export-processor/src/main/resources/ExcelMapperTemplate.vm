@@ -1,4 +1,0 @@
-#set($exporterName = "ExcelExporter")
-#set($classToExtend = $config.abstractExcelMapperClassName)
-#set($classToImport = $config.abstractExcelMapperFullClassName)
-#parse("CommonMapperTemplate.vm")

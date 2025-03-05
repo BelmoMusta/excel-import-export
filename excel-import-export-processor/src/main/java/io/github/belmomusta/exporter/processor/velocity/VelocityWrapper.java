@@ -1,6 +1,8 @@
-package io.github.belmomusta.exporter.processor.velocity;
+package io.github.mustabelmo.exporter.processor.velocity;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -14,6 +16,7 @@ public class VelocityWrapper {
     private boolean withIoC;
     
     private Collection<FieldMethodPair> correspondanceFieldMethod;
+    private List<String> imports;
     
     public String getSimplifiedClassName() {
         return simplifiedClassName;
@@ -84,5 +87,13 @@ public class VelocityWrapper {
     
     public void setWithIoC(boolean withIoC) {
         this.withIoC = withIoC;
+    }
+    
+    public void setImports(List<String> imports) {
+        this.imports = imports;
+    }
+    
+    public List<String> getImports() {
+        return imports;
     }
 }

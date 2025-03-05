@@ -1,6 +1,6 @@
 # Excel import and export
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.belmomusta/export-import-export/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.belmomusta/export-import-export)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.mustabelmo/export-import-export/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.mustabelmo/export-import-export)
 
 This project contains utilities to import objects from an export file.
 It also contains functions to export data from objects an to export file.
@@ -9,7 +9,7 @@ It also contains functions to export data from objects an to export file.
 
 ```XML
    <dependency>
-            <groupId>io.github.belmomusta</groupId>
+            <groupId>io.github.mustabelmo</groupId>
             <artifactId>export-import-export</artifactId>
             <version>1.1</version>
    </dependency>

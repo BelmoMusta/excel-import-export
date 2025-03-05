@@ -1,7 +1,7 @@
-package io.github.belmomusta.exporter.api.common;
+package io.github.mustabelmo.exporter.api.common;
 
-import io.github.belmomusta.exporter.api.exception.ExporterException;
-import io.github.belmomusta.exporter.api.formatter.Formatter;
+import io.github.mustabelmo.exporter.api.exception.ExporterException;
+import io.github.mustabelmo.exporter.api.formatter.Formatter;
 
 import java.io.File;
 import java.util.Collection;

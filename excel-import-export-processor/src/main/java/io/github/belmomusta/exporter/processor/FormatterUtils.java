@@ -1,6 +1,6 @@
-package io.github.belmomusta.exporter.processor;
+package io.github.mustabelmo.exporter.processor;
 
-import io.github.belmomusta.exporter.api.annotation.ColumnFormat;
+import io.github.mustabelmo.exporter.api.annotation.ColumnFormat;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;

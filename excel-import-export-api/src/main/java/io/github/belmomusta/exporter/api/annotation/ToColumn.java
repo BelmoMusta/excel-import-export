@@ -1,4 +1,4 @@
-package io.github.belmomusta.exporter.api.annotation;
+package io.github.mustabelmo.exporter.api.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

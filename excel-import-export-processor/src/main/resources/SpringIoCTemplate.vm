@@ -1,3 +1,0 @@
-#if($wrapper.withIoC)
-    $config.springComponentAnnotation
-#end

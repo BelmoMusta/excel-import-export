@@ -1,6 +1,6 @@
-package io.github.belmomusta.exporter.processor;
+package io.github.mustabelmo.exporter.processor;
 
-import io.github.belmomusta.exporter.api.common.ExportType;
+import io.github.mustabelmo.exporter.api.common.ExportType;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;

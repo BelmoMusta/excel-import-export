@@ -1,4 +1,4 @@
-package io.github.belmomusta.exporter.api.common;
+package io.github.mustabelmo.exporter.api.common;
 
 public enum ExportType {
 	CSV(".export.csv.", "CSVExporter"),

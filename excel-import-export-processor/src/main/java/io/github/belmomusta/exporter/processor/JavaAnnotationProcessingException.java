@@ -1,4 +1,4 @@
-package io.github.belmomusta.exporter.processor;
+package io.github.mustabelmo.exporter.processor;
 
 public class JavaAnnotationProcessingException extends RuntimeException {
     public JavaAnnotationProcessingException(Exception e) {

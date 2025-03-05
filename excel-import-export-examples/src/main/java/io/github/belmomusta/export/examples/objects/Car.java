@@ -1,10 +1,10 @@
-package io.github.belmomusta.export.examples.objects;
+package io.github.mustabelmo.export.examples.objects;
 
-import io.github.belmomusta.exporter.api.annotation.ColumnFormat;
-import io.github.belmomusta.exporter.api.annotation.Export;
-import io.github.belmomusta.exporter.api.annotation.ObjectToColumns;
-import io.github.belmomusta.exporter.api.annotation.ToColumn;
-import io.github.belmomusta.exporter.api.common.ExportType;
+import io.github.mustabelmo.exporter.api.annotation.ColumnFormat;
+import io.github.mustabelmo.exporter.api.annotation.Export;
+import io.github.mustabelmo.exporter.api.annotation.ObjectToColumns;
+import io.github.mustabelmo.exporter.api.annotation.ToColumn;
+import io.github.mustabelmo.exporter.api.common.ExportType;
 
 import java.util.Date;
 

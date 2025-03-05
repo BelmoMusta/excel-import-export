@@ -1,6 +1,6 @@
-package io.github.belmomusta.export.examples.objects;
+package io.github.mustabelmo.export.examples.objects;
 
-import io.github.belmomusta.exporter.api.annotation.ToColumn;
+import io.github.mustabelmo.exporter.api.annotation.ToColumn;
 
 public class Inner {
     @ToColumn()

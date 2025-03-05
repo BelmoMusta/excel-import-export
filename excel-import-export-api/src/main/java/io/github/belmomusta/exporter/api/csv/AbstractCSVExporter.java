@@ -1,8 +1,8 @@
-package io.github.belmomusta.exporter.api.csv;
+package io.github.mustabelmo.exporter.api.csv;
 
-import io.github.belmomusta.exporter.api.common.AbstractExporter;
-import io.github.belmomusta.exporter.api.exception.ExporterException;
-import io.github.belmomusta.exporter.api.formatter.Formatter;
+import io.github.mustabelmo.exporter.api.common.AbstractExporter;
+import io.github.mustabelmo.exporter.api.exception.ExporterException;
+import io.github.mustabelmo.exporter.api.formatter.Formatter;
 
 import java.io.File;
 import java.io.PrintWriter;

@@ -1,6 +1,6 @@
-package io.github.belmomusta.exporter.api.common;
+package io.github.mustabelmo.exporter.api.common;
 
-import io.github.belmomusta.exporter.api.exception.ExporterException;
+import io.github.mustabelmo.exporter.api.exception.ExporterException;
 
 import java.io.File;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package io.github.belmomusta.exporter.processor;
+package io.github.mustabelmo.exporter.processor;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;

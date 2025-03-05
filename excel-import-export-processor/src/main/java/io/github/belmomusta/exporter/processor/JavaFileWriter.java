@@ -1,7 +1,7 @@
-package io.github.belmomusta.exporter.processor;
+package io.github.mustabelmo.exporter.processor;
 
-import io.github.belmomusta.exporter.processor.velocity.VelocityGenerator;
-import io.github.belmomusta.exporter.processor.velocity.VelocityWrapper;
+import io.github.mustabelmo.exporter.processor.velocity.VelocityGenerator;
+import io.github.mustabelmo.exporter.processor.velocity.VelocityWrapper;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.tools.JavaFileObject;

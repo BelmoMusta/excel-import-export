@@ -1,6 +1,6 @@
-package io.github.belmomusta.exporter.api.annotation;
+package io.github.mustabelmo.exporter.api.annotation;
 
-import io.github.belmomusta.exporter.api.formatter.Formatter;
+import io.github.mustabelmo.exporter.api.formatter.Formatter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
